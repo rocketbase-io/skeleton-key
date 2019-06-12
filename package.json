@@ -42,5 +42,8 @@
     "mocha": "^6.1.4",
     "tslint": "^5.17.0",
     "typescript": "^3.5.1"
+  },
+  "dependencies": {
+    "@rocketbase/tslint-rules": "^1.0.0"
   }
 }

@@ -1,0 +1,10 @@
+{
+  "extends": ["@rocketbase/tslint-rules"],
+  "rules": {},
+  "linterOptions": {
+    "exclude": [
+      "dist/**/*",
+      "test/**/*"
+    ]
+  }
+}

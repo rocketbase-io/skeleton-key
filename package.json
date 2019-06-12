@@ -1,6 +1,6 @@
 {
   "name": "@rocketbase/skeleton-key",
-  "version": "0.0.2",
+  "version": "0.0.1",
   "description": "A Client-Side JS Authentication and Authorization Library",
   "main": "dist/index.js",
   "files": [
@@ -16,7 +16,8 @@
     "build": "tsc",
     "watch": "tsc --watch",
     "authors": "ngm authors --md --out AUTHORS.md",
-    "changelog": "ngm changelog --md --out CHANGELOG.md"
+    "changelog": "ngm changelog --md --out CHANGELOG.md",
+    "prepublish": "npm run lint:fix && npm run build && npm run authors && npm run changelog && git add AUTHORS.md CHANGELOG.md && git commit -m 'update authors and changelog'"
   },
   "repository": {
     "type": "git",

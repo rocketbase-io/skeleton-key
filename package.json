@@ -13,6 +13,7 @@
     "test": "mocha",
     "lint": "tslint --project tsconfig.json",
     "lint:fix": "tslint --fix --project tsconfig.json",
+    "lint:fix:commit": "npm run lint:fix && git add src && git commit -m 'linter changes'",
     "build": "tsc",
     "watch": "tsc --watch",
     "authors": "ngm authors --md --out AUTHORS.md",

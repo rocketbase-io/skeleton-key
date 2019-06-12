@@ -46,5 +46,8 @@
   },
   "dependencies": {
     "@rocketbase/tslint-rules": "^1.0.0"
+  },
+  "publishConfig": {
+    "@rocketbase:registry": "https://central.npmjs.org/"
   }
 }

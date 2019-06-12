@@ -48,6 +48,6 @@
     "@rocketbase/tslint-rules": "^1.0.0"
   },
   "publishConfig": {
-    "@rocketbase:registry": "https://central.npmjs.org/"
+    "@rocketbase:registry": "https://registry.npmjs.org/"
   }
 }

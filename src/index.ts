@@ -2,7 +2,7 @@
 
 import {interceptXHR} from './request-interceptor';
 import {SkeletonUser} from './user';
-import {ensureCookie} from "./cookie";
+import {ensureCookie} from './cookie';
 
 export * from './domain';
 export * from './user';

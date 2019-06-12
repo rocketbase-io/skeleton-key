@@ -1,5 +1,4 @@
 
-
 export interface SkeletonRequestOptions {
   token: string;
   tokenHeader?: string;

@@ -1,0 +1,46 @@
+{
+  "name": "@rocketbase/skeleton-key",
+  "version": "0.0.1",
+  "description": "A Client-Side JS Authentication and Authorization Library",
+  "main": "dist/index.js",
+  "files": [
+    "dist",
+    "LICENSE.md",
+    "README.md",
+    "AUTHORS.md"
+  ],
+  "scripts": {
+    "test": "mocha",
+    "lint": "tslint --project tsconfig.json",
+    "lint:fix": "tslint --fix --project tsconfig.json",
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "authors": "ngm authors --md --out AUTHORS.md",
+    "changelog": "ngm changelog --md --out CHANGELOG.md"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rocketbase-io/skeleton-key.git"
+  },
+  "keywords": [
+    "js",
+    "auth",
+    "commons-auth"
+  ],
+  "author": "Rocketbase Team <team@rocketbase.io>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rocketbase-io/skeleton-key/issues"
+  },
+  "homepage": "https://github.com/rocketbase-io/skeleton-key#readme",
+  "devDependencies": {
+    "@propero/ngm": "^1.1.0",
+    "@types/chai": "^4.1.7",
+    "@types/mocha": "^5.2.7",
+    "@types/node": "^12.0.7",
+    "chai": "^4.2.0",
+    "mocha": "^6.1.4",
+    "tslint": "^5.17.0",
+    "typescript": "^3.5.1"
+  }
+}

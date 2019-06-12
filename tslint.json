@@ -1,0 +1,12 @@
+{
+  "extends": [
+
+  ],
+  "rules": {},
+  "linterOptions": {
+    "exclude": [
+      "dist/**/*",
+      "test/**/*"
+    ]
+  }
+}

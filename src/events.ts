@@ -1,5 +1,4 @@
-import {Constructor} from "./types";
-
+import {Constructor} from './types';
 
 export interface IEventing {
   on(event: string, callback: (ev: any) => void): this;
@@ -26,7 +25,7 @@ export function Eventing<T extends Object>(base: Constructor<T>): Constructor<T>
     }
 
     public once(event: string, callback: (ev: any) => void): this {
-      const onceHandler = (...args:any[]) => {
+      const onceHandler = (...args: any[]) => {
         // @ts-ignore
         callback.apply(this, args);
         this.off(event, onceHandler);

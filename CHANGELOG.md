@@ -1,5 +1,12 @@
 ## Changelog
 
+### v0.1.0
+- add login strategy, eventing [[a66084]](commits/ca73e720b8eeeeae3be588c835e6a21f84a66084)
+- update authors and changelog [[c92453]](commits/94eb65da92e360c10e8a0d6737f4e9ab00c92453)
+- change npm registry [[cd8cea]](commits/d725d92033ed67e34ef7824614222bf8bbcd8cea)
+- update authors and changelog [[3f7725]](commits/48fde35c319092dbe3d1853ee2f9f9d1933f7725)
+- add registry config to package.json [[67c13f]](commits/3c60b9d27ac7283093371d2366925015a367c13f)
+
 ### v0.0.3
 - 0.0.2 [[e2d6e6]](commits/173c1518623098a9492d692fa2d99dbc21e2d6e6)
 - add prepublish hook [[ae18ac]](commits/3b4e79753f952b8e6e8f2263cd70c0437fae18ac)
@@ -13,4 +20,4 @@
 - Add request interceptor logic, skeletonkey class [[a11655]](commits/21d6fbf5fa3d109ba93e24edb01a42ff1fa11655)
 - Initial commit [[6183b2]](commits/e8b63334be9b51e465e6f780f355bb7a7d6183b2)
 
-###### Generated on 2019-06-12T09:08:45.655Z | Made with @propero/ngm
+###### Generated on 2019-06-12T11:29:44.787Z | Made with @propero/ngm

@@ -28,7 +28,7 @@ export interface SkeletonUserInfo {
 export class SkeletonUser {
 
   constructor(
-    private info: SkeletonUserInfo
+    public info: SkeletonUserInfo
   ) {}
 
   public isValid() {

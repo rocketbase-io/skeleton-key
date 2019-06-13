@@ -29,7 +29,8 @@ export const SkeletonKeyDefaults: SkeletonKeyOpts = {
 export default interface SkeletonKey {
   on(event: 'login', callback: (user: SkeletonUser) => void): this;
   on(event: 'logout', callback: (user: SkeletonUser, reason: 'timeout' | 'logout') => void): this;
-  on(event: 'action', callback: (user: SkeletonUser, req: XMLHttpRequest, method: string, url: string) => void): this;
+  on(event: 'action', callback:
+    (user: SkeletonUser, req: XMLHttpRequest | [RequestInfo, RequestInit], method: string, url: string) => void): this;
 }
 
 export default class SkeletonKey extends Eventing(Object) implements RequestInterceptor {
@@ -88,8 +89,10 @@ export default class SkeletonKey extends Eventing(Object) implements RequestInte
       Object.keys(cookies).forEach(cookie => ensureCookie(cookie, cookies[cookie]));
       if (tokenCookie && token) ensureCookie(tokenCookie, token);
       if (tokenHeader && token) xhr.setRequestHeader(tokenHeader, token);
-      this.user.getSessionOptions().lastAction = new Date();
+      // this.user.getSessionOptions().lastAction = new Date();
     }
+
+    this.emit('action', xhr, method, url);
 
     return [method, url, async, user, password];
   }
@@ -122,7 +125,10 @@ export default class SkeletonKey extends Eventing(Object) implements RequestInte
           input = { url: input, headers: {[key]: headers[key]} };
         }
       });
+      // TODO Cookies, Tokens, etc.
     }
+
+    this.emit('action', [input, init], method, url);
 
     if (this.log) console.log(`FETCH: [${method}] "${url}"`, input, init);
     return [input, init];

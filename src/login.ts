@@ -1,14 +1,16 @@
 import {SkeletonUser, SkeletonUserInfo} from './user';
 import SkeletonKey from './index';
-import {decode} from "./jwt";
+import {decode} from './jwt';
 
 export interface LoginStrategy {
   login(user: string, password: string): Promise<false | SkeletonUser>;
+
   login(token: string): Promise<false | SkeletonUser>;
 
   logout(): Promise<boolean>;
 
   onXHROpen?(xhr: XMLHttpRequest, method: string, url: string, async?: boolean, user?: string, password?: string): void;
+
   onXHRSend?(xhr: XMLHttpRequest, body: any): void;
 }
 
@@ -29,8 +31,76 @@ export interface RocketCommonsAuthLoginResponse {
   };
 }
 
+export interface RocketCommonsAuthOptions {
+  url: string;
+  authHeader?: string;
+  authPrefix?: string;
+  autoRefresh?: boolean;
+  timedRefresh?: boolean;
+}
+
 export class RocketCommonsAuth implements LoginStrategy {
-  constructor(private url: string, private key: SkeletonKey) {}
+
+  public url: string;
+  public authHeader: string = 'Authorization';
+  public authPrefix: string = 'Bearer ';
+  public autoRefresh: boolean = false;
+  public timedRefresh: boolean = false;
+
+  private intervalId?: number;
+
+  constructor(opts: RocketCommonsAuthOptions, public key: SkeletonKey) {
+    this.url = opts.url;
+    if (opts.authHeader) this.authHeader = opts.authHeader;
+    if (opts.authPrefix) this.authPrefix = opts.authPrefix;
+    if (opts.autoRefresh) this.autoRefresh = true;
+    if (opts.timedRefresh) this.timedRefresh = true;
+    key.on('action', this.onAction.bind(this));
+  }
+
+  public onAction(user: SkeletonUser, xhrOrRequest: any, method: string, url: string) {
+    if (this.autoRefresh && this.needsRefresh(user.info)) this.refreshToken(user.info);
+  }
+
+  public scheduleTimedRefresh(info: SkeletonUserInfo): void {
+    if (this.intervalId != null) this.intervalId = clearInterval(this.intervalId) as undefined;
+    if (!info.sessionOptions.maxInactiveMs) return;
+    setInterval(() => {
+      this.refreshToken(info);
+    }, info.sessionOptions.maxInactiveMs / 2);
+  }
+
+  public needsRefresh(info: SkeletonUserInfo): boolean {
+    if (!info.sessionOptions.maxInactiveMs) return false;
+    const now = new Date();
+    const before = info.sessionOptions.lastAction;
+    const halfInactiveMs = info.sessionOptions.maxInactiveMs / 2;
+    const diff = +now - +before;
+    return diff > halfInactiveMs;
+  }
+
+  public async refreshToken(info: SkeletonUserInfo): Promise<boolean> {
+    if (!new SkeletonUser(info).isValid()) return false;
+    return new Promise(resolve => {
+      const req = new XMLHttpRequest();
+      req.overrideMimeType('text/plain');
+      req.onload = () => {
+        const token = req.responseText;
+        const parsed = decode(token);
+        const expiry = parsed.payload.exp ? +new Date() - +new Date(parsed.payload.exp) : undefined;
+        info.requestOptions.headers[this.authHeader] = `${this.authPrefix}${token}`;
+        info.requestOptions.token = token;
+        info.props.jwtToken = token;
+        info.props.jwtData = parsed.payload;
+        info.sessionOptions.maxInactiveMs = expiry;
+        info.sessionOptions.lastAction = new Date();
+        resolve(true);
+      };
+      req.onerror = () => resolve(false);
+      req.open('GET', `${this.url}/auth/refresh`);
+      req.send();
+    });
+  }
 
   public async login(user: string, password: string): Promise<false | SkeletonUser>;
   public async login(token: string): Promise<false | SkeletonUser>;
@@ -42,8 +112,10 @@ export class RocketCommonsAuth implements LoginStrategy {
       req.onload = () => {
         const res: RocketCommonsAuthLoginResponse = JSON.parse(req.responseText);
         const jwt = decode(res.jwtTokenBundle.token);
+        const jwtRefresh = decode(res.jwtTokenBundle.refreshToken);
         const expiry = jwt.payload.exp ? +new Date() - +new Date(jwt.payload.exp) : undefined;
-        resolve(new SkeletonUser({
+        const totalExpiry = jwtRefresh.payload.exp ? +new Date() - +new Date(jwt.payload.exp) : undefined;
+        const info: SkeletonUserInfo = {
           name: res.user.username,
           props: {
             id: res.user.id,
@@ -53,7 +125,10 @@ export class RocketCommonsAuth implements LoginStrategy {
             created: res.user.created,
             lastLogin: res.user.lastLogin,
             enabled: res.user.enabled,
-            jwtData: jwt.payload
+            jwtToken: res.jwtTokenBundle.refreshToken,
+            jwtData: jwt.payload,
+            jwtRefreshToken: res.jwtTokenBundle.refreshToken,
+            jwtRefreshData: jwtRefresh.payload,
           },
           flags: {
             enabled: res.user.enabled
@@ -64,14 +139,19 @@ export class RocketCommonsAuth implements LoginStrategy {
           sessionOptions: {
             lastAction: new Date(),
             firstAction: new Date(),
-            maxInactiveMs: expiry
+            maxInactiveMs: expiry,
+            maxSessionMs: totalExpiry
           },
           requestOptions: {
             token: res.jwtTokenBundle.token,
-            headers: {},
+            headers: {
+              [this.authHeader]: `${this.authPrefix} ${res.jwtTokenBundle.token}`
+            },
             cookies: {}
           }
-        }));
+        };
+        if (this.timedRefresh) this.scheduleTimedRefresh(info);
+        resolve(new SkeletonUser(info));
       };
       req.onerror = () => {
         resolve(false);
@@ -92,7 +172,8 @@ export class RocketCommonsAuth implements LoginStrategy {
 }
 
 export class DigestAuthLoginStragegy implements LoginStrategy {
-  constructor(private url: string, private key: SkeletonKey) {}
+  constructor(private url: string, private key: SkeletonKey) {
+  }
 
   public async login(user: string, password: string): Promise<false | SkeletonUser>;
   public async login(token: string): Promise<false | SkeletonUser>;
@@ -110,7 +191,8 @@ export class DigestAuthLoginStragegy implements LoginStrategy {
 }
 
 export class BasicAuthLoginStrategy implements LoginStrategy {
-  constructor(private url: string, private key: SkeletonKey) {}
+  constructor(private url: string, private key: SkeletonKey) {
+  }
 
   public async login(user: string, password: string): Promise<false | SkeletonUser>;
   public async login(token: string): Promise<false | SkeletonUser>;

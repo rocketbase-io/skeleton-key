@@ -1,5 +1,10 @@
 ## Changelog
 
+### v0.2.0
+- add options for auto refresh commons auth jwt [[524c95]](commits/1289b9cec369c9f2fc184739510252df92524c95)
+- add commons auth login strategy, jwt parsing [[edb373]](commits/9083ebd73d68cc0a40eb964e13907de31fedb373)
+- update authors and changelog [[dccf85]](commits/a3041f3a667256e14992e616f72c5f2fc8dccf85)
+
 ### v0.1.1
 - make tslint rules a dev dep [[4390b8]](commits/d7b7dfa3f77c6849733c1071f50237dd534390b8)
 - update authors and changelog [[220db4]](commits/5a7839b4eb0f0051a53b52e19333220d15220db4)
@@ -26,4 +31,4 @@
 - Add request interceptor logic, skeletonkey class [[a11655]](commits/21d6fbf5fa3d109ba93e24edb01a42ff1fa11655)
 - Initial commit [[6183b2]](commits/e8b63334be9b51e465e6f780f355bb7a7d6183b2)
 
-###### Generated on 2019-06-12T11:46:06.354Z | Made with @propero/ngm
+###### Generated on 2019-06-13T14:21:03.486Z | Made with @propero/ngm

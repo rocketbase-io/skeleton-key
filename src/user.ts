@@ -16,7 +16,7 @@ export interface SkeletonSessionOptions {
 
 export interface SkeletonUserInfo {
   name: string;
-  props: {[key: string]: string};
+  props: {[key: string]: any};
   flags: {[key: string]: boolean};
   roles: string[];
   groups: string[];
@@ -72,7 +72,7 @@ export class SkeletonUser {
     return this.info.sessionOptions;
   }
 
-  public getProperties<T extends string>(...keys: T[]): {[key in T]: string} {
+  public getProperties<T extends string>(...keys: T[]): {[key in T]: any} {
     const props = Array.prototype.slice.apply(keys);
     return Object
       .keys(this.info.props)

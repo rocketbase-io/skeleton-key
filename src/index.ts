@@ -1,6 +1,6 @@
 // tslint:disable:no-console
 
-import {interceptXHR} from './request-interceptor';
+import {interceptXHR, RequestInterceptor} from './request-interceptor';
 import {SkeletonUser} from './user';
 import {ensureCookie} from './cookie';
 import {Eventing} from './events';
@@ -32,7 +32,7 @@ export default interface SkeletonKey {
   on(event: 'action', callback: (user: SkeletonUser, req: XMLHttpRequest, method: string, url: string) => void): this;
 }
 
-export default class SkeletonKey extends Eventing(Object) {
+export default class SkeletonKey extends Eventing(Object) implements RequestInterceptor {
 
   public static interceptXHR = interceptXHR;
 
@@ -78,7 +78,7 @@ export default class SkeletonKey extends Eventing(Object) {
   public onXHROpen(xhr: XMLHttpRequest, method: string, url: string, async?: boolean, user?: string, password?: string) {
     if (this.log) console.log(`XHR OPEN: [${method}] "${url}" (${async ? 'async, ' : ''}${user}:${password})`, xhr);
 
-    if (this.user && !this.user.isValid()) delete this.user;
+    if (this.user && !this.user.isValid()) this.logout();
 
     if (this.user) {
       const {headers, cookies, token, tokenCookie, tokenHeader} = this.user.getRequestOptions();
@@ -96,7 +96,35 @@ export default class SkeletonKey extends Eventing(Object) {
 
   public onXHRSend(xhr: XMLHttpRequest, body: any) {
     if (this.log) console.log(`XHR SEND: [${xhr.responseURL}] ${body}`, xhr);
-    if (this.user && !this.user.isValid()) delete this.user;
+    if (this.user && !this.user.isValid()) this.logout();
     return body;
+  }
+
+  public onFetch(input: any, init?: any): false | [RequestInfo, (RequestInit | undefined)] {
+    const str = typeof input === 'string';
+    // @ts-ignore
+    const url = str ? input : input.url;
+    // @ts-ignore
+    const method = str ? init ? init.method || 'GET' : 'GET' : input.method || 'GET';
+
+    if (this.user && !this.user.isValid()) this.logout();
+
+    if (this.user) {
+      const {headers, cookies, token, tokenCookie, tokenHeader} = this.user.getRequestOptions();
+      Object.keys(headers).forEach(key => {
+        if (init) {
+          if (!init.headers) init.headers = {};
+          init.headers[key] = headers[key];
+        } else if (typeof input !== 'string') {
+          if (!input.headers) input.headers = {};
+          input.headers[key] = headers[key];
+        } else {
+          input = { url: input, headers: {[key]: headers[key]} };
+        }
+      });
+    }
+
+    if (this.log) console.log(`FETCH: [${method}] "${url}"`, input, init);
+    return [input, init];
   }
 }

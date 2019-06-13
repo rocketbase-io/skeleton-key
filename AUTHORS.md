@@ -1,6 +1,5 @@
 ## Authors
 
-Merlin Reichwald <merlin.reichwald@rocketbase.io>  
-Merlin Reichwald <merlin.reichwald@gmail.com>
+Merlin Reichwald <merlin.reichwald@rocketbase.io>
 
-###### Generated on 2019-06-13T14:21:02.921Z | Made with @propero/ngm
+###### Generated on 2019-06-13T14:27:23.108Z | Made with @propero/ngm

@@ -1,5 +1,9 @@
 ## Changelog
 
+### v0.2.2
+- update authors and changelog [[ce7f52]](commits/466b275944f2bea338810ccbd1c1e5988fce7f52)
+- update authors and changelog [[c4d097]](commits/4b229d1ceb738bca240c2a4512894d94c4c4d097)
+
 ### v0.2.1
 - compile to es6 compliance level [[8f1661]](commits/a94362760bde322048ed1487023f9a05e78f1661)
 - update authors and changelog [[ff3d57]](commits/156cce8e1257323330990cff1c18694362ff3d57)
@@ -37,4 +41,4 @@
 - Add request interceptor logic, skeletonkey class [[a11655]](commits/21d6fbf5fa3d109ba93e24edb01a42ff1fa11655)
 - Initial commit [[6183b2]](commits/e8b63334be9b51e465e6f780f355bb7a7d6183b2)
 
-###### Generated on 2019-07-02T14:38:18.564Z | Made with @propero/ngm
+###### Generated on 2019-07-02T14:38:59.281Z | Made with @propero/ngm

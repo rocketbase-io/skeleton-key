@@ -1,5 +1,12 @@
 ## Changelog
 
+### v0.2.6
+
+
+### v0.2.5
+- use call instead of apply [[8c1663]](commits/133e530bf5e08a7e63effc375dda6adbf28c1663)
+- update authors and changelog [[61599c]](commits/4aabf0decf3b09c8362e1e823f38b9734c61599c)
+
 ### v0.2.4
 - fix typo [[d7007c]](commits/dd0097f557d963f85c83c5679d49757835d7007c)
 - update authors and changelog [[df0413]](commits/b2ae96fdbc267079b0e19678269bc2db8fdf0413)
@@ -48,4 +55,4 @@
 - Add request interceptor logic, skeletonkey class [[a11655]](commits/21d6fbf5fa3d109ba93e24edb01a42ff1fa11655)
 - Initial commit [[6183b2]](commits/e8b63334be9b51e465e6f780f355bb7a7d6183b2)
 
-###### Generated on 2019-07-02T16:29:08.207Z | Made with @propero/ngm
+###### Generated on 2019-07-02T16:33:24.658Z | Made with @propero/ngm

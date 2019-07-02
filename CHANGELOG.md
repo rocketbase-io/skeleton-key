@@ -1,5 +1,11 @@
 ## Changelog
 
+### v0.2.1
+- compile to es6 compliance level [[8f1661]](commits/a94362760bde322048ed1487023f9a05e78f1661)
+- update authors and changelog [[ff3d57]](commits/156cce8e1257323330990cff1c18694362ff3d57)
+- add mailmap file to remove duplicate authors [[65ce5a]](commits/f411328c90a6e9a2f6edbda4c9792fccef65ce5a)
+- update authors and changelog [[5cc26a]](commits/4cde07a3c2eb7b64f84d092345995b37155cc26a)
+
 ### v0.2.0
 - add options for auto refresh commons auth jwt [[524c95]](commits/1289b9cec369c9f2fc184739510252df92524c95)
 - add commons auth login strategy, jwt parsing [[edb373]](commits/9083ebd73d68cc0a40eb964e13907de31fedb373)
@@ -31,4 +37,4 @@
 - Add request interceptor logic, skeletonkey class [[a11655]](commits/21d6fbf5fa3d109ba93e24edb01a42ff1fa11655)
 - Initial commit [[6183b2]](commits/e8b63334be9b51e465e6f780f355bb7a7d6183b2)
 
-###### Generated on 2019-07-02T14:28:14.303Z | Made with @propero/ngm
+###### Generated on 2019-07-02T14:29:20.937Z | Made with @propero/ngm

@@ -17,6 +17,7 @@ export interface SkeletonKeyOpts {
   interceptXHR?: boolean;
   domains?: string[];
   log?: boolean;
+
   loginStategy?(key: SkeletonKey): LoginStrategy;
 }
 
@@ -28,7 +29,9 @@ export const SkeletonKeyDefaults: SkeletonKeyOpts = {
 
 export default interface SkeletonKey {
   on(event: 'login', callback: (user: SkeletonUser) => void): this;
+
   on(event: 'logout', callback: (user: SkeletonUser, reason: 'timeout' | 'logout') => void): this;
+
   on(event: 'action', callback:
     (user: SkeletonUser, req: XMLHttpRequest | [RequestInfo, RequestInit], method: string, url: string) => void): this;
 }
@@ -77,7 +80,9 @@ export default class SkeletonKey extends Eventing(Object) implements RequestInte
   }
 
   public onXHROpen(xhr: XMLHttpRequest, method: string, url: string, async?: boolean, user?: string, password?: string) {
-    if (this.log) console.log(`XHR OPEN: [${method}] "${url}" (${async ? 'async, ' : ''}${user}:${password})`, xhr);
+    if (this.log) {
+      console.log(`XHR OPEN: [${method}] "${url}" (${async ? 'async, ' : ''}${user || 'anonymous'}:${password || 'none'})`, xhr);
+    }
 
     if (this.user && !this.user.isValid()) this.logout();
 
@@ -122,7 +127,7 @@ export default class SkeletonKey extends Eventing(Object) implements RequestInte
           if (!input.headers) input.headers = {};
           input.headers[key] = headers[key];
         } else {
-          input = { url: input, headers: {[key]: headers[key]} };
+          input = {url: input, headers: {[key]: headers[key]}};
         }
       });
       // TODO Cookies, Tokens, etc.

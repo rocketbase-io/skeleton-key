@@ -38,7 +38,7 @@ export function interceptXHROpen() {
   // tslint:disable-next-line:only-arrow-functions
   const open = XMLHttpRequest.prototype.open = function () {
     // @ts-ignore
-    const args = requestOpenMiddleware(...arguments);
+    const args = requestOpenMiddleware.apply(this, arguments);
     // @ts-ignore
     if (args != null) return orig.apply(this, args);
   };
@@ -54,7 +54,7 @@ export function interceptXHRSend() {
   // tslint:disable-next-line:only-arrow-functions
   const send = XMLHttpRequest.prototype.send = function () {
     // @ts-ignore
-    const args = requestSendMiddleware(...arguments);
+    const args = requestSendMiddleware.apply(this, arguments);
     // @ts-ignore
     if (args != null) return orig.appy(this, args);
   };

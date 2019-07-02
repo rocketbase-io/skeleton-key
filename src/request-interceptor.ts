@@ -56,7 +56,7 @@ export function interceptXHRSend() {
     // @ts-ignore
     const args = requestSendMiddleware.apply(this, arguments);
     // @ts-ignore
-    if (args != null) return orig.appy(this, args);
+    if (args != null) return orig.apply(this, args);
   };
   // @ts-ignore
   send.__intercepted = true;

@@ -9,10 +9,8 @@ export interface IEventing {
 
 const EVENTS = Symbol('Events');
 
-export function Eventing<T extends Object>(base: Constructor<T>): Constructor<T> & Constructor<IEventing> {
-  const mixed =
-    // @ts-ignore
-    class extends base implements IEventing {
+export function Eventing<T extends Object>(Base: Constructor<T> = Object as any): Constructor<T> & Constructor<IEventing> {
+  const mixed = class extends (Base as any) implements IEventing {
 
     public on(event: string, callback: (ev: any) => void): this {
       // @ts-ignore
@@ -48,5 +46,6 @@ export function Eventing<T extends Object>(base: Constructor<T>): Constructor<T>
     }
 
   };
-  return mixed as unknown as Constructor<T> & Constructor<IEventing>;
+  // @ts-ignore
+  return mixed;
 }

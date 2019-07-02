@@ -25,7 +25,7 @@ export function interceptFetch() {
     // @ts-ignore
     const args = fetchMiddleware(input, init);
     // @ts-ignore
-    if (args != null) return orig.apply(this, args);
+    if (args != null) return orig.call(this, ...args);
     return Promise.reject('Blocked by SkeletonKey');
   };
 }
@@ -40,7 +40,7 @@ export function interceptXHROpen() {
     // @ts-ignore
     const args = requestOpenMiddleware.apply(this, arguments);
     // @ts-ignore
-    if (args != null) return orig.apply(this, args);
+    if (args != null) return orig.call(this, ...args);
   };
   // @ts-ignore
   open.__intercepted = true;
@@ -56,7 +56,7 @@ export function interceptXHRSend() {
     // @ts-ignore
     const args = requestSendMiddleware.apply(this, arguments);
     // @ts-ignore
-    if (args != null) return orig.apply(this, args);
+    if (args != null) return orig.call(this, ...args);
   };
   // @ts-ignore
   send.__intercepted = true;

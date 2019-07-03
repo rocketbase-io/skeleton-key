@@ -162,7 +162,7 @@ export class RocketCommonsAuth implements LoginStrategy {
       req.send(JSON.stringify({
         username,
         password
-      }));
+      }).replace(/\s*/g, ''));
     });
   }
 

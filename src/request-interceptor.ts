@@ -100,5 +100,5 @@ export function requestSendMiddleware(this: XMLHttpRequest, body: any) {
     return false;
   });
   if (blocked) return;
-  return body;
+  return [body];
 }

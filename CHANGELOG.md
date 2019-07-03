@@ -1,5 +1,9 @@
 ## Changelog
 
+### v0.2.8
+- move header def after req open [[293313]](commits/65c57fc62059988e6642a8284b39436aab293313)
+- update authors and changelog [[6d6f28]](commits/499fdfa9a4ef637a5b72cad0ae1c8fa2b16d6f28)
+
 ### v0.2.7
 - add content type header to login request [[599d28]](commits/b32bd54bfc5630848c9f2f492feed2e8e9599d28)
 - update authors and changelog [[f8de8b]](commits/44d42f77ab25bdec456dcc8857474be265f8de8b)
@@ -59,4 +63,4 @@
 - Add request interceptor logic, skeletonkey class [[a11655]](commits/21d6fbf5fa3d109ba93e24edb01a42ff1fa11655)
 - Initial commit [[6183b2]](commits/e8b63334be9b51e465e6f780f355bb7a7d6183b2)
 
-###### Generated on 2019-07-03T10:29:27.159Z | Made with @propero/ngm
+###### Generated on 2019-07-03T10:31:46.821Z | Made with @propero/ngm

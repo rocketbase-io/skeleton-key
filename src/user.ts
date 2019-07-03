@@ -34,9 +34,9 @@ export class SkeletonUser {
   public isValid() {
     const now = new Date();
     return this.info.sessionOptions.maxSessionMs
-      ? (+this.info.sessionOptions.firstAction + this.info.sessionOptions.maxSessionMs < +now)
+      ? (+this.info.sessionOptions.firstAction + this.info.sessionOptions.maxSessionMs > +now)
       : this.info.sessionOptions.maxInactiveMs
-      ? (+this.info.sessionOptions.maxInactiveMs + this.info.sessionOptions.maxInactiveMs < +now)
+      ? (+this.info.sessionOptions.maxInactiveMs + this.info.sessionOptions.maxInactiveMs > +now)
       : true;
   }
 

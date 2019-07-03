@@ -29,6 +29,10 @@
 ### v0.2.2
 
 
+### v0.2.19
+- fix validation comparison [[a6529e]](commits/fabc65b4bc5c7ff785a13ffe1a1f26d173a6529e)
+- update authors and changelog [[42b5e0]](commits/95f805c419b314a783d262f3b981e0a23d42b5e0)
+
 ### v0.2.18
 - fix typing path [[0bd9c1]](commits/943fb3080b1e2c4e20523425e7c99d978c0bd9c1)
 - update authors and changelog [[2c1789]](commits/c8098cde941c6e8f653e25fc90ffb360742c1789)
@@ -123,4 +127,4 @@
 - Add request interceptor logic, skeletonkey class [[a11655]](commits/21d6fbf5fa3d109ba93e24edb01a42ff1fa11655)
 - Initial commit [[6183b2]](commits/e8b63334be9b51e465e6f780f355bb7a7d6183b2)
 
-###### Generated on 2019-07-03T16:29:34.596Z | Made with @propero/ngm
+###### Generated on 2019-07-03T16:38:07.249Z | Made with @propero/ngm

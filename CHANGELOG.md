@@ -27,6 +27,30 @@
 - update authors and changelog [[b15595]](commits/5095cd023c66414aba4733c62e37c953ddb15595)
 
 ### v0.2.2
+
+
+### v0.2.10
+- wrap args as array [[10b714]](commits/dc401a40186e597ee0c12e673d89d23f5710b714)
+- update authors and changelog [[701d7c]](commits/571f2e9ad9e4c9f93e6e1c7f3ca1292775701d7c)
+- 0.2.9 [[7638f2]](commits/db200adca41299336dadd41cfb5d23f9027638f2)
+- remove whitespace from login request [[1fa584]](commits/b8cdffc52d934e7f8bed061838e994b1c71fa584)
+- update authors and changelog [[0862d7]](commits/7cabff110d7edc041e41fe1fde33dec1180862d7)
+- 0.2.8 [[0dc593]](commits/b32b2d97935c5dcf4fa40105b944452c3d0dc593)
+- move header def after req open [[293313]](commits/65c57fc62059988e6642a8284b39436aab293313)
+- update authors and changelog [[6d6f28]](commits/499fdfa9a4ef637a5b72cad0ae1c8fa2b16d6f28)
+- 0.2.7 [[08e5c7]](commits/5466d69d26ee7881ac8fbd3ec415f072c508e5c7)
+- add content type header to login request [[599d28]](commits/b32bd54bfc5630848c9f2f492feed2e8e9599d28)
+- update authors and changelog [[f8de8b]](commits/44d42f77ab25bdec456dcc8857474be265f8de8b)
+- 0.2.6 [[d0a43a]](commits/d885a7f65265d2a6dc5caa2d5c107c6aeed0a43a)
+- 0.2.5 [[bf3078]](commits/684d01861965089ff110ee7dbe7e0b57f2bf3078)
+- use call instead of apply [[8c1663]](commits/133e530bf5e08a7e63effc375dda6adbf28c1663)
+- update authors and changelog [[61599c]](commits/4aabf0decf3b09c8362e1e823f38b9734c61599c)
+- 0.2.4 [[2b3a4f]](commits/631521cc2b0022ff4e28f42b28ca02509f2b3a4f)
+- fix typo [[d7007c]](commits/dd0097f557d963f85c83c5679d49757835d7007c)
+- update authors and changelog [[df0413]](commits/b2ae96fdbc267079b0e19678269bc2db8fdf0413)
+- 0.2.3 [[d4b35a]](commits/8501ab861075520e2b435670ffb223088ad4b35a)
+- update authors and changelog [[b15595]](commits/5095cd023c66414aba4733c62e37c953ddb15595)
+- 0.2.2 [[92922c]](commits/1c7c9a81ea996e0503641b03f0bd380f5992922c)
 - update authors and changelog [[ce7f52]](commits/466b275944f2bea338810ccbd1c1e5988fce7f52)
 - update authors and changelog [[c4d097]](commits/4b229d1ceb738bca240c2a4512894d94c4c4d097)
 
@@ -67,4 +91,4 @@
 - Add request interceptor logic, skeletonkey class [[a11655]](commits/21d6fbf5fa3d109ba93e24edb01a42ff1fa11655)
 - Initial commit [[6183b2]](commits/e8b63334be9b51e465e6f780f355bb7a7d6183b2)
 
-###### Generated on 2019-07-03T11:03:00.430Z | Made with @propero/ngm
+###### Generated on 2019-07-03T11:07:24.206Z | Made with @propero/ngm

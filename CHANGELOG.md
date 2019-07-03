@@ -29,6 +29,10 @@
 ### v0.2.2
 
 
+### v0.2.11
+- fix typo [[4979ea]](commits/2332124c8ff76df102b8b5a0944572642f4979ea)
+- update authors and changelog [[99a6ae]](commits/54d84118ccffaea8e1a20fb7acaa71332299a6ae)
+
 ### v0.2.10
 - wrap args as array [[10b714]](commits/dc401a40186e597ee0c12e673d89d23f5710b714)
 - update authors and changelog [[701d7c]](commits/571f2e9ad9e4c9f93e6e1c7f3ca1292775701d7c)
@@ -91,4 +95,4 @@
 - Add request interceptor logic, skeletonkey class [[a11655]](commits/21d6fbf5fa3d109ba93e24edb01a42ff1fa11655)
 - Initial commit [[6183b2]](commits/e8b63334be9b51e465e6f780f355bb7a7d6183b2)
 
-###### Generated on 2019-07-03T11:07:24.206Z | Made with @propero/ngm
+###### Generated on 2019-07-03T11:29:01.494Z | Made with @propero/ngm

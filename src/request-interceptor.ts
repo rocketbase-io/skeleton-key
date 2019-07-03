@@ -52,11 +52,11 @@ export function interceptXHRSend() {
   if (orig.__intercepted) return;
 
   // tslint:disable-next-line:only-arrow-functions
-  const send = XMLHttpRequest.prototype.send = function () {
+  const body: any = XMLHttpRequest.prototype.send = function () {
     // @ts-ignore
     const args = requestSendMiddleware.apply(this, arguments);
     // @ts-ignore
-    if (args != null) return orig.call(this, ...args);
+    if (args != null) return orig.call(this, body);
   };
   // @ts-ignore
   send.__intercepted = true;
@@ -100,5 +100,5 @@ export function requestSendMiddleware(this: XMLHttpRequest, body: any) {
     return false;
   });
   if (blocked) return;
-  return [body];
+  return body;
 }

@@ -3,7 +3,7 @@
   "version": "0.2.17",
   "description": "A Client-Side JS Authentication and Authorization Library",
   "main": "dist/index.js",
-  "types": "dist/index.ts",
+  "types": "dist/index.d.ts",
   "files": [
     "dist",
     "LICENSE.md",

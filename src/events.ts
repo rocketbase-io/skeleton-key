@@ -35,7 +35,7 @@ export function Eventing<T extends Object>(Base: Constructor<T> = Object as any)
       // @ts-ignore
       if (!callback) delete this[EVENTS][event];
       // @ts-ignore
-      else this[EVENTS][event] = this[EVENTS][event].filter(cb => cl !== callback);
+      else this[EVENTS][event] = this[EVENTS][event].filter(cb => cb !== callback);
       return this;
     }
 

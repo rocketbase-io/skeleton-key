@@ -76,6 +76,7 @@ export default class SkeletonKey extends Eventing(Object) implements RequestInte
   }
 
   public async waitForLogin(): Promise<SkeletonUser> {
+    if (this.isLoggedIn()) return this.user!;
     return new Promise(resolve => this.once('login', resolve));
   }
 

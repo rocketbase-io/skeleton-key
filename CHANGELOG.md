@@ -29,6 +29,10 @@
 ### v0.2.2
 
 
+### v0.2.16
+- allow for empty request body [[92211d]](commits/d04c516b74ab580bd1b37cbf571a8c092a92211d)
+- update authors and changelog [[03fd54]](commits/91b2d3f8a57b1aeb7d6d40d3078acad04903fd54)
+
 ### v0.2.15
 - typo fix [[41e58e]](commits/d7c761fa3db7c4afceeeac76adfe876c6341e58e)
 - update authors and changelog [[2cb70f]](commits/7856938e03a362c573c682d2dea1d8a6702cb70f)
@@ -111,4 +115,4 @@
 - Add request interceptor logic, skeletonkey class [[a11655]](commits/21d6fbf5fa3d109ba93e24edb01a42ff1fa11655)
 - Initial commit [[6183b2]](commits/e8b63334be9b51e465e6f780f355bb7a7d6183b2)
 
-###### Generated on 2019-07-03T14:31:07.523Z | Made with @propero/ngm
+###### Generated on 2019-07-03T15:22:51.667Z | Made with @propero/ngm

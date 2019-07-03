@@ -29,6 +29,10 @@
 ### v0.2.2
 
 
+### v0.2.12
+- move header def to onXHRSend [[e10403]](commits/2a542ef6ffcbc53238ec638753cfdb9140e10403)
+- update authors and changelog [[696042]](commits/099d2b2e67692748b06743e1732587adc8696042)
+
 ### v0.2.11
 - fix typo [[4979ea]](commits/2332124c8ff76df102b8b5a0944572642f4979ea)
 - update authors and changelog [[99a6ae]](commits/54d84118ccffaea8e1a20fb7acaa71332299a6ae)
@@ -95,4 +99,4 @@
 - Add request interceptor logic, skeletonkey class [[a11655]](commits/21d6fbf5fa3d109ba93e24edb01a42ff1fa11655)
 - Initial commit [[6183b2]](commits/e8b63334be9b51e465e6f780f355bb7a7d6183b2)
 
-###### Generated on 2019-07-03T11:29:01.494Z | Made with @propero/ngm
+###### Generated on 2019-07-03T14:14:36.899Z | Made with @propero/ngm

@@ -29,6 +29,10 @@
 ### v0.2.2
 
 
+### v0.2.18
+- fix typing path [[0bd9c1]](commits/943fb3080b1e2c4e20523425e7c99d978c0bd9c1)
+- update authors and changelog [[2c1789]](commits/c8098cde941c6e8f653e25fc90ffb360742c1789)
+
 ### v0.2.17
 - add typings to package.json [[f6be05]](commits/769c7e95ecf19758530514dbc8aee742acf6be05)
 - update authors and changelog [[e6e095]](commits/938cdb9a9a040d161553b900e784463811e6e095)
@@ -119,4 +123,4 @@
 - Add request interceptor logic, skeletonkey class [[a11655]](commits/21d6fbf5fa3d109ba93e24edb01a42ff1fa11655)
 - Initial commit [[6183b2]](commits/e8b63334be9b51e465e6f780f355bb7a7d6183b2)
 
-###### Generated on 2019-07-03T16:22:08.069Z | Made with @propero/ngm
+###### Generated on 2019-07-03T16:29:34.596Z | Made with @propero/ngm

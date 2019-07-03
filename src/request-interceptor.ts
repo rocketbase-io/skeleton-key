@@ -52,9 +52,9 @@ export function interceptXHRSend() {
   if (orig.__intercepted) return;
 
   // tslint:disable-next-line:only-arrow-functions
-  const body: any = XMLHttpRequest.prototype.send = function () {
+  const send = XMLHttpRequest.prototype.send = function () {
     // @ts-ignore
-    const args = requestSendMiddleware.apply(this, arguments);
+    const body = requestSendMiddleware.apply(this, arguments);
     // @ts-ignore
     if (args != null) return orig.call(this, body);
   };

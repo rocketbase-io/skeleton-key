@@ -86,6 +86,14 @@ export default class SkeletonKey extends Eventing(Object) implements RequestInte
 
     if (this.user && !this.user.isValid()) this.logout();
 
+    this.emit('action', xhr, method, url);
+
+    return [method, url, async, user, password];
+  }
+
+  public onXHRSend(xhr: XMLHttpRequest, body: any) {
+    if (this.log) console.log(`XHR SEND: [${xhr.responseURL}] ${body}`, xhr);
+    if (this.user && !this.user.isValid()) this.logout();
     if (this.user) {
       const {headers, cookies, token, tokenCookie, tokenHeader} = this.user.getRequestOptions();
       Object.keys(headers).forEach(key => {
@@ -96,15 +104,6 @@ export default class SkeletonKey extends Eventing(Object) implements RequestInte
       if (tokenHeader && token) xhr.setRequestHeader(tokenHeader, token);
       // this.user.getSessionOptions().lastAction = new Date();
     }
-
-    this.emit('action', xhr, method, url);
-
-    return [method, url, async, user, password];
-  }
-
-  public onXHRSend(xhr: XMLHttpRequest, body: any) {
-    if (this.log) console.log(`XHR SEND: [${xhr.responseURL}] ${body}`, xhr);
-    if (this.user && !this.user.isValid()) this.logout();
     return body;
   }
 

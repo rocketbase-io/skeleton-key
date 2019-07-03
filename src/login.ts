@@ -109,6 +109,7 @@ export class RocketCommonsAuth implements LoginStrategy {
     return new Promise((resolve, reject) => {
       const req = new XMLHttpRequest();
       req.overrideMimeType('application/json');
+      req.setRequestHeader('Content-Type', 'application/json');
       req.onload = () => {
         const res: RocketCommonsAuthLoginResponse = JSON.parse(req.responseText);
         const jwt = decode(res.jwtTokenBundle.token);

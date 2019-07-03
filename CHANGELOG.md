@@ -29,6 +29,10 @@
 ### v0.2.2
 
 
+### v0.2.13
+- pass body without array [[2ff314]](commits/31ac8aa5305186d070d904ec223e8bcfb32ff314)
+- update authors and changelog [[ff34ae]](commits/4b895b26a3fc2f32651103c2443a6c7256ff34ae)
+
 ### v0.2.12
 - move header def to onXHRSend [[e10403]](commits/2a542ef6ffcbc53238ec638753cfdb9140e10403)
 - update authors and changelog [[696042]](commits/099d2b2e67692748b06743e1732587adc8696042)
@@ -99,4 +103,4 @@
 - Add request interceptor logic, skeletonkey class [[a11655]](commits/21d6fbf5fa3d109ba93e24edb01a42ff1fa11655)
 - Initial commit [[6183b2]](commits/e8b63334be9b51e465e6f780f355bb7a7d6183b2)
 
-###### Generated on 2019-07-03T14:14:36.899Z | Made with @propero/ngm
+###### Generated on 2019-07-03T14:25:35.666Z | Made with @propero/ngm

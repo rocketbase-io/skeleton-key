@@ -26,6 +26,10 @@
 ### v0.2.3
 
 
+### v0.2.21
+- streamline user validation checks [[04f0f1]](commits/2b5af2bf43b023e283800050e9c50554b304f0f1)
+- update authors and changelog [[19c13a]](commits/e398b6b6b91fcfdc1ceddaa3ceee4d96bc19c13a)
+
 ### v0.2.20
 - exit waitForLogin immediately if the user is already logged in [[d2ae0f]](commits/c2cec3ab7232ffc3ba2b8a514c10513a05d2ae0f)
 - update authors and changelog [[613329]](commits/83f71627341cae3745fb7d62f58c707b83613329)
@@ -179,4 +183,4 @@
 - Add request interceptor logic, skeletonkey class [[a11655]](commits/21d6fbf5fa3d109ba93e24edb01a42ff1fa11655)
 - Initial commit [[6183b2]](commits/e8b63334be9b51e465e6f780f355bb7a7d6183b2)
 
-###### Generated on 2019-07-03T16:43:24.362Z | Made with @propero/ngm
+###### Generated on 2019-07-04T11:55:36.172Z | Made with @propero/ngm

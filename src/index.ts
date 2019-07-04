@@ -54,6 +54,7 @@ export default class SkeletonKey extends Eventing(Object) implements RequestInte
     this.domains = options.domains || ['*'];
     this.log = !!options.log;
     this.loginStrategy = options.loginStategy ? options.loginStategy(this) : undefined;
+    this.load();
     if (options.interceptXHR) SkeletonKey.interceptXHR(this);
   }
 

@@ -38,6 +38,8 @@ export function interceptXHROpen() {
   // tslint:disable-next-line:only-arrow-functions
   const open = XMLHttpRequest.prototype.open = function () {
     // @ts-ignore
+    this.__openArgs = arguments;
+    // @ts-ignore
     const args = requestOpenMiddleware.apply(this, arguments);
     // @ts-ignore
     if (args != null) return orig.call(this, ...args);
@@ -93,7 +95,8 @@ export function requestOpenMiddleware(this: XMLHttpRequest, method: string, url:
 
 export function requestSendMiddleware(this: XMLHttpRequest, body: any) {
   const blocked = interceptors.find(interceptor => {
-    if (!isInDomain(this.responseURL, interceptor.domains)) return false;
+    // @ts-ignore
+    if (!isInDomain(this.__openArgs[1], interceptor.domains)) return false;
     const newParams = interceptor.onXHRSend(this, body);
     if (!newParams) return true;
     body = newParams;

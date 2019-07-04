@@ -26,6 +26,10 @@
 ### v0.2.3
 
 
+### v0.2.24
+- persist user reliably to localStorage [[7f2e4d]](commits/20d683f5dfa6c8775826bddc4306d3c8347f2e4d)
+- update authors and changelog [[7c24af]](commits/23404952e0f635994ace45b9ed9c1f53567c24af)
+
 ### v0.2.23
 - cache open arguments for url checking [[820e2b]](commits/a43c03dfc08dbf88e63ed72cc98cda3ac9820e2b)
 - update authors and changelog [[1c292a]](commits/f485c303c01002debd392ff6e0d6b991e41c292a)
@@ -191,4 +195,4 @@
 - Add request interceptor logic, skeletonkey class [[a11655]](commits/21d6fbf5fa3d109ba93e24edb01a42ff1fa11655)
 - Initial commit [[6183b2]](commits/e8b63334be9b51e465e6f780f355bb7a7d6183b2)
 
-###### Generated on 2019-07-04T12:48:07.843Z | Made with @propero/ngm
+###### Generated on 2019-07-04T12:55:50.251Z | Made with @propero/ngm

@@ -59,6 +59,7 @@ export default class SkeletonKey extends Eventing(Object) implements RequestInte
   }
 
   public isLoggedIn(): boolean {
+    this.persist();
     if (this.user == null) return false;
     if (this.user.isValid()) return true;
     this.logout();
@@ -81,6 +82,7 @@ export default class SkeletonKey extends Eventing(Object) implements RequestInte
     if (!this.loginStrategy) return false;
     const result = await this.loginStrategy.login(user, password);
     if (result) this.emit('login', this.user = result);
+    this.persist();
     return result;
   }
 

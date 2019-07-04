@@ -95,7 +95,6 @@ export class RocketCommonsAuth implements LoginStrategy {
         info.sessionOptions.maxInactiveMs = expiry;
         info.sessionOptions.lastAction = new Date();
         resolve(true);
-        this.key.persist();
       };
       req.onerror = () => resolve(false);
       req.open('GET', `${this.url}/auth/refresh`);
@@ -153,7 +152,6 @@ export class RocketCommonsAuth implements LoginStrategy {
         };
         if (this.timedRefresh) this.scheduleTimedRefresh(info);
         resolve(new SkeletonUser(info));
-        this.key.persist();
       };
       req.onerror = () => {
         resolve(false);

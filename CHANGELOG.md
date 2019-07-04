@@ -26,6 +26,10 @@
 ### v0.2.3
 
 
+### v0.2.22
+- persist user info to local storage [[d2ac4b]](commits/908a62639456f9c29785b7dabd0223884cd2ac4b)
+- update authors and changelog [[52fb72]](commits/eaff053d7ab63b9a1c864b1457d3c8c5a852fb72)
+
 ### v0.2.21
 - streamline user validation checks [[04f0f1]](commits/2b5af2bf43b023e283800050e9c50554b304f0f1)
 - update authors and changelog [[19c13a]](commits/e398b6b6b91fcfdc1ceddaa3ceee4d96bc19c13a)
@@ -183,4 +187,4 @@
 - Add request interceptor logic, skeletonkey class [[a11655]](commits/21d6fbf5fa3d109ba93e24edb01a42ff1fa11655)
 - Initial commit [[6183b2]](commits/e8b63334be9b51e465e6f780f355bb7a7d6183b2)
 
-###### Generated on 2019-07-04T11:55:36.172Z | Made with @propero/ngm
+###### Generated on 2019-07-04T12:12:05.322Z | Made with @propero/ngm

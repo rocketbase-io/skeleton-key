@@ -17,6 +17,7 @@ export interface SkeletonKeyOpts {
   interceptXHR?: boolean;
   domains?: string[];
   log?: boolean;
+  storageKey?: string;
 
   loginStategy?(key: SkeletonKey): LoginStrategy;
 }
@@ -25,6 +26,7 @@ export const SkeletonKeyDefaults: SkeletonKeyOpts = {
   interceptXHR: true,
   domains: ['*'],
   log: false,
+  storageKey: 'RocketAuth',
 };
 
 export default interface SkeletonKey {
@@ -42,6 +44,7 @@ export default class SkeletonKey extends Eventing(Object) implements RequestInte
 
   public domains: string[] = [];
   public log: boolean = false;
+  public storageKey: string = 'RocketAuth';
   public loginStrategy?: LoginStrategy;
   public user?: SkeletonUser;
 
@@ -55,7 +58,22 @@ export default class SkeletonKey extends Eventing(Object) implements RequestInte
   }
 
   public isLoggedIn(): boolean {
-    return this.user != null;
+    if (this.user == null) return false;
+    if (this.user.isValid()) return true;
+    this.logout();
+    return false;
+  }
+
+  public persist() {
+    if (this.user) {
+      localStorage.setItem(this.storageKey, JSON.stringify(this.user.info));
+    }
+  }
+
+  public load() {
+    if (localStorage.getItem(this.storageKey)) {
+      this.user = new SkeletonUser(JSON.parse(localStorage.getItem(this.storageKey) as string));
+    }
   }
 
   public async login(user: string, password: string): Promise<false | SkeletonUser> {
@@ -85,8 +103,6 @@ export default class SkeletonKey extends Eventing(Object) implements RequestInte
       console.log(`XHR OPEN: [${method}] "${url}" (${async ? 'async, ' : ''}${user || 'anonymous'}:${password || 'none'})`, xhr);
     }
 
-    if (this.user && !this.user.isValid()) this.logout();
-
     this.emit('action', xhr, method, url);
 
     return [method, url, async, user, password];
@@ -94,9 +110,8 @@ export default class SkeletonKey extends Eventing(Object) implements RequestInte
 
   public onXHRSend(xhr: XMLHttpRequest, body: any) {
     if (this.log) console.log(`XHR SEND: [${xhr.responseURL}] ${body}`, xhr);
-    if (this.user && !this.user.isValid()) this.logout();
-    if (this.user) {
-      const {headers, cookies, token, tokenCookie, tokenHeader} = this.user.getRequestOptions();
+    if (this.isLoggedIn()) {
+      const {headers, cookies, token, tokenCookie, tokenHeader} = this.user!.getRequestOptions();
       Object.keys(headers).forEach(key => {
         xhr.setRequestHeader(key, headers[key]);
       });
@@ -115,10 +130,8 @@ export default class SkeletonKey extends Eventing(Object) implements RequestInte
     // @ts-ignore
     const method = str ? init ? init.method || 'GET' : 'GET' : input.method || 'GET';
 
-    if (this.user && !this.user.isValid()) this.logout();
-
-    if (this.user) {
-      const {headers, cookies, token, tokenCookie, tokenHeader} = this.user.getRequestOptions();
+    if (this.isLoggedIn()) {
+      const {headers, cookies, token, tokenCookie, tokenHeader} = this.user!.getRequestOptions();
       Object.keys(headers).forEach(key => {
         if (init) {
           if (!init.headers) init.headers = {};

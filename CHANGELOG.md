@@ -26,6 +26,10 @@
 ### v0.2.3
 
 
+### v0.2.25
+- revive json dates [[1a89cd]](commits/445c0066fff477b630341926d5bccb0e161a89cd)
+- update authors and changelog [[ce665d]](commits/580c4a6c85ffca3ee12feda3f5a049262fce665d)
+
 ### v0.2.24
 - persist user reliably to localStorage [[7f2e4d]](commits/20d683f5dfa6c8775826bddc4306d3c8347f2e4d)
 - update authors and changelog [[7c24af]](commits/23404952e0f635994ace45b9ed9c1f53567c24af)
@@ -195,4 +199,4 @@
 - Add request interceptor logic, skeletonkey class [[a11655]](commits/21d6fbf5fa3d109ba93e24edb01a42ff1fa11655)
 - Initial commit [[6183b2]](commits/e8b63334be9b51e465e6f780f355bb7a7d6183b2)
 
-###### Generated on 2019-07-04T12:55:50.251Z | Made with @propero/ngm
+###### Generated on 2019-07-23T11:05:25.029Z | Made with @propero/ngm

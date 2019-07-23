@@ -74,7 +74,12 @@ export default class SkeletonKey extends Eventing(Object) implements RequestInte
 
   public load() {
     if (localStorage.getItem(this.storageKey)) {
-      this.user = new SkeletonUser(JSON.parse(localStorage.getItem(this.storageKey) as string));
+      this.user = new SkeletonUser(JSON.parse(localStorage.getItem(this.storageKey) as string, (key, val) => {
+        if (typeof val === 'string' && /[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}/.test(val)) {
+          return new Date(val);
+        }
+        return val;
+      }));
     }
   }
 

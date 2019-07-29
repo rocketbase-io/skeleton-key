@@ -26,6 +26,10 @@
 ### v0.2.3
 
 
+### v0.2.26
+- persist logout [[6ba1a6]](commits/4b70eb7c81e76cb61c31ea2fb3287af8846ba1a6)
+- update authors and changelog [[8ecca9]](commits/7cd16938e70b0e78edb923747e139aeaac8ecca9)
+
 ### v0.2.25
 - revive json dates [[1a89cd]](commits/445c0066fff477b630341926d5bccb0e161a89cd)
 - update authors and changelog [[ce665d]](commits/580c4a6c85ffca3ee12feda3f5a049262fce665d)
@@ -199,4 +203,4 @@
 - Add request interceptor logic, skeletonkey class [[a11655]](commits/21d6fbf5fa3d109ba93e24edb01a42ff1fa11655)
 - Initial commit [[6183b2]](commits/e8b63334be9b51e465e6f780f355bb7a7d6183b2)
 
-###### Generated on 2019-07-23T11:05:25.029Z | Made with @propero/ngm
+###### Generated on 2019-07-29T08:04:04.907Z | Made with @propero/ngm

@@ -98,6 +98,7 @@ export default class SkeletonKey extends Eventing(Object) implements RequestInte
       this.emit('logout', this.user, 'logout');
       delete this.user;
     }
+    this.persist();
     return result;
   }
 

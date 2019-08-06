@@ -9,7 +9,7 @@ export interface LoginStrategy {
 
   logout(): Promise<boolean>;
 
-  register(): Promise<false | SkeletonUserInfo>;
+  // register(): Promise<false | SkeletonUserInfo>;
 
   onXHROpen?(xhr: XMLHttpRequest, method: string, url: string, async?: boolean, user?: string, password?: string): void;
 

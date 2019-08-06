@@ -1,5 +1,5 @@
 import {SkeletonUser, SkeletonUserInfo} from './user';
-import SkeletonKey from './index';
+import SkeletonKey, {IRegisterInfo} from './index';
 import {decode} from './jwt';
 
 export interface LoginStrategy {
@@ -8,6 +8,8 @@ export interface LoginStrategy {
   login(token: string): Promise<false | SkeletonUser>;
 
   logout(): Promise<boolean>;
+
+  register(): Promise<false | SkeletonUserInfo>;
 
   onXHROpen?(xhr: XMLHttpRequest, method: string, url: string, async?: boolean, user?: string, password?: string): void;
 
@@ -102,10 +104,30 @@ export class RocketCommonsAuth implements LoginStrategy {
     });
   }
 
+  public async register(info: IRegisterInfo<any>): Promise<false | SkeletonUserInfo> {
+    if (!info) throw new Error('Registration info required');
+    return new Promise(((resolve, reject) => {
+      const req = new XMLHttpRequest();
+      req.overrideMimeType('application/json');
+      req.onload = () => {
+        const res: RocketCommonsAuthLoginResponse = JSON.parse(req.responseText);
+        const info: SkeletonUserInfo = {
+          name: res.user.username,
+          props: {
+            ...res.user
+          },
+          flags: {
+            enabled: res.user.enabled,
+          }
+        };
+      };
+    }));
+  }
+
   public async login(user: string, password: string): Promise<false | SkeletonUser>;
   public async login(token: string): Promise<false | SkeletonUser>;
   public async login(username: string, password?: string): Promise<false | SkeletonUser> {
-    if (!password) throw new Error('Username and Password required for basic auth');
+    if (!password) throw new Error('Username and Password required');
     return new Promise((resolve, reject) => {
       const req = new XMLHttpRequest();
       req.overrideMimeType('application/json');

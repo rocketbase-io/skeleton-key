@@ -1,10 +1,11 @@
 // tslint:disable:no-console
 
 import {interceptXHR, RequestInterceptor} from './request-interceptor';
-import {SkeletonUser} from './user';
+import {SkeletonUser, SkeletonUserInfo} from './user';
 import {ensureCookie} from './cookie';
 import {Eventing} from './events';
 import {BasicAuthLoginStrategy, LoginStrategy} from './login';
+import {IRegisterInfo} from "./types";
 
 export * from './domain';
 export * from './user';
@@ -59,7 +60,6 @@ export default class SkeletonKey extends Eventing(Object) implements RequestInte
   }
 
   public isLoggedIn(): boolean {
-    this.persist();
     if (this.user == null) return false;
     if (this.user.isValid()) return true;
     this.logout();
@@ -69,6 +69,8 @@ export default class SkeletonKey extends Eventing(Object) implements RequestInte
   public persist() {
     if (this.user) {
       localStorage.setItem(this.storageKey, JSON.stringify(this.user.info));
+    } else {
+      localStorage.removeItem(this.storageKey);
     }
   }
 
@@ -99,6 +101,17 @@ export default class SkeletonKey extends Eventing(Object) implements RequestInte
       delete this.user;
     }
     this.persist();
+    return result;
+  }
+
+  public async register(info: IRegisterInfo<any>): Promise<false | SkeletonUserInfo | SkeletonUser> {
+    if (!this.loginStrategy) return false;
+    if (this.isLoggedIn()) await this.logout();
+    const result: SkeletonUserInfo = await this.loginStrategy.register(info);
+    if (result) this.emit('register', this.user);
+    if (result.flags.enabled) {
+      return this.login(info.username || info.email as string, info.password as string);
+    }
     return result;
   }
 

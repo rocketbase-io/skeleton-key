@@ -26,6 +26,14 @@
 ### v0.2.3
 
 
+### v0.2.28
+- remove register stub [[0ace8a]](commits/e3ec76128a8f80e902ac86bed462301dbd0ace8a)
+- remove register stub [[92eafc]](commits/84d826ab2ad05b51a8f9685d93da2494f292eafc)
+
+### v0.2.27
+- persist on logout [[d1fabf]](commits/97a3f4e742e6f15a7b0fe03b27d78abebfd1fabf)
+- update authors and changelog [[8eac50]](commits/1f4983be3c0b718149fd1b1e601efcfe838eac50)
+
 ### v0.2.26
 - persist logout [[6ba1a6]](commits/4b70eb7c81e76cb61c31ea2fb3287af8846ba1a6)
 - update authors and changelog [[8ecca9]](commits/7cd16938e70b0e78edb923747e139aeaac8ecca9)
@@ -203,4 +211,4 @@
 - Add request interceptor logic, skeletonkey class [[a11655]](commits/21d6fbf5fa3d109ba93e24edb01a42ff1fa11655)
 - Initial commit [[6183b2]](commits/e8b63334be9b51e465e6f780f355bb7a7d6183b2)
 
-###### Generated on 2019-07-29T08:04:04.907Z | Made with @propero/ngm
+###### Generated on 2019-08-06T08:31:29.147Z | Made with @propero/ngm

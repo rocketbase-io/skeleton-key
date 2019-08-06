@@ -5,7 +5,7 @@ import {SkeletonUser, SkeletonUserInfo} from './user';
 import {ensureCookie} from './cookie';
 import {Eventing} from './events';
 import {BasicAuthLoginStrategy, LoginStrategy} from './login';
-import {IRegisterInfo} from "./types";
+import {IRegisterInfo} from './types';
 
 export * from './domain';
 export * from './user';

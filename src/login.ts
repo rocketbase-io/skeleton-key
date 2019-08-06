@@ -111,7 +111,7 @@ export class RocketCommonsAuth implements LoginStrategy {
       req.overrideMimeType('application/json');
       req.onload = () => {
         const res: RocketCommonsAuthLoginResponse = JSON.parse(req.responseText);
-        const info: SkeletonUserInfo = {
+        const newInfo: any = {
           name: res.user.username,
           props: {
             ...res.user

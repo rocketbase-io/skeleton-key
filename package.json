@@ -1,6 +1,6 @@
 {
   "name": "@rocketbase/skeleton-key",
-  "version": "0.2.26",
+  "version": "0.2.27",
   "description": "A Client-Side JS Authentication and Authorization Library",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

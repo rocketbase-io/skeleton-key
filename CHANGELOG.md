@@ -26,6 +26,11 @@
 ### v0.2.3
 
 
+### v0.2.29
+- update authors and changelog [[2618d2]](commits/9b37e0edc06f14ac273e85be13cf5781952618d2)
+- refresh token on expiry [[f0fc91]](commits/794a83dd6e809686c41020c4bde6b8896cf0fc91)
+- update authors and changelog [[13211f]](commits/236943d7d80a7763e142571f2432c1bd1f13211f)
+
 ### v0.2.28
 - remove register stub [[0ace8a]](commits/e3ec76128a8f80e902ac86bed462301dbd0ace8a)
 - remove register stub [[92eafc]](commits/84d826ab2ad05b51a8f9685d93da2494f292eafc)
@@ -211,4 +216,4 @@
 - Add request interceptor logic, skeletonkey class [[a11655]](commits/21d6fbf5fa3d109ba93e24edb01a42ff1fa11655)
 - Initial commit [[6183b2]](commits/e8b63334be9b51e465e6f780f355bb7a7d6183b2)
 
-###### Generated on 2019-08-07T12:06:09.673Z | Made with @propero/ngm
+###### Generated on 2019-08-07T12:06:34.800Z | Made with @propero/ngm

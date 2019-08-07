@@ -59,13 +59,13 @@ export default class SkeletonKey extends Eventing(Object) implements RequestInte
     if (options.interceptXHR) SkeletonKey.interceptXHR(this);
   }
 
-  public isLoggedIn(): boolean {
+  public async isLoggedIn(): Promise<boolean> {
     if (this.user == null) return false;
     if ((this.loginStrategy as any).onAction) {
-      (this.loginStrategy as any).onAction(this.user);
+      await (this.loginStrategy as any).onAction(this.user);
     }
     if (this.user.isValid()) return true;
-    this.logout();
+    await this.logout();
     return false;
   }
 

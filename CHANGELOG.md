@@ -22,6 +22,10 @@
 ### v0.2.4
 
 
+### v0.2.31
+- make isLoggedIn async [[6a3433]](commits/1db2b6ab2e554b04c670d11a9542c9cc3d6a3433)
+- update authors and changelog [[4a905e]](commits/3f25ab9d696f54fbe61947b6a669fb39584a905e)
+
 ### v0.2.30
 - change maxinactivems logig from timespan to date [[ae4af6]](commits/348db3d0f702c8ccbd6e7bf95c81544bebae4af6)
 - update authors and changelog [[2ec3df]](commits/2b9d607fcf4545f895b8486a676e54cb412ec3df)
@@ -297,4 +301,4 @@
 - Add request interceptor logic, skeletonkey class [[a11655]](commits/21d6fbf5fa3d109ba93e24edb01a42ff1fa11655)
 - Initial commit [[6183b2]](commits/e8b63334be9b51e465e6f780f355bb7a7d6183b2)
 
-###### Generated on 2019-08-07T12:18:28.336Z | Made with @propero/ngm
+###### Generated on 2019-08-07T12:27:15.564Z | Made with @propero/ngm

@@ -61,6 +61,9 @@ export default class SkeletonKey extends Eventing(Object) implements RequestInte
 
   public isLoggedIn(): boolean {
     if (this.user == null) return false;
+    if ((this.loginStrategy as any).onAction) {
+      (this.loginStrategy as any).onAction(this.user);
+    }
     if (this.user.isValid()) return true;
     this.logout();
     return false;
@@ -107,6 +110,7 @@ export default class SkeletonKey extends Eventing(Object) implements RequestInte
   public async register(info: IRegisterInfo<any>): Promise<false | SkeletonUserInfo | SkeletonUser> {
     if (!this.loginStrategy) return false;
     if (this.isLoggedIn()) await this.logout();
+    // @ts-ignore
     const result: SkeletonUserInfo = await this.loginStrategy.register(info);
     if (result) this.emit('register', this.user);
     if (result.flags.enabled) {

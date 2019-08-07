@@ -60,8 +60,8 @@ export class RocketCommonsAuth implements LoginStrategy {
     key.on('action', this.onAction.bind(this));
   }
 
-  public onAction(user: SkeletonUser, xhrOrRequest: any, method: string, url: string) {
-    if (this.autoRefresh && this.needsRefresh(user.info)) this.refreshToken(user.info);
+  public async onAction(user: SkeletonUser) {
+    if (this.autoRefresh && this.needsRefresh(user.info)) await this.refreshToken(user.info);
   }
 
   public scheduleTimedRefresh(info: SkeletonUserInfo): void {

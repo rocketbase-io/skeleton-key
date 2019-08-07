@@ -74,11 +74,7 @@ export class RocketCommonsAuth implements LoginStrategy {
 
   public needsRefresh(info: SkeletonUserInfo): boolean {
     if (!info.sessionOptions.maxInactiveMs) return false;
-    const now = new Date();
-    const before = info.sessionOptions.lastAction;
-    const halfInactiveMs = info.sessionOptions.maxInactiveMs / 2;
-    const diff = +now - +before;
-    return diff > halfInactiveMs;
+    return new Date() > new Date(info.sessionOptions.maxInactiveMs);
   }
 
   public async refreshToken(info: SkeletonUserInfo): Promise<boolean> {

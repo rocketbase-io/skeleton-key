@@ -185,7 +185,7 @@ export default class SkeletonKey<USER_DATA = object, TOKEN_DATA = object> extend
   }
 
   private xhrSetAuthHeader(xhr: XMLHttpRequest) {
-    if (this.jwtBundle && !(xhr as any).__headers[this.authHeader])
+    if (this.jwtBundle && (!(xhr as any).__headers || !(xhr as any).__headers[this.authHeader]))
       xhr.setRequestHeader(this.authHeader, `${this.authPrefix}${this.jwtBundle.token!}${this.authSuffix}`);
   }
 }

@@ -1,18 +1,20 @@
-import {Constructor} from './types';
+import {Constructor} from "./types";
 
-export interface IEventing {
-  on(event: string, callback: (ev: any) => void): this;
-  once(event: string, callback: (ev: any) => void): this;
-  off(event: string, callback?: (ev: any) => void): this;
-  emit(event: string, ...data: any[]): this;
+export interface IEventing<K> {
+  on(event: K, callback: (ev: any) => void): this;
+  once(event: K, callback: (ev: any) => void): this;
+  off(event: K, callback?: (ev: any) => void): this;
+  emit(event: K, ...data: any[]): this;
 }
 
-const EVENTS = Symbol('Events');
+const EVENTS = Symbol("Events");
 
-export function Eventing<T extends Object>(base: Constructor<T>): Constructor<T> & Constructor<IEventing> {
-  const mixed =
-    // @ts-ignore
-    class extends base implements IEventing {
+export function Eventing<K extends string = string, T extends {} = {}>(
+  Base: Constructor<T> = Object as any
+): Constructor<T> & Constructor<IEventing<T>> {
+
+  // @ts-ignore
+  return class extends (Base as any) implements IEventing<K> {
 
     public on(event: string, callback: (ev: any) => void): this {
       // @ts-ignore
@@ -37,7 +39,7 @@ export function Eventing<T extends Object>(base: Constructor<T>): Constructor<T>
       // @ts-ignore
       if (!callback) delete this[EVENTS][event];
       // @ts-ignore
-      else this[EVENTS][event] = this[EVENTS][event].filter(cb => cl !== callback);
+      else this[EVENTS][event] = this[EVENTS][event].filter(cb => cb !== callback);
       return this;
     }
 
@@ -48,5 +50,4 @@ export function Eventing<T extends Object>(base: Constructor<T>): Constructor<T>
     }
 
   };
-  return mixed as unknown as Constructor<T> & Constructor<IEventing>;
 }

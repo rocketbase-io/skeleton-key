@@ -1,102 +1,198 @@
-// tslint:disable:no-console
+import {AuthClient} from "./client";
+import {installInterceptors, Interceptor, interceptors} from "./intercept";
+import {Eventing} from "./events";
+import {AppUserRead, JwtBundle} from "./model";
+import {decode} from "./jwt";
+import {only} from "./util";
 
-import {interceptXHR} from './request-interceptor';
-import {SkeletonUser} from './user';
-import {ensureCookie} from './cookie';
-import {Eventing} from './events';
-import {BasicAuthLoginStrategy, LoginStrategy} from './login';
+export * from "./model";
+export * from "./client";
+export * from "./jwt";
+export * from "./intercept";
+export * from "./domain";
+export * from "./events";
+export * from "./types";
 
-export * from './domain';
-export * from './user';
-export * from './request-interceptor';
-export * from './events';
-export * from './login';
-export * from './types';
 
-export interface SkeletonKeyOpts {
-  interceptXHR?: boolean;
+export interface SkeletonKeyOptions {
+  url?: string;
+  client?: AuthClient;
   domains?: string[];
-  log?: boolean;
-  loginStategy?(key: SkeletonKey): LoginStrategy;
+  intercept?: boolean;
+  renewType?: "action" | "never";
+  authHeader?: string;
+  authPrefix?: string;
+  authSuffix?: string;
+  storageKey?: string;
 }
 
-export const SkeletonKeyDefaults: SkeletonKeyOpts = {
-  interceptXHR: true,
-  domains: ['*'],
-  log: false,
+export const SkeletonKeyDefaults: Readonly<SkeletonKeyOptions> = {
+  url: window.location.origin,
+  domains: [window.location.host],
+  intercept: true,
+  renewType: "action",
+  authHeader: "Authorization",
+  authPrefix: "Bearer ",
+  authSuffix: "",
+  storageKey: "io.rocketbase.commons.auth"
 };
 
-export default interface SkeletonKey {
-  on(event: 'login', callback: (user: SkeletonUser) => void): this;
-  on(event: 'logout', callback: (user: SkeletonUser, reason: 'timeout' | 'logout') => void): this;
-  on(event: 'action', callback: (user: SkeletonUser, req: XMLHttpRequest, method: string, url: string) => void): this;
-}
+export default class SkeletonKey<USER_DATA = object, TOKEN_DATA = object> extends Eventing<"login" | "logout" | "action" | "refresh">()
+  implements Interceptor, Required<SkeletonKeyOptions> {
 
-export default class SkeletonKey extends Eventing(Object) {
+  public url!: string;
+  public client!: AuthClient;
+  public domains!: string[];
+  public intercept!: boolean;
+  public renewType!: "action" | "never";
+  public authHeader!: string;
+  public authPrefix!: string;
+  public authSuffix!: string;
+  public storageKey!: string;
 
-  public static interceptXHR = interceptXHR;
+  public user?: AppUserRead & USER_DATA;
+  public jwtBundle?: JwtBundle & TOKEN_DATA;
 
-  public domains: string[] = [];
-  public log: boolean = false;
-  public loginStrategy?: LoginStrategy;
-  public user?: SkeletonUser;
-
-  constructor(opts?: SkeletonKeyOpts) {
+  constructor(opts: SkeletonKeyOptions = {}) {
     super();
-    const options = {...SkeletonKeyDefaults, ...opts};
-    this.domains = options.domains || ['*'];
-    this.log = !!options.log;
-    this.loginStrategy = options.loginStategy ? options.loginStategy(this) : undefined;
-    if (options.interceptXHR) SkeletonKey.interceptXHR(this);
-  }
-
-  public isLoggedIn(): boolean {
-    return this.user != null;
-  }
-
-  public async login(user: string, password: string): Promise<false | SkeletonUser> {
-    if (!this.loginStrategy) return false;
-    const result = await this.loginStrategy.login(user, password);
-    if (result) this.emit('login', this.user = result);
-    return result;
-  }
-
-  public async logout(): Promise<boolean> {
-    if (!this.loginStrategy) return false;
-    const result = await this.loginStrategy.logout();
-    if (result) {
-      this.emit('logout', this.user, 'logout');
-      delete this.user;
+    Object.assign(this, {...SkeletonKeyDefaults, ...opts});
+    if (!this!.client) this.client = new AuthClient(this!.url!);
+    this.load();
+    this.on("action", this.onAction.bind(this));
+    if (this.intercept) {
+      interceptors.push(this);
+      installInterceptors();
     }
-    return result;
   }
 
-  public async waitForLogin(): Promise<SkeletonUser> {
-    return new Promise(resolve => this.once('login', resolve));
+  public isLoggedIn() {
+    return !!this.user && !!this.jwtBundle && (!this.needsRefresh() || this.canRefresh());
   }
 
-  public onXHROpen(xhr: XMLHttpRequest, method: string, url: string, async?: boolean, user?: string, password?: string) {
-    if (this.log) console.log(`XHR OPEN: [${method}] "${url}" (${async ? 'async, ' : ''}${user}:${password})`, xhr);
+  public async login(username: string, password: string) {
+    if (this.isLoggedIn()) await this.logout();
+    const {jwtTokenBundle, user} = await this.client.login({username, password});
+    this.jwtBundle = jwtTokenBundle as JwtBundle & TOKEN_DATA;
+    this.user = user as AppUserRead & USER_DATA;
+    this.emit("login", user);
+    this.persist();
+    return user;
+  }
 
-    if (this.user && !this.user.isValid()) delete this.user;
+  public async logout() {
+    this.user = undefined;
+    this.jwtBundle = undefined;
+    this.emit("logout");
+    this.persist();
+    return true;
+  }
 
-    if (this.user) {
-      const {headers, cookies, token, tokenCookie, tokenHeader} = this.user.getRequestOptions();
-      Object.keys(headers).forEach(key => {
-        xhr.setRequestHeader(key, headers[key]);
-      });
-      Object.keys(cookies).forEach(cookie => ensureCookie(cookie, cookies[cookie]));
-      if (tokenCookie && token) ensureCookie(tokenCookie, token);
-      if (tokenHeader && token) xhr.setRequestHeader(tokenHeader, token);
-      this.user.getSessionOptions().lastAction = new Date();
+  public async waitForLogin() {
+    if (this.isLoggedIn()) return this.user!;
+    return new Promise(resolve => this.once("login", resolve));
+  }
+
+  public async refreshToken() {
+    if (!this.jwtBundle) return false;
+    this.jwtBundle!.token = await this.client.refresh(this.jwtBundle!.refreshToken);
+    this.emit("refresh", "token", this.jwtBundle);
+    this.persist();
+    return this.jwtBundle;
+  }
+
+  public async refreshInfo() {
+    if (!this.isLoggedIn()) return false;
+    this.user = await this.client.me(this.jwtBundle!.token) as AppUserRead & USER_DATA;
+    this.emit("refresh", "user", this.user);
+    this.persist();
+    return this.user;
+  }
+
+  public needsRefresh() {
+    if (!this.jwtBundle) return true;
+    return new Date(this.tokenData.payload.exp!) < new Date();
+  }
+
+  public canRefresh() {
+    if (!this.jwtBundle) return false;
+    return new Date(this.refreshTokenData.payload.exp!) > new Date();
+  }
+
+  public get userData() {
+    return this.user;
+  }
+
+  public get tokenData() {
+    return decode(this.jwtBundle!.token);
+  }
+
+  public get refreshTokenData() {
+    return decode(this.jwtBundle!.refreshToken);
+  }
+
+
+  public persist() {
+    if (this.isLoggedIn())
+      localStorage.setItem(this.storageKey, JSON.stringify(only(this, "jwtBundle", "user")));
+    else
+      localStorage.removeItem(this.storageKey);
+  }
+
+  public load() {
+    if (!this.isLoggedIn()) {
+      const item = localStorage.getItem(this.storageKey);
+      if (!item) return;
+      try {
+        Object.apply(this, only(JSON.parse(item), "jwtBundle", "user") as any);
+      } catch (ex) {
+        // Make sure invalid data isn't kept
+        this.persist();
+      }
     }
-
-    return [method, url, async, user, password];
   }
 
-  public onXHRSend(xhr: XMLHttpRequest, body: any) {
-    if (this.log) console.log(`XHR SEND: [${xhr.responseURL}] ${body}`, xhr);
-    if (this.user && !this.user.isValid()) delete this.user;
-    return body;
+
+  public async onAction(type: string) {
+    if (type === "open") return;
+    if (this.renewType === "action" && this.needsRefresh() && this.canRefresh())
+      await this.refreshToken();
+  }
+
+
+  public onFetch(input: Request | string, init?: RequestInit): any {
+    this.emit("action", "fetch", input, init);
+    if (!this.jwtBundle) return arguments;
+    const headerVal = `${this.authPrefix}${this.jwtBundle.token!}${this.authSuffix}`;
+    if (!init) init = {};
+    if (!init.headers) init.headers = {};
+    if (init.headers instanceof Headers && !init.headers.get(this.authHeader))
+      init.headers.set(this.authHeader, headerVal);
+    else
+      (init.headers as any)[this.authHeader] = headerVal;
+    return arguments;
+  }
+
+  public onXhrOpen(xhr: XMLHttpRequest, method: string, url: string, async?: boolean, user?: string, password?: string): any {
+    this.emit("action", "open", xhr, method, url, async, user, password);
+    this.xhrSetAuthHeader(xhr);
+    return arguments;
+  }
+
+  public onXhrSend(xhr: XMLHttpRequest, body: any): any {
+    this.emit("action", "send", xhr, body);
+    this.xhrSetAuthHeader(xhr);
+    return arguments;
+  }
+
+  private xhrSetAuthHeader(xhr: XMLHttpRequest) {
+    if (this.jwtBundle && !(xhr as any).__headers[this.authHeader])
+      xhr.setRequestHeader(this.authHeader, `${this.authPrefix}${this.jwtBundle.token!}${this.authSuffix}`);
   }
 }
+
+
+
+
+
+
+

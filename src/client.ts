@@ -1,8 +1,7 @@
 import axios, {AxiosInstance} from "axios";
-import {HEADER_IGNORE_AUTH} from "./constants";
 import {
   AppUserRead,
-  ForgotPasswordRequest, JwtTokenBundle,
+  ForgotPasswordRequest, JwtBundle,
   LoginRequest,
   LoginResponse,
   PasswordChangeRequest,
@@ -18,7 +17,7 @@ export class AuthClient {
   public constructor(client: AxiosInstance);
   public constructor(url: string | AxiosInstance) {
     if (typeof url === "string")
-      this.api = axios.create({ baseURL: url, headers: { [HEADER_IGNORE_AUTH]: "yes" } });
+      this.api = axios.create({ baseURL: url });
     else
       this.api = url;
   }
@@ -59,7 +58,7 @@ export class AuthClient {
   }
 
   public async verify(verification: string) {
-    return this.api.get<JwtTokenBundle>(`/auth/verify?verification=${verification}`);
+    return this.api.get<JwtBundle>(`/auth/verify?verification=${verification}`);
   }
 
   public async validateEmail(email: string) {

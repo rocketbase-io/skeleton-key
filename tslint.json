@@ -18,7 +18,11 @@
     "interface-name": false,
     "no-consecutive-blank-lines": false,
     "unified-signatures": false,
-    "ordered-imports": false
+    "ordered-imports": false,
+    "only-arrow-functions": false,
+    "arrow-parens": [true, "ban-single-arg-parens"],
+    "no-shadowed-variable": false,
+    "object-literal-sort-keys": false
   },
   "linterOptions": {
     "exclude": [

@@ -1,5 +1,5 @@
 
-export interface JwtTokenBundle {
+export interface JwtBundle {
   refreshToken: string;
   token: string;
 }

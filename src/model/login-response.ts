@@ -1,7 +1,7 @@
 import {AppUserRead} from "./app-user-read";
-import {JwtTokenBundle} from "./jwt-token-bundle";
+import {JwtBundle} from "./jwt-bundle";
 
 export interface LoginResponse {
-  jwtTokenBundle: JwtTokenBundle;
+  jwtTokenBundle: JwtBundle;
   user: AppUserRead;
 }

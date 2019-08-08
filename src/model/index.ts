@@ -2,7 +2,7 @@ export * from "./app-user-create";
 export * from "./app-user-read";
 export * from "./app-user-update";
 export * from "./forgot-password-request";
-export * from "./jwt-token-bundle";
+export * from "./jwt-bundle";
 export * from "./login-request";
 export * from "./login-response";
 export * from "./pageable-result";

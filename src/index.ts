@@ -157,7 +157,7 @@ export default class SkeletonKey<USER_DATA = object, TOKEN_DATA = object> extend
       const item = localStorage.getItem(this.storageKey);
       if (!item) return;
       try {
-        Object.apply(this, only(JSON.parse(item), "jwtBundle", "user") as any);
+        Object.assign(this, only(JSON.parse(item), "jwtBundle", "user") as any);
       } catch (ex) {
         // Make sure invalid data isn't kept
         this.persist();

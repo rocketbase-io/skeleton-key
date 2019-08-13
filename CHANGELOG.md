@@ -1,5 +1,10 @@
 ## Changelog
 
+### v0.3.3
+- Merge pull request #7 from rocketbase-io/dev [[3c939b]](commits/2769fbc2e649a75e9d51cba53c5c10a3d63c939b)
+- set axios contet type to json [[8f2375]](commits/7cf30a5bd2a3db32ea545d12d1c46980268f2375)
+- update authors and changelog [[998048]](commits/f8855e05231032a4a4a57c0f19052ed72b998048)
+
 ### v0.3.2
 - Merge pull request #6 from rocketbase-io/dev [[2b7dd8]](commits/06ee80a7b6a4acf9abaad53580533f1cfb2b7dd8)
 - raise method threshold [[334378]](commits/19e75aab63a6afc4e52eeec0784b357aed334378)
@@ -395,4 +400,4 @@
 - Add request interceptor logic, skeletonkey class [[a11655]](commits/21d6fbf5fa3d109ba93e24edb01a42ff1fa11655)
 - Initial commit [[6183b2]](commits/e8b63334be9b51e465e6f780f355bb7a7d6183b2)
 
-###### Generated on 2019-08-13T10:35:26.884Z | Made with @propero/ngm
+###### Generated on 2019-08-13T10:46:40.419Z | Made with @propero/ngm

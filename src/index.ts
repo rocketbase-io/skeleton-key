@@ -12,6 +12,7 @@ export * from "./intercept";
 export * from "./domain";
 export * from "./events";
 export * from "./types";
+export * from "./util";
 
 
 export interface SkeletonKeyOptions {
@@ -58,7 +59,19 @@ export default class SkeletonKey<USER_DATA = object, TOKEN_DATA = object> extend
     Object.assign(this, {...SkeletonKeyDefaults, ...opts});
     if (!this!.client) this.client = new AuthClient(this!.url!);
     this.load();
-    this.on("action", this.onAction.bind(this));
+    this.bindMethods();
+    this.installListeners();
+  }
+
+  public bindMethods() {
+    this.onAction = this.onAction.bind(this);
+    this.onFetch = this.onFetch.bind(this);
+    this.onXhrOpen = this.onXhrOpen.bind(this);
+    this.onXhrSend = this.onXhrSend.bind(this);
+  }
+
+  public installListeners() {
+    this.on("action", this.onAction);
     if (this.intercept) {
       interceptors.push(this);
       installInterceptors();
@@ -174,7 +187,6 @@ export default class SkeletonKey<USER_DATA = object, TOKEN_DATA = object> extend
 
   public onXhrOpen(xhr: XMLHttpRequest, method: string, url: string, async?: boolean, user?: string, password?: string): any {
     this.emit("action", "open", xhr, method, url, async, user, password);
-    this.xhrSetAuthHeader(xhr);
     return arguments;
   }
 

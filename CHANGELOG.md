@@ -1,5 +1,10 @@
 ## Changelog
 
+### v0.3.5
+- Merge pull request #9 from rocketbase-io/dev [[6dfb40]](commits/4a195ffd42885c04ca9c44d48b209f6ab86dfb40)
+- add user and token data to skeleton key [[6a4d1b]](commits/a6fcfed6ae1afdc4cc74239ea2ee25af6e6a4d1b)
+- update authors and changelog [[ee9e25]](commits/17ab6ae4e5601e7b6030670eeec683e36dee9e25)
+
 ### v0.3.4
 - Merge pull request #8 from rocketbase-io/dev [[a3fbbd]](commits/d643c05fb7d424b6556ddc665e38469f07a3fbbd)
 - Fix expiry ratio validation [[5f0529]](commits/857437cd850a2df699c66b29bec568e8d55f0529)
@@ -405,4 +410,4 @@
 - Add request interceptor logic, skeletonkey class [[a11655]](commits/21d6fbf5fa3d109ba93e24edb01a42ff1fa11655)
 - Initial commit [[6183b2]](commits/e8b63334be9b51e465e6f780f355bb7a7d6183b2)
 
-###### Generated on 2019-08-13T11:56:45.805Z | Made with @propero/ngm
+###### Generated on 2019-08-13T12:16:12.644Z | Made with @propero/ngm

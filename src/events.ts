@@ -26,7 +26,7 @@ export function Eventing<K extends string = string, T extends {} = {}>(
   return cls as Constructor<T> & Constructor<IEventing<K>>;
 }
 
-export function on<K, R extends IEventing<K>>(this: R, event: K, callback: (ev: any) => void): IEventing<K> {
+export function on<K, R extends IEventing<K>>(this: R, event: K, callback: (ev: any) => void): R {
   // @ts-ignore
   if (!this[EVENTS]) this[EVENTS] = {};
   // @ts-ignore
@@ -36,7 +36,7 @@ export function on<K, R extends IEventing<K>>(this: R, event: K, callback: (ev: 
   return this;
 }
 
-export function once<K, R extends IEventing<K>>(this: R, event: K, callback: (ev: any) => void): IEventing<K> {
+export function once<K, R extends IEventing<K>>(this: R, event: K, callback: (ev: any) => void): R {
   const onceHandler = (...args: any[]) => {
     // @ts-ignore
     const result = callback.apply(this, args);
@@ -46,7 +46,7 @@ export function once<K, R extends IEventing<K>>(this: R, event: K, callback: (ev
   return this.on(event, onceHandler);
 }
 
-export function off<K, R extends IEventing<K>>(this: R, event: K, callback?: (ev: any) => void): this {
+export function off<K, R extends IEventing<K>>(this: R, event: K, callback?: (ev: any) => void): R {
   // @ts-ignore
   if (!callback) delete this[EVENTS][event];
   // @ts-ignore

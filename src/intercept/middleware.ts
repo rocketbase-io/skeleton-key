@@ -34,9 +34,8 @@ function executeRelevantInterceptors(url: string, handler: string, context: any,
   const relevant = interceptors.filter(itor => isInDomain(itor.domains, url));
   if (!relevant.length) return args;
   return relevant
-    .map(itor => wrapShiftArgs(itor))
-    .reduce((args, itor) => (itor as any)[handler]
-      .apply(context, args) || args, args as any);
+    .map(itor => wrapShiftArgs((itor as any)[handler]))
+    .reduce((args, itor) => itor.apply(context, args) || args, args as any);
 }
 
 

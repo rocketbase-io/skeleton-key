@@ -17,7 +17,7 @@ export class AuthClient {
   public constructor(client: AxiosInstance);
   public constructor(url: string | AxiosInstance) {
     if (typeof url === "string")
-      this.api = axios.create({ baseURL: url });
+      this.api = axios.create({ baseURL: url, headers: { "Content-Type": "application/json" } });
     else
       this.api = url;
   }

@@ -66,6 +66,7 @@
     "axios": "^0.19.0"
   },
   "publishConfig": {
-    "@rocketbase:registry": "https://registry.npmjs.org/"
+    "@rocketbase:registry": "https://registry.npmjs.org/",
+    "access": "public"
   }
 }

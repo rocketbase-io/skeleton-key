@@ -172,34 +172,37 @@ export default class SkeletonKey<USER_DATA = object, TOKEN_DATA = object> extend
       await this.refreshToken();
   }
 
+  private get authHeaderValue() {
+    return `${this.authPrefix}${this.jwtBundle!.token!}${this.authSuffix}`;
+  }
 
-  public onFetch(input: Request | string, init?: RequestInit): any {
-    this.emit("action", "fetch", input, init);
+
+  public onFetch(ctx: any, input: Request | string, init?: RequestInit): any {
+    this.emitSync("action", "fetch", input, init);
     if (!this.jwtBundle) return arguments;
-    const headerVal = `${this.authPrefix}${this.jwtBundle.token!}${this.authSuffix}`;
     if (!init) init = {};
     if (!init.headers) init.headers = {};
     if (init.headers instanceof Headers && !init.headers.get(this.authHeader))
-      init.headers.set(this.authHeader, headerVal);
+      init.headers.set(this.authHeader, this.authHeaderValue);
     else
-      (init.headers as any)[this.authHeader] = headerVal;
+      (init.headers as any)[this.authHeader] = this.authHeaderValue;
     return arguments;
   }
 
   public onXhrOpen(xhr: XMLHttpRequest, method: string, url: string, async?: boolean, user?: string, password?: string): any {
-    this.emit("action", "open", xhr, method, url, async, user, password);
+    this.emitSync("action", "open", xhr, method, url, async, user, password);
     return arguments;
   }
 
   public onXhrSend(xhr: XMLHttpRequest, body: any): any {
-    this.emit("action", "send", xhr, body);
+    this.emitSync("action", "send", xhr, body);
     this.xhrSetAuthHeader(xhr);
     return arguments;
   }
 
   private xhrSetAuthHeader(xhr: XMLHttpRequest) {
     if (this.jwtBundle && (!(xhr as any).__headers || !(xhr as any).__headers[this.authHeader]))
-      xhr.setRequestHeader(this.authHeader, `${this.authPrefix}${this.jwtBundle.token!}${this.authSuffix}`);
+      xhr.setRequestHeader(this.authHeader, this.authHeaderValue);
   }
 }
 

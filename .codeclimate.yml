@@ -57,3 +57,4 @@ exclude_patterns:
   - ".mailmap"
   - "**/*.md"
   - "**/*polyfill*"
+  - "*conf*"

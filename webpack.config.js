@@ -19,6 +19,9 @@ module.exports = {
   node: {
     fs: 'empty'
   },
+  stats: {
+    warningsFilter: /^(?!CriticalDependenciesWarning$)/
+  },
   output: {
     filename: 'index.js',
     path: paths.dist

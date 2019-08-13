@@ -21,7 +21,7 @@ export function interceptFunction<T, K extends keyof T, M extends (T[K] extends 
       return;
     }
     // @ts-ignore
-    return orig.apply(this, args === null ? arguments : args);
+    return orig.apply(this, args == null ? arguments : args);
   };
   (intercepted as any).__intercepted = true;
   return intercepted;

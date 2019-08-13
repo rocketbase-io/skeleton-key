@@ -1,3 +1,4 @@
+const fs = require("fs");
 const path = require('path');
 const pkg = require('./package.json');
 const dts = require('dts-bundle');
@@ -47,7 +48,8 @@ module.exports = {
   },
   plugins: [
     new DtsBundlePlugin(),
-    new RemoveEmptyDirsPlugin()
+    new RemoveEmptyDirsPlugin(),
+    new DtsRemoveDynamicImportsPlugin()
   ]
 };
 
@@ -73,4 +75,18 @@ RemoveEmptyDirsPlugin.prototype.apply = function(compiler) {
   compiler.plugin('done', function() {
     removeEmpty(paths.dist);
   });
+};
+
+function DtsRemoveDynamicImportsPlugin(){}
+DtsRemoveDynamicImportsPlugin.prototype.apply = function(compiler) {
+  compiler.plugin('done', function() {
+    const regexDynamicImport = /import\("[^"]+"\)\./g;
+    const regexUnexportedConst = /([\n\r]+)(const [^\s:]+:)/g;
+
+    const dtsSource = fs.readFileSync(pkg.types).toString('utf8');
+    const stripped = dtsSource.replace(regexDynamicImport, '');
+    const replaced = stripped.replace(regexUnexportedConst, (all, lb, val) => `${lb}export ${val}`);
+
+    fs.writeFileSync(pkg.types, replaced);
+  })
 };

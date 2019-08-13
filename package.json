@@ -6,9 +6,9 @@
   "types": "dist/index.d.ts",
   "files": [
     "dist",
-    "LICENSE.md",
-    "README.md",
-    "AUTHORS.md"
+    "src",
+    "*.md",
+    "docs"
   ],
   "scripts": {
     "test": "karma start karma-ci.conf.js",

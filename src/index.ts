@@ -14,6 +14,7 @@ export * from "./events";
 export * from "./types";
 export * from "./util";
 
+export const JWT_DATE_TO_JS_DATE_RATIO = 1000;
 
 export interface SkeletonKeyOptions {
   url?: string;
@@ -123,12 +124,12 @@ export default class SkeletonKey<USER_DATA = object, TOKEN_DATA = object> extend
 
   public needsRefresh() {
     if (!this.jwtBundle) return true;
-    return new Date(this.tokenData.payload.exp!) < new Date();
+    return new Date(this.tokenData.payload.exp! * JWT_DATE_TO_JS_DATE_RATIO) < new Date();
   }
 
   public canRefresh() {
     if (!this.jwtBundle) return false;
-    return new Date(this.refreshTokenData.payload.exp!) > new Date();
+    return new Date(this.refreshTokenData.payload.exp! * JWT_DATE_TO_JS_DATE_RATIO) > new Date();
   }
 
   public get userData() {

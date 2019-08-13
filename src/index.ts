@@ -2,7 +2,7 @@ import {AuthClient} from "./client";
 import {installInterceptors, Interceptor, interceptors} from "./intercept";
 import {Eventing} from "./events";
 import {AppUserRead, JwtBundle} from "./model";
-import {decode} from "./jwt";
+import {decode, JsonWebToken, JsonWebTokenPayload} from "./jwt";
 import {only} from "./util";
 
 export * from "./model";
@@ -51,7 +51,7 @@ export default class SkeletonKey<USER_DATA = object, TOKEN_DATA = object> extend
   public storageKey!: string;
 
   public user?: AppUserRead & USER_DATA;
-  public jwtBundle?: JwtBundle & TOKEN_DATA;
+  public jwtBundle?: JwtBundle;
 
   constructor(opts: SkeletonKeyOptions = {}) {
     super();
@@ -123,7 +123,7 @@ export default class SkeletonKey<USER_DATA = object, TOKEN_DATA = object> extend
   }
 
   public get tokenData() {
-    return decode(this.jwtBundle!.token);
+    return decode(this.jwtBundle!.token) as JsonWebToken & { payload: TOKEN_DATA };
   }
 
   public get refreshTokenData() {
@@ -185,7 +185,7 @@ export default class SkeletonKey<USER_DATA = object, TOKEN_DATA = object> extend
   }
 
   private xhrSetAuthHeader(xhr: XMLHttpRequest) {
-    if (this.jwtBundle && !(xhr as any).__headers[this.authHeader])
+    if (this.jwtBundle && (!(xhr as any).__headers || !(xhr as any).__headers[this.authHeader]))
       xhr.setRequestHeader(this.authHeader, `${this.authPrefix}${this.jwtBundle.token!}${this.authSuffix}`);
   }
 }

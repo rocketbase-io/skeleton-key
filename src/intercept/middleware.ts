@@ -30,7 +30,7 @@ export function xmlHttpRequestSetRequestHeaderMiddleware(this: XMLHttpRequest, k
 }
 
 
-function executeRelevantInterceptors(url: string, handler: string, context: any, args: any) {
+export function executeRelevantInterceptors(url: string, handler: string, context: any, args: any) {
   const relevant = interceptors.filter(itor => isInDomain(itor.domains, url));
   if (!relevant.length) return args;
   return relevant
@@ -39,7 +39,7 @@ function executeRelevantInterceptors(url: string, handler: string, context: any,
 }
 
 
-function skipFirst(array: any[]) {
+export function skipFirst(array: any[]) {
   if (!array) return;
   return array.slice(1);
 }

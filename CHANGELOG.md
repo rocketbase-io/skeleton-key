@@ -1,5 +1,45 @@
 ## Changelog
 
+### v0.3.7
+- Merge pull request #11 from rocketbase-io/dev [[f8f2d6]](commits/ca684861fd2394f1adee877614052e290ef8f2d6)
+- wrap handler functions of interceptors [[811185]](commits/913e04d2059d9e141b6e8f445cf6215c08811185)
+- update authors and changelog [[5d69d6]](commits/28bb07a351b913520d8db20fee7fee4ef05d69d6)
+
+### v0.3.6
+- Merge pull request #10 from rocketbase-io/dev [[f6ff28]](commits/2bafaa2ec2034665305086786e0db2e68af6ff28)
+- reduce complexity of eventing mixin [[3eb03b]](commits/e00de11ab88083694e050e22d7b05066753eb03b)
+- shift arguments by one for middleware [[90e558]](commits/ae812609c0815b8de416d9d41c89a521b390e558)
+- add documentation to jwt model class [[7f15d3]](commits/ec929e03443560f3c8fc26f3a9d571647a7f15d3)
+- add async execution of events (eventing mixin), refactor header value [[55edff]](commits/6f69ecb20bd5afae888de6fc93cbe3ac9655edff)
+- update authors and changelog [[9d4f71]](commits/81d93ad9f4d9df26df42d5e2e0555b82799d4f71)
+
+### v0.3.5
+- Merge pull request #9 from rocketbase-io/dev [[6dfb40]](commits/4a195ffd42885c04ca9c44d48b209f6ab86dfb40)
+- add user and token data to skeleton key [[6a4d1b]](commits/a6fcfed6ae1afdc4cc74239ea2ee25af6e6a4d1b)
+- update authors and changelog [[ee9e25]](commits/17ab6ae4e5601e7b6030670eeec683e36dee9e25)
+
+### v0.3.4
+- Merge pull request #8 from rocketbase-io/dev [[a3fbbd]](commits/d643c05fb7d424b6556ddc665e38469f07a3fbbd)
+- Fix expiry ratio validation [[5f0529]](commits/857437cd850a2df699c66b29bec568e8d55f0529)
+- update authors and changelog [[313e73]](commits/b48f2f197a69f4c9f8a47ae956558c7b6f313e73)
+
+### v0.3.3
+- Merge pull request #7 from rocketbase-io/dev [[3c939b]](commits/2769fbc2e649a75e9d51cba53c5c10a3d63c939b)
+- set axios contet type to json [[8f2375]](commits/7cf30a5bd2a3db32ea545d12d1c46980268f2375)
+- update authors and changelog [[998048]](commits/f8855e05231032a4a4a57c0f19052ed72b998048)
+
+### v0.3.2
+- Merge pull request #6 from rocketbase-io/dev [[2b7dd8]](commits/06ee80a7b6a4acf9abaad53580533f1cfb2b7dd8)
+- raise method threshold [[334378]](commits/19e75aab63a6afc4e52eeec0784b357aed334378)
+- bind request interceptor handers [[020f16]](commits/1e150d211cb4a39c774814b9b821615b4b020f16)
+- update authors and changelog [[0cdb41]](commits/56ad89e4a37b037c8c87e6ba890450e1400cdb41)
+
+### v0.3.1
+- Merge pull request #5 from rocketbase-io/dev [[cdf509]](commits/c54e0d6113e9d54370e19057daa3492c93cdf509)
+- join jwt payload types and check for null and undefined in interceptors [[97287f]](commits/0be184090fd1596d2d9e1f9ae04ea3661f97287f)
+- make sure requests without headers pass [[07564f]](commits/e77f32212f0aae9aa219ffe817d1cd393607564f)
+- update authors and changelog [[85e85f]](commits/8889064ff12c91fe01a7ffe058fc9588d485e85f)
+
 ### v0.3.0
 - Merge pull request #4 from rocketbase-io/dev [[fac97f]](commits/a3ec4b2d48a7c6b8277bb3134c0fd981aafac97f)
 - raise identical code threshold [[7ca7ab]](commits/acabd6901b76688c6edb48cb6756df77357ca7ab)
@@ -383,4 +423,4 @@
 - Add request interceptor logic, skeletonkey class [[a11655]](commits/21d6fbf5fa3d109ba93e24edb01a42ff1fa11655)
 - Initial commit [[6183b2]](commits/e8b63334be9b51e465e6f780f355bb7a7d6183b2)
 
-###### Generated on 2019-08-08T14:31:46.883Z | Made with @propero/ngm
+###### Generated on 2019-08-13T15:16:56.575Z | Made with @propero/ngm

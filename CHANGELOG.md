@@ -1,5 +1,13 @@
 ## Changelog
 
+### v0.3.6
+- Merge pull request #10 from rocketbase-io/dev [[f6ff28]](commits/2bafaa2ec2034665305086786e0db2e68af6ff28)
+- reduce complexity of eventing mixin [[3eb03b]](commits/e00de11ab88083694e050e22d7b05066753eb03b)
+- shift arguments by one for middleware [[90e558]](commits/ae812609c0815b8de416d9d41c89a521b390e558)
+- add documentation to jwt model class [[7f15d3]](commits/ec929e03443560f3c8fc26f3a9d571647a7f15d3)
+- add async execution of events (eventing mixin), refactor header value [[55edff]](commits/6f69ecb20bd5afae888de6fc93cbe3ac9655edff)
+- update authors and changelog [[9d4f71]](commits/81d93ad9f4d9df26df42d5e2e0555b82799d4f71)
+
 ### v0.3.5
 - Merge pull request #9 from rocketbase-io/dev [[6dfb40]](commits/4a195ffd42885c04ca9c44d48b209f6ab86dfb40)
 - add user and token data to skeleton key [[6a4d1b]](commits/a6fcfed6ae1afdc4cc74239ea2ee25af6e6a4d1b)
@@ -410,4 +418,4 @@
 - Add request interceptor logic, skeletonkey class [[a11655]](commits/21d6fbf5fa3d109ba93e24edb01a42ff1fa11655)
 - Initial commit [[6183b2]](commits/e8b63334be9b51e465e6f780f355bb7a7d6183b2)
 
-###### Generated on 2019-08-13T12:16:12.644Z | Made with @propero/ngm
+###### Generated on 2019-08-13T15:01:36.341Z | Made with @propero/ngm

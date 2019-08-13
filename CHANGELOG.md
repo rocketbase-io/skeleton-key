@@ -1,5 +1,10 @@
 ## Changelog
 
+### v0.3.7
+- Merge pull request #11 from rocketbase-io/dev [[f8f2d6]](commits/ca684861fd2394f1adee877614052e290ef8f2d6)
+- wrap handler functions of interceptors [[811185]](commits/913e04d2059d9e141b6e8f445cf6215c08811185)
+- update authors and changelog [[5d69d6]](commits/28bb07a351b913520d8db20fee7fee4ef05d69d6)
+
 ### v0.3.6
 - Merge pull request #10 from rocketbase-io/dev [[f6ff28]](commits/2bafaa2ec2034665305086786e0db2e68af6ff28)
 - reduce complexity of eventing mixin [[3eb03b]](commits/e00de11ab88083694e050e22d7b05066753eb03b)
@@ -418,4 +423,4 @@
 - Add request interceptor logic, skeletonkey class [[a11655]](commits/21d6fbf5fa3d109ba93e24edb01a42ff1fa11655)
 - Initial commit [[6183b2]](commits/e8b63334be9b51e465e6f780f355bb7a7d6183b2)
 
-###### Generated on 2019-08-13T15:01:36.341Z | Made with @propero/ngm
+###### Generated on 2019-08-13T15:16:56.575Z | Made with @propero/ngm

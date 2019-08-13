@@ -1,4 +1,5 @@
 // tslint:disable
+/* istanbul ignore file */
 /**
  * The code was extracted from:
  * https://github.com/davidchambers/Base64.js

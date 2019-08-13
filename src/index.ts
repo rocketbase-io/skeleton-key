@@ -177,7 +177,7 @@ export default class SkeletonKey<USER_DATA = object, TOKEN_DATA = object> extend
   }
 
 
-  public onFetch(input: Request | string, init?: RequestInit): any {
+  public onFetch(ctx: any, input: Request | string, init?: RequestInit): any {
     this.emitSync("action", "fetch", input, init);
     if (!this.jwtBundle) return arguments;
     if (!init) init = {};

@@ -11,12 +11,14 @@
     "AUTHORS.md"
   ],
   "scripts": {
-    "test": "mocha",
+    "test": "karma start karma-ci.conf.js",
+    "test:local": "karma start karma.conf.js",
     "lint": "tslint --project tsconfig.json",
     "lint:fix": "tslint --fix --project tsconfig.json",
     "lint:fix:commit": "npm run lint:fix && git add src && git commit -m 'linter changes'",
-    "build": "tsc",
-    "watch": "tsc --watch",
+    "build": "webpack",
+    "watch": "webpack --watch",
+    "docs": "typedoc --out docs src",
     "authors": "ngm authors --md --out AUTHORS.md",
     "changelog": "ngm changelog --md --out CHANGELOG.md",
     "prepublish": "npm run lint:fix && npm run build && npm run authors && npm run changelog && git add AUTHORS.md CHANGELOG.md && git commit -m 'update authors and changelog'"

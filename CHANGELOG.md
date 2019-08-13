@@ -1,5 +1,11 @@
 ## Changelog
 
+### v0.3.1
+- Merge pull request #5 from rocketbase-io/dev [[cdf509]](commits/c54e0d6113e9d54370e19057daa3492c93cdf509)
+- join jwt payload types and check for null and undefined in interceptors [[97287f]](commits/0be184090fd1596d2d9e1f9ae04ea3661f97287f)
+- make sure requests without headers pass [[07564f]](commits/e77f32212f0aae9aa219ffe817d1cd393607564f)
+- update authors and changelog [[85e85f]](commits/8889064ff12c91fe01a7ffe058fc9588d485e85f)
+
 ### v0.3.0
 - Merge pull request #4 from rocketbase-io/dev [[fac97f]](commits/a3ec4b2d48a7c6b8277bb3134c0fd981aafac97f)
 - raise identical code threshold [[7ca7ab]](commits/acabd6901b76688c6edb48cb6756df77357ca7ab)
@@ -383,4 +389,4 @@
 - Add request interceptor logic, skeletonkey class [[a11655]](commits/21d6fbf5fa3d109ba93e24edb01a42ff1fa11655)
 - Initial commit [[6183b2]](commits/e8b63334be9b51e465e6f780f355bb7a7d6183b2)
 
-###### Generated on 2019-08-08T14:31:46.883Z | Made with @propero/ngm
+###### Generated on 2019-08-13T08:59:33.546Z | Made with @propero/ngm

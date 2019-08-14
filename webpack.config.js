@@ -17,6 +17,7 @@ module.exports = {
   entry: paths.entry,
   mode: 'development',
   devtool: "inline-source-maps",
+  target: 'node',
   node: {
     fs: 'empty'
   },
@@ -25,8 +26,16 @@ module.exports = {
   },
   output: {
     filename: 'index.js',
-    path: paths.dist
+    library: {
+      root: pkg.name,
+      amd: pkg.name,
+      commonjs: pkg.name
+    },
+  //  libraryExport: ["default"],
+    libraryTarget: "umd",
+    globalObject: "this",
   },
+  externals: ['axios'],
   devServer: {
     contentBase: paths.dist,
     compress: true,

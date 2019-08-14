@@ -39,7 +39,7 @@ export const SkeletonKeyDefaults: Readonly<SkeletonKeyOptions> = {
   storageKey: "io.rocketbase.commons.auth"
 };
 
-export default class SkeletonKey<USER_DATA = object, TOKEN_DATA = object> extends Eventing<"login" | "logout" | "action" | "refresh">()
+export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object> extends Eventing<"login" | "logout" | "action" | "refresh">()
   implements Interceptor, Required<SkeletonKeyOptions> {
 
   public url!: string;

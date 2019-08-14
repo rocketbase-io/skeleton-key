@@ -4,6 +4,7 @@ const webpackConfig = require("./webpack.config");
 process.env.CHROME_BIN = require("puppeteer").executablePath();
 
 delete webpackConfig.entry;
+webpackConfig.target = 'web';
 
 webpackConfig.module.rules.push({
   test: /\.tsx?$/,

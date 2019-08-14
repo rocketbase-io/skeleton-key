@@ -18,6 +18,8 @@ export function interceptFunction<T, K extends keyof T, M extends (T[K] extends 
       args = middleware.call(this, ...arguments as any as Parameters<M>);
     } catch (ex) {
       // Don't call on error.
+      // tslint:disable-next-line
+      console.error(ex);
       return;
     }
     // @ts-ignore

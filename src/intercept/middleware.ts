@@ -41,5 +41,5 @@ export function executeRelevantInterceptors(url: string, handler: string, contex
 
 export function skipFirst(array: any[]) {
   if (!array) return;
-  return array.slice(1);
+  return array.slice ? array.slice(1) : [...array].slice(1);
 }

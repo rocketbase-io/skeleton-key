@@ -95,6 +95,15 @@ describe("intercept", () => {
         expect(orig).toEqual([1,2,3,4,5]);
       });
 
+      it("should be okay with array likes", () => {
+
+        // @ts-ignore
+        const args = (function(){return arguments})(1,2,3,4,5);
+
+        expect(skipFirst(args as any)).toEqual([2,3,4,5]);
+
+      });
+
 
     });
 

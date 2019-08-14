@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import axios, {AxiosInstance} from "axios";
 import {
   AppUserRead,

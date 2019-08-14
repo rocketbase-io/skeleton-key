@@ -30,25 +30,16 @@ export function xmlHttpRequestSetRequestHeaderMiddleware(this: XMLHttpRequest, k
 }
 
 
-function executeRelevantInterceptors(url: string, handler: string, context: any, args: any) {
+export function executeRelevantInterceptors(url: string, handler: string, context: any, args: any) {
   const relevant = interceptors.filter(itor => isInDomain(itor.domains, url));
   if (!relevant.length) return args;
   return relevant
-    .map(itor => wrapShiftArgs((itor as any)[handler]))
-    .reduce((args, itor) => itor.apply(context, args) || args, args as any);
+    .map(interceptor => ((interceptor as any)[handler]))
+    .reduce((args, handler) => skipFirst(handler.apply(context, [context, ...args])) || args, args as any);
 }
 
 
-function rightShiftArgs(this: any, ...args: any[]) {
-  return [this, ...args];
-}
-
-function leftShiftArgs(this: any, ...args: any[]) {
-  return args.slice(-args.length + 1);
-}
-
-function wrapShiftArgs(fn: any): any {
-  return function(this: any, ...args: any[]) {
-    return rightShiftArgs(...fn.apply(this, leftShiftArgs.apply(this, args)));
-  };
+export function skipFirst(array: any[]) {
+  if (!array) return;
+  return array.slice(1);
 }

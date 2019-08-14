@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 import {InvalidCharacterError} from "./invalid-character-error";
 
 /**

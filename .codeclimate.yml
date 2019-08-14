@@ -26,7 +26,7 @@ checks:
       threshold: 4
   similar-code:
     config:
-      threshold: 60 # language-specific defaults. an override will affect all languages.
+      threshold: 80 # language-specific defaults. an override will affect all languages.
   identical-code:
     config:
       threshold: 50 # language-specific defaults. an override will affect all languages.
@@ -57,3 +57,4 @@ exclude_patterns:
   - ".mailmap"
   - "**/*.md"
   - "**/*polyfill*"
+  - "*conf*"

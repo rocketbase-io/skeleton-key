@@ -5,13 +5,11 @@ import {isInDomain} from "../domain";
 export function xmlHttpRequestOpenMiddleware(
   this: XMLHttpRequest, method: string, url: string, async?: boolean, username?: string | null, password?: string | null
 ) {
-  // @ts-ignore
   this.__openArgs = arguments;
   return executeRelevantInterceptors(url, "onXhrOpen", this, arguments);
 }
 
 export function xmlHttpRequestSendMiddleware(this: XMLHttpRequest, body: any) {
-  // @ts-ignore
   const [, url] = this.__openArgs;
   return executeRelevantInterceptors(url, "onXhrSend", this, arguments);
 }
@@ -23,10 +21,14 @@ export function fetchMiddleware(this: any, info: RequestInfo, init?: RequestInit
 
 
 export function xmlHttpRequestSetRequestHeaderMiddleware(this: XMLHttpRequest, key: string, value: string) {
-  const anyThis = this as any;
-  if (!anyThis.__headers) anyThis.__headers = {};
-  anyThis.__headers[key] = value;
+  if (!this.__headers) this.__headers = {};
+  this.__headers[key] = value;
   return arguments as any;
+}
+
+export interface XMLHttpRequest {
+  __headers: {[key: string]: string};
+  __openArgs: IArguments;
 }
 
 

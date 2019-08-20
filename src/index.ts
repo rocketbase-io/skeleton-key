@@ -67,7 +67,6 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object> extends Eventi
   public bindMethods() {
     this.onAction = this.onAction.bind(this);
     this.onFetch = this.onFetch.bind(this);
-    this.onXhrOpen = this.onXhrOpen.bind(this);
     this.onXhrSend = this.onXhrSend.bind(this);
   }
 

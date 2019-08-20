@@ -1,9 +1,9 @@
 import {Constructor} from "./types";
 
 export interface IEventing<K> {
-  on(event: K, callback: (ev: any) => void): this;
-  once(event: K, callback: (ev: any) => void): this;
-  off(event: K, callback?: (ev: any) => void): this;
+  on(event: K, callback: (...args: any[]) => void): this;
+  once(event: K, callback: (...args: any[]) => void): this;
+  off(event: K, callback?: (...args: any[]) => void): this;
   emit(event: K, ...data: any[]): Promise<any[]>;
   emitSync(event: K, ...data: any[]): any[];
 }

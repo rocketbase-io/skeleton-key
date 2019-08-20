@@ -1,6 +1,7 @@
 import "jasmine";
+import mock from "xhr-mock";
 import {interceptors} from "../src/intercept";
-import {SkeletonKey, SkeletonKeyDefaults} from "../src";
+import {SkeletonKey, SkeletonKeyDefaults, urlAbsolute} from "../src";
 import {
   JWT_VALID_REFRESH,
   JWT_VALID_TOKEN,
@@ -11,6 +12,8 @@ import {
 } from "./mock/localStorage";
 
 describe("index", () => {
+  beforeEach(() => mock.setup());
+  afterEach(() => mock.teardown());
 
   describe("SkeletonKey", () => {
 
@@ -148,6 +151,116 @@ describe("index", () => {
       });
     });
 
+    describe("#login()", () => {
+      let body = JSON.parse(STORAGE_VALID_TOKEN);
+      body.jwtTokenBundle = body.jwtBundle;
+      delete body.jwtBundle;
+
+      it("should send a login request to the auth service", async () => {
+        localStorage.removeItem(skey);
+        interceptors.splice(0, interceptors.length);
+
+        const auth = new SkeletonKey({ intercept: false });
+
+        expect(auth.isLoggedIn()).toBeFalsy();
+
+        mock.post(urlAbsolute("/auth/login"), (req, res) => {
+          expect(req.header("Content-Type")).toEqual("application/json");
+          res.status(200);
+          res.header("Content-Type", "application/json");
+          res.body(JSON.stringify(body));
+          return res;
+        });
+
+        await auth.login("test.user", "sup3rs3cr3t");
+
+        expect(auth.isLoggedIn()).toBeTruthy();
+        expect(auth.userData).toEqual(JSON.parse(USER_DATA));
+        expect(auth.jwtBundle.token).toEqual(JWT_VALID_TOKEN);
+        expect(auth.jwtBundle.refreshToken).toEqual(JWT_VALID_REFRESH);
+      });
+
+      it("should logout the user before trying to log in again", async () => {
+        localStorage.removeItem(skey);
+        interceptors.splice(0, interceptors.length);
+
+        const auth = new SkeletonKey({ intercept: false });
+
+        auth.user = JSON.parse(USER_DATA);
+        auth.jwtBundle = JSON.parse(STORAGE_VALID_TOKEN).jwtBundle;
+        expect(auth.isLoggedIn()).toBeTruthy();
+
+        mock.post(urlAbsolute("/auth/login"), (req, res) => {
+          expect(req.header("Content-Type")).toEqual("application/json");
+          res.status(200);
+          res.header("Content-Type", "application/json");
+          res.body(JSON.stringify(body));
+          return res;
+        });
+
+        const promise = auth.login("test.user", "sup3rs3cr3t");
+        expect(auth.isLoggedIn()).toBeFalsy();
+        await promise;
+        expect(auth.isLoggedIn()).toBeTruthy();
+      });
+
+      it("should emit the login event after successful login", async () => {
+        localStorage.removeItem(skey);
+        interceptors.splice(0, interceptors.length);
+
+        const auth = new SkeletonKey({ intercept: false });
+
+        mock.post(urlAbsolute("/auth/login"), (req, res) => {
+          expect(req.header("Content-Type")).toEqual("application/json");
+          res.status(200);
+          res.header("Content-Type", "application/json");
+          res.body(JSON.stringify(body));
+          return res;
+        });
+
+        const spy = jasmine.createSpy();
+        auth.on("login", spy);
+
+        await auth.login("test.user", "sup3rs3cr3t");
+        expect(auth.isLoggedIn()).toBeTruthy();
+        expect(spy).toHaveBeenCalled();
+      });
+
+    });
+
+    describe("#logout()", () => {
+
+      it("should log out the current user", async () => {
+        localStorage.removeItem(skey);
+        interceptors.splice(0, interceptors.length);
+
+        const auth = new SkeletonKey({ intercept: false });
+        auth.user = JSON.parse(USER_DATA);
+        auth.jwtBundle = JSON.parse(STORAGE_VALID_TOKEN).jwtBundle;
+        expect(auth.isLoggedIn()).toBeTruthy();
+
+        await auth.logout();
+        expect(auth.isLoggedIn()).toBeFalsy();
+      });
+
+      it("trigger the 'logout' event", async () => {
+        localStorage.removeItem(skey);
+        interceptors.splice(0, interceptors.length);
+
+        const auth = new SkeletonKey({ intercept: false });
+        auth.user = JSON.parse(USER_DATA);
+        auth.jwtBundle = JSON.parse(STORAGE_VALID_TOKEN).jwtBundle;
+        expect(auth.isLoggedIn()).toBeTruthy();
+
+        const spy = jasmine.createSpy();
+        auth.on("logout", spy);
+
+        await auth.logout();
+        expect(auth.isLoggedIn()).toBeFalsy();
+        expect(spy).toHaveBeenCalled();
+      });
+
+    });
 
   })
 

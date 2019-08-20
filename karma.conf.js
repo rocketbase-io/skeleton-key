@@ -18,6 +18,8 @@ webpackConfig.module.rules.push({
   exclude: /(node_modules|\.test\.tsx?$)/
 });
 
+webpackConfig.externals = [];
+
 module.exports = function(config) {
   config.set({
 

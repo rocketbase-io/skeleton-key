@@ -3,7 +3,7 @@ import {installInterceptors, Interceptor, interceptors} from "./intercept";
 import {Eventing} from "./events";
 import {AppUserRead, JwtBundle} from "./model";
 import {decode, JsonWebToken, JsonWebTokenPayload} from "./jwt";
-import {only} from "./util";
+import {only, urlMatches} from "./util";
 
 export * from "./model";
 export * from "./client";
@@ -166,13 +166,12 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object> extends Eventi
   }
 
   private get renewUrl() {
-    return `${this.url}/auth/renew`;
+    return `${this.url}/auth/refresh`;
   }
 
   public async onAction(type: string, url: string) {
-    if (!url) return;
     // Prevent infinite renew loop
-    if (url.indexOf(this.renewUrl) !== -1) return;
+    if (!url || urlMatches(url, this.renewUrl)) return;
     if (this.renewType === "action" && this.needsRefresh() && this.canRefresh())
       await this.refreshToken();
   }

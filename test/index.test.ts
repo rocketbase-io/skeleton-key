@@ -1,7 +1,14 @@
 import "jasmine";
 import {interceptors} from "../src/intercept";
 import {SkeletonKey, SkeletonKeyDefaults} from "../src";
-import {JWT_VALID_REFRESH, JWT_VALID_TOKEN, STORAGE_VALID_TOKEN, USER_DATA} from "./mock/localStorage";
+import {
+  JWT_VALID_REFRESH,
+  JWT_VALID_TOKEN,
+  STORAGE_EXPIRED_REFRESH,
+  STORAGE_EXPIRED_TOKEN,
+  STORAGE_VALID_TOKEN,
+  USER_DATA
+} from "./mock/localStorage";
 
 describe("index", () => {
 
@@ -40,6 +47,53 @@ describe("index", () => {
         expect(auth.isLoggedIn()).toBeFalsy();
         expect(localStorage.getItem(skey)).toBeFalsy();
       });
+    });
+
+    describe("#persist()", () => {
+      it("should write data to localStorage, if logged in", () => {
+        localStorage.removeItem(skey);
+        interceptors.splice(0, interceptors.length);
+        const auth = new SkeletonKey({ intercept: false });
+        auth.user = JSON.parse(USER_DATA);
+        auth.jwtBundle = JSON.parse(STORAGE_VALID_TOKEN).jwtBundle;
+        expect(auth.isLoggedIn()).toBeTruthy();
+        auth.persist();
+        expect(JSON.parse(localStorage.getItem(skey))).toEqual(JSON.parse(STORAGE_VALID_TOKEN));
+      });
+    });
+
+    describe("#isLoggedIn()", () => {
+      it("should be false if no user or token are stored", () => {
+        localStorage.removeItem(skey);
+        interceptors.splice(0, interceptors.length);
+        const auth = new SkeletonKey({ intercept: false });
+        expect(auth.isLoggedIn()).toBeFalsy();
+      });
+      it("should be true for valid user and tokens", () => {
+        localStorage.removeItem(skey);
+        interceptors.splice(0, interceptors.length);
+        const auth = new SkeletonKey({ intercept: false });
+        auth.user = JSON.parse(USER_DATA);
+        auth.jwtBundle = JSON.parse(STORAGE_VALID_TOKEN).jwtBundle;
+        expect(auth.isLoggedIn()).toBeTruthy();
+      });
+      it("should be true for expired token if refresh token isn't expired", () => {
+        localStorage.removeItem(skey);
+        interceptors.splice(0, interceptors.length);
+        const auth = new SkeletonKey({ intercept: false });
+        auth.user = JSON.parse(USER_DATA);
+        auth.jwtBundle = JSON.parse(STORAGE_EXPIRED_TOKEN).jwtBundle;
+        expect(auth.isLoggedIn()).toBeTruthy();
+      });
+      it("should be false for expired token and refresh token", () => {
+        localStorage.removeItem(skey);
+        interceptors.splice(0, interceptors.length);
+        const auth = new SkeletonKey({ intercept: false });
+        auth.user = JSON.parse(USER_DATA);
+        auth.jwtBundle = JSON.parse(STORAGE_EXPIRED_REFRESH).jwtBundle;
+        expect(auth.isLoggedIn()).toBeFalsy();
+      });
+
     });
 
 

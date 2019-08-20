@@ -93,7 +93,59 @@ describe("index", () => {
         auth.jwtBundle = JSON.parse(STORAGE_EXPIRED_REFRESH).jwtBundle;
         expect(auth.isLoggedIn()).toBeFalsy();
       });
+    });
 
+    describe("#onAction()", () => {
+      it("should not do anything if no url is passed", async () => {
+        localStorage.removeItem(skey);
+        interceptors.splice(0, interceptors.length);
+        const auth = new SkeletonKey({ intercept: false });
+        auth.user = JSON.parse(USER_DATA);
+        auth.jwtBundle = JSON.parse(STORAGE_EXPIRED_TOKEN).jwtBundle;
+        auth.refreshToken = jasmine.createSpy();
+        await auth.onAction("send", undefined as any as string);
+        expect(auth.refreshToken).not.toHaveBeenCalled();
+      });
+      it("should not do anything if the url matches the refresh url", async () => {
+        localStorage.removeItem(skey);
+        interceptors.splice(0, interceptors.length);
+        const auth = new SkeletonKey({ intercept: false });
+        auth.user = JSON.parse(USER_DATA);
+        auth.jwtBundle = JSON.parse(STORAGE_EXPIRED_TOKEN).jwtBundle;
+        auth.refreshToken = jasmine.createSpy();
+        await auth.onAction("send", "./auth/refresh");
+        expect(auth.refreshToken).not.toHaveBeenCalled();
+      });
+      it("should try to refresh the token if the token is expired and the refreshToken is valid", async () => {
+        localStorage.removeItem(skey);
+        interceptors.splice(0, interceptors.length);
+        const auth = new SkeletonKey({ intercept: false });
+        auth.user = JSON.parse(USER_DATA);
+        auth.jwtBundle = JSON.parse(STORAGE_EXPIRED_TOKEN).jwtBundle;
+        auth.refreshToken = jasmine.createSpy();
+        await auth.onAction("send", "/some/path");
+        expect(auth.refreshToken).toHaveBeenCalled();
+      });
+      it("should not try to refresh the token if the token is valid", async () => {
+        localStorage.removeItem(skey);
+        interceptors.splice(0, interceptors.length);
+        const auth = new SkeletonKey({ intercept: false });
+        auth.user = JSON.parse(USER_DATA);
+        auth.jwtBundle = JSON.parse(STORAGE_VALID_TOKEN).jwtBundle;
+        auth.refreshToken = jasmine.createSpy();
+        await auth.onAction("send", "/some/path");
+        expect(auth.refreshToken).not.toHaveBeenCalled();
+      });
+      it("should not try to refresh the token if the refresh token is expired", async () => {
+        localStorage.removeItem(skey);
+        interceptors.splice(0, interceptors.length);
+        const auth = new SkeletonKey({ intercept: false });
+        auth.user = JSON.parse(USER_DATA);
+        auth.jwtBundle = JSON.parse(STORAGE_EXPIRED_REFRESH).jwtBundle;
+        auth.refreshToken = jasmine.createSpy();
+        await auth.onAction("send", "/some/path");
+        expect(auth.refreshToken).not.toHaveBeenCalled();
+      });
     });
 
 

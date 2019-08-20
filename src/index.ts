@@ -165,9 +165,14 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object> extends Eventi
     }
   }
 
+  private get renewUrl() {
+    return `${this.url}/auth/renew`;
+  }
 
-  public async onAction(type: string) {
-    if (type === "open") return;
+  public async onAction(type: string, url: string) {
+    if (!url) return;
+    // Prevent infinite renew loop
+    if (url.indexOf(this.renewUrl) !== -1) return;
     if (this.renewType === "action" && this.needsRefresh() && this.canRefresh())
       await this.refreshToken();
   }
@@ -178,7 +183,7 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object> extends Eventi
 
 
   public onFetch(ctx: any, input: Request | string, init?: RequestInit): any {
-    this.emitSync("action", "fetch", input, init);
+    this.emitSync("action", "fetch", typeof input === "string" ? input : input.url, input, init);
     if (!this.jwtBundle) return arguments;
     if (!init) init = {};
     if (!init.headers) init.headers = {};
@@ -189,13 +194,8 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object> extends Eventi
     return arguments;
   }
 
-  public onXhrOpen(xhr: XMLHttpRequest, method: string, url: string, async?: boolean, user?: string, password?: string): any {
-    this.emitSync("action", "open", xhr, method, url, async, user, password);
-    return arguments;
-  }
-
   public onXhrSend(xhr: XMLHttpRequest, body: any): any {
-    this.emitSync("action", "send", xhr, body);
+    this.emitSync("action", "send", (xhr as any).__openArgs[1], xhr, body);
     this.xhrSetAuthHeader(xhr);
     return arguments;
   }

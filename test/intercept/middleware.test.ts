@@ -1,5 +1,5 @@
 import "jasmine";
-import {executeRelevantInterceptors, installInterceptors, interceptors, skipFirst, xmlHttpRequestOpenMiddleware} from "../../src/intercept";
+import {executeRelevantInterceptors, installInterceptors, interceptors, skipFirst} from "../../src/intercept";
 
 describe("intercept", () => {
 

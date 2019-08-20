@@ -185,11 +185,8 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object> extends Eventi
     if (!this.jwtBundle) return arguments;
     if (!init) init = {};
     if (!init.headers) init.headers = {};
-    if (init.headers instanceof Headers && !init.headers.get(this.authHeader))
-      init.headers.set(this.authHeader, this.authHeaderValue);
-    else
-      (init.headers as any)[this.authHeader] = this.authHeaderValue;
-    return arguments;
+    (init.headers as any)[this.authHeader] = this.authHeaderValue;
+    return [ctx, input, init];
   }
 
   public onXhrSend(xhr: XMLHttpRequest, body: any): any {

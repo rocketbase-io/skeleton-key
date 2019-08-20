@@ -87,7 +87,7 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object> extends Eventi
     const {jwtTokenBundle, user} = await this.client.login({username, password});
     this.jwtBundle = jwtTokenBundle as JwtBundle & TOKEN_DATA;
     this.user = user as AppUserRead & USER_DATA;
-    this.emit("login", user);
+    this.emitSync("login", user);
     this.persist();
     return user;
   }
@@ -95,7 +95,7 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object> extends Eventi
   public async logout() {
     this.user = undefined;
     this.jwtBundle = undefined;
-    this.emit("logout");
+    this.emitSync("logout");
     this.persist();
     return true;
   }
@@ -108,7 +108,7 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object> extends Eventi
   public async refreshToken() {
     if (!this.jwtBundle) return false;
     this.jwtBundle!.token = await this.client.refresh(this.jwtBundle!.refreshToken);
-    this.emit("refresh", "token", this.jwtBundle);
+    this.emitSync("refresh", "token", this.jwtBundle);
     this.persist();
     return this.jwtBundle;
   }
@@ -116,7 +116,7 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object> extends Eventi
   public async refreshInfo() {
     if (!this.isLoggedIn()) return false;
     this.user = await this.client.me(this.jwtBundle!.token) as AppUserRead & USER_DATA;
-    this.emit("refresh", "user", this.user);
+    this.emitSync("refresh", "user", this.user);
     this.persist();
     return this.user;
   }

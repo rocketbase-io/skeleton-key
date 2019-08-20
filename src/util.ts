@@ -8,5 +8,17 @@ export function only<T, K extends keyof T>(target: T, ...members: K[]): Pick<T, 
 
 
 export function urlMatches(target: string, needle: string): boolean {
-  return new URL(target).href.indexOf(new URL(needle).href) !== -1;
+  return urlAbsolute(target).indexOf(urlAbsolute(needle)) !== -1;
 }
+
+
+export const urlAbsolute = (() => {
+  if (window.URL) return url => new URL(url, window.location.href).href;
+  let a: HTMLAnchorElement;
+  /* istanbul ignore next */
+  return url => { // IE Fallback
+    if (!a) a = document.createElement("a");
+    a.href = url;
+    return a.href;
+  };
+})();

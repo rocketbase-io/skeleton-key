@@ -90,7 +90,7 @@ export class AuthClient {
 
 
   public authHeader(token: string) {
-    return {headers: {Authorization: token}};
+    return {headers: {Authorization: `Bearer ${token}`}};
   }
 }
 

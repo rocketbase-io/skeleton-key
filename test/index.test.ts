@@ -3,6 +3,7 @@ import mock from "xhr-mock";
 import {interceptors} from "../src/intercept";
 import {SkeletonKey, SkeletonKeyDefaults, urlAbsolute} from "../src";
 import {
+  JWT_EXPIRED_TOKEN,
   JWT_VALID_REFRESH,
   JWT_VALID_TOKEN,
   STORAGE_EXPIRED_REFRESH,
@@ -257,6 +258,84 @@ describe("index", () => {
 
         await auth.logout();
         expect(auth.isLoggedIn()).toBeFalsy();
+        expect(spy).toHaveBeenCalled();
+      });
+
+    });
+
+    describe("#waitForLogin()", () => {
+      let body = JSON.parse(STORAGE_VALID_TOKEN);
+      body.jwtTokenBundle = body.jwtBundle;
+      delete body.jwtBundle;
+
+      it("should return a promise that resolves upon successful login", async () => {
+        localStorage.removeItem(skey);
+        interceptors.splice(0, interceptors.length);
+
+        const auth = new SkeletonKey({ intercept: false });
+        const spy = jasmine.createSpy();
+        auth.waitForLogin().then(spy);
+
+        mock.post(urlAbsolute("/auth/login"), (req, res) => {
+          expect(req.header("Content-Type")).toEqual("application/json");
+          res.status(200);
+          res.header("Content-Type", "application/json");
+          res.body(JSON.stringify(body));
+          return res;
+        });
+
+        expect(spy).not.toHaveBeenCalled();
+        await auth.login("test.user", "sup3rs3cr3t");
+        expect(spy).toHaveBeenCalled();
+      });
+
+    });
+
+    describe("#refreshToken()", () => {
+
+      it("should refresh a jwt using the refreshToken", async () => {
+        localStorage.removeItem(skey);
+        interceptors.splice(0, interceptors.length);
+
+        const auth = new SkeletonKey({ intercept: false });
+        auth.user = JSON.parse(USER_DATA);
+        auth.jwtBundle = JSON.parse(STORAGE_EXPIRED_TOKEN).jwtBundle;
+        expect(auth.isLoggedIn()).toBeTruthy();
+
+        mock.get(urlAbsolute("/auth/refresh"), (req, res) => {
+          expect(req.header('Authorization')).toEqual(`Bearer ${JWT_VALID_REFRESH}`);
+          res.status(200);
+          res.header("Content-Type", "text/plain");
+          res.body(JWT_VALID_TOKEN);
+          return res;
+        });
+
+        await auth.refreshToken();
+        expect(auth.jwtBundle.token).toEqual(JWT_VALID_TOKEN);
+      });
+
+      it("should fire a 'refresh' event", async () => {
+        localStorage.removeItem(skey);
+        interceptors.splice(0, interceptors.length);
+
+        const auth = new SkeletonKey({ intercept: false });
+        auth.user = JSON.parse(USER_DATA);
+        auth.jwtBundle = JSON.parse(STORAGE_EXPIRED_TOKEN).jwtBundle;
+        expect(auth.isLoggedIn()).toBeTruthy();
+
+        mock.get(urlAbsolute("/auth/refresh"), (req, res) => {
+          expect(req.header('Authorization')).toEqual(`Bearer ${JWT_VALID_REFRESH}`);
+          res.status(200);
+          res.header("Content-Type", "text/plain");
+          res.body(JWT_VALID_TOKEN);
+          return res;
+        });
+
+        const spy = jasmine.createSpy();
+        auth.on("refresh", spy);
+
+        await auth.refreshToken();
+        expect(auth.jwtBundle.token).toEqual(JWT_VALID_TOKEN);
         expect(spy).toHaveBeenCalled();
       });
 

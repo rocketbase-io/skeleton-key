@@ -1,10 +1,9 @@
 import "jasmine";
 import mock from "xhr-mock";
 import * as fetchMock from "fetch-mock";
-import {installInterceptors, interceptors} from "../src/intercept";
+import {interceptors} from "../src/intercept";
 import {SkeletonKey, SkeletonKeyDefaults, urlAbsolute} from "../src";
 import {
-  JWT_EXPIRED_TOKEN,
   JWT_VALID_REFRESH,
   JWT_VALID_TOKEN,
   STORAGE_EXPIRED_REFRESH,
@@ -241,8 +240,7 @@ describe("index", () => {
         auth.user = JSON.parse(USER_DATA);
         auth.jwtBundle = JSON.parse(STORAGE_VALID_TOKEN).jwtBundle;
         expect(auth.isLoggedIn()).toBeTruthy();
-
-        await auth.logout();
+        expect(await auth.logout()).toBeTruthy();
         expect(auth.isLoggedIn()).toBeFalsy();
       });
 
@@ -258,7 +256,7 @@ describe("index", () => {
         const spy = jasmine.createSpy();
         auth.on("logout", spy);
 
-        await auth.logout();
+        expect(await auth.logout()).toBeTruthy();
         expect(auth.isLoggedIn()).toBeFalsy();
         expect(spy).toHaveBeenCalled();
       });

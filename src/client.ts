@@ -39,7 +39,7 @@ export class AuthClient {
   }
 
   public async changePassword(body: PasswordChangeRequest, token: string) {
-    return this.api.put<void>("/auth/refresh", JSON.stringify(body), this.authHeader(token))
+    return this.api.put<void>("/auth/change-password", JSON.stringify(body), this.authHeader(token))
       .then(r => r.status);
   }
 

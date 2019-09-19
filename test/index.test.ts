@@ -54,6 +54,54 @@ describe("index", () => {
       });
     });
 
+    describe("#installInterval()", () => {
+      it("should be called on login and creation", async () => {
+        localStorage.setItem(skey, STORAGE_VALID_TOKEN);
+        interceptors.splice(0, interceptors.length);
+        const orig = SkeletonKey.prototype.installInterval;
+        const spy = jasmine.createSpy();
+
+        SkeletonKey.prototype.installInterval = spy;
+        const auth = new SkeletonKey({ intercept: false, renewType: "interval" });
+        SkeletonKey.prototype.installInterval = orig;
+
+        expect(spy).toHaveBeenCalledTimes(1);
+        await auth.emit("login");
+        expect(spy).toHaveBeenCalledTimes(2);
+      });
+
+      it("should not install a timer if the user isn't logged in", () => {
+        localStorage.removeItem(skey);
+        interceptors.splice(0, interceptors.length);
+
+        const orig = window.setTimeout;
+        const spy  = window.setTimeout = jasmine.createSpy();
+
+        const auth = new SkeletonKey({ intercept: false, renewType: "interval" });
+
+        window.setTimeout = orig;
+        expect(spy).not.toHaveBeenCalled();
+      });
+
+      /*it("should try to refresh the token if it needs to be refreshed", async () => {
+        localStorage.setItem(skey, STORAGE_EXPIRED_TOKEN);
+        interceptors.splice(0, interceptors.length);
+
+
+        const auth = new SkeletonKey({ intercept: false, renewType: "never" });
+
+        const _setTimeout = global.setTimeout;
+        const spy1        = global.setTimeout = jasmine.createSpy("setTimeout");
+        const spy2        = auth.refreshToken = jasmine.createSpy("refreshToken");
+
+        await auth.emit("login");
+        global.setTimeout = _setTimeout;
+
+        expect(spy1).toHaveBeenCalledTimes(1);
+        expect(spy2).toHaveBeenCalledTimes(2);
+      });
+    });*/
+
     describe("#persist()", () => {
       it("should write data to localStorage, if logged in", () => {
         localStorage.removeItem(skey);

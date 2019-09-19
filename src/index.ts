@@ -21,7 +21,7 @@ export interface SkeletonKeyOptions {
   client?: AuthClient;
   domains?: string[];
   intercept?: boolean;
-  renewType?: "action" | "never";
+  renewType?: "action" | "never" | "interval";
   authHeader?: string;
   authPrefix?: string;
   authSuffix?: string;
@@ -39,6 +39,8 @@ export const SkeletonKeyDefaults: Readonly<SkeletonKeyOptions> = {
   storageKey: "io.rocketbase.commons.auth"
 };
 
+const INTERVAL_TOLERANCE = 10000; // 10s
+
 export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object> extends Eventing<"login" | "logout" | "action" | "refresh">()
   implements Interceptor, Required<SkeletonKeyOptions> {
 
@@ -46,7 +48,7 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object> extends Eventi
   public client!: AuthClient;
   public domains!: string[];
   public intercept!: boolean;
-  public renewType!: "action" | "never";
+  public renewType!: "action" | "never" | "interval";
   public authHeader!: string;
   public authPrefix!: string;
   public authSuffix!: string;
@@ -58,24 +60,39 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object> extends Eventi
   constructor(opts: SkeletonKeyOptions = {}) {
     super();
     Object.assign(this, {...SkeletonKeyDefaults, ...opts});
-    if (!this!.client) this.client = new AuthClient(this!.url!);
+    if (!this!.client)
+      this.client = new AuthClient(this!.url!);
     this.load();
     this.bindMethods();
     this.installListeners();
+    this.installInterval();
   }
 
   public bindMethods() {
     this.onAction = this.onAction.bind(this);
     this.onFetch = this.onFetch.bind(this);
     this.onXhrSend = this.onXhrSend.bind(this);
+    this.installInterval = this.installInterval.bind(this);
   }
 
   public installListeners() {
     this.on("action", this.onAction);
+    this.on("login", this.installInterval);
     if (this.intercept) {
       interceptors.push(this);
       installInterceptors();
     }
+  }
+
+  public async installInterval() {
+    if (this.renewType !== "interval") return;
+    if (!this.isLoggedIn()) return;
+    if (this.needsRefresh())
+      await this.refreshToken();
+    const ms = +new Date(this.tokenData.payload.exp) - +new Date();
+    if (ms < INTERVAL_TOLERANCE * 2 || this.needsRefresh())
+      await this.refreshToken();
+    setTimeout(this.installInterval, ms - INTERVAL_TOLERANCE);
   }
 
   public isLoggedIn() {

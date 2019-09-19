@@ -99,8 +99,8 @@ describe("index", () => {
 
         expect(spy1).toHaveBeenCalledTimes(1);
         expect(spy2).toHaveBeenCalledTimes(2);
-      });
-    });*/
+      });*/
+    });
 
     describe("#persist()", () => {
       it("should write data to localStorage, if logged in", () => {

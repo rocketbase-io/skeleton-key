@@ -83,7 +83,28 @@ describe("index", () => {
         expect(spy).not.toHaveBeenCalled();
       });
 
-      /*it("should try to refresh the token if it needs to be refreshed", async () => {
+      it("should delete token data if the token is valid but incorrect", async () => {
+        localStorage.setItem(skey, STORAGE_EXPIRED_TOKEN);
+        interceptors.splice(0, interceptors.length);
+
+        mock.get(urlAbsolute("/auth/refresh"), (req, res) => {
+          res.status(401);
+          res.header("Content-Type", "application/json");
+          res.body("401 Unauthorized");
+          return res;
+        });
+
+        const auth = new SkeletonKey({ intercept: false, renewType: "never" });
+
+        await auth.refreshToken();
+
+        expect(auth.isLoggedIn()).toBeFalsy();
+        expect(auth.jwtBundle).toBeFalsy();
+        expect(auth.user).toBeFalsy();
+        expect(localStorage.getItem(skey)).toBeFalsy();
+      });
+
+      xit("should try to refresh the token if it needs to be refreshed", async () => {
         localStorage.setItem(skey, STORAGE_EXPIRED_TOKEN);
         interceptors.splice(0, interceptors.length);
 
@@ -99,7 +120,7 @@ describe("index", () => {
 
         expect(spy1).toHaveBeenCalledTimes(1);
         expect(spy2).toHaveBeenCalledTimes(2);
-      });*/
+      });
     });
 
     describe("#persist()", () => {

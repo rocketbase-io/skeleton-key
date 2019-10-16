@@ -124,9 +124,17 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object> extends Eventi
 
   public async refreshToken() {
     if (!this.jwtBundle) return false;
-    this.jwtBundle!.token = await this.client.refresh(this.jwtBundle!.refreshToken);
-    this.emitSync("refresh", "token", this.jwtBundle);
-    this.persist();
+    try {
+      this.jwtBundle!.token = await this.client.refresh(this.jwtBundle!.refreshToken);
+      this.emitSync("refresh", "token", this.jwtBundle);
+      this.persist();
+    } catch (ex) {
+      const {response} = ex;
+      const {status} = response;
+      // Forbidden / Unauthorized
+      if (status && status === 401 || status === 403)
+        await this.logout();
+    }
     return this.jwtBundle;
   }
 

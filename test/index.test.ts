@@ -1,10 +1,9 @@
 import "jasmine";
 import mock from "xhr-mock";
 import * as fetchMock from "fetch-mock";
-import {installInterceptors, interceptors} from "../src/intercept";
+import {interceptors} from "../src/intercept";
 import {SkeletonKey, SkeletonKeyDefaults, urlAbsolute} from "../src";
 import {
-  JWT_EXPIRED_TOKEN,
   JWT_VALID_REFRESH,
   JWT_VALID_TOKEN,
   STORAGE_EXPIRED_REFRESH,
@@ -52,6 +51,75 @@ describe("index", () => {
         const auth = new SkeletonKey({ intercept: false });
         expect(auth.isLoggedIn()).toBeFalsy();
         expect(localStorage.getItem(skey)).toBeFalsy();
+      });
+    });
+
+    describe("#installInterval()", () => {
+      it("should be called on login and creation", async () => {
+        localStorage.setItem(skey, STORAGE_VALID_TOKEN);
+        interceptors.splice(0, interceptors.length);
+        const orig = SkeletonKey.prototype.installInterval;
+        const spy = jasmine.createSpy();
+
+        SkeletonKey.prototype.installInterval = spy;
+        const auth = new SkeletonKey({ intercept: false, renewType: "interval" });
+        SkeletonKey.prototype.installInterval = orig;
+
+        expect(spy).toHaveBeenCalledTimes(1);
+        await auth.emit("login");
+        expect(spy).toHaveBeenCalledTimes(2);
+      });
+
+      it("should not install a timer if the user isn't logged in", () => {
+        localStorage.removeItem(skey);
+        interceptors.splice(0, interceptors.length);
+
+        const orig = window.setTimeout;
+        const spy  = window.setTimeout = jasmine.createSpy();
+
+        const auth = new SkeletonKey({ intercept: false, renewType: "interval" });
+
+        window.setTimeout = orig;
+        expect(spy).not.toHaveBeenCalled();
+      });
+
+      it("should delete token data if the token is valid but incorrect", async () => {
+        localStorage.setItem(skey, STORAGE_EXPIRED_TOKEN);
+        interceptors.splice(0, interceptors.length);
+
+        mock.get(urlAbsolute("/auth/refresh"), (req, res) => {
+          res.status(401);
+          res.header("Content-Type", "application/json");
+          res.body("401 Unauthorized");
+          return res;
+        });
+
+        const auth = new SkeletonKey({ intercept: false, renewType: "never" });
+
+        await auth.refreshToken();
+
+        expect(auth.isLoggedIn()).toBeFalsy();
+        expect(auth.jwtBundle).toBeFalsy();
+        expect(auth.user).toBeFalsy();
+        expect(localStorage.getItem(skey)).toBeFalsy();
+      });
+
+      xit("should try to refresh the token if it needs to be refreshed", async () => {
+        localStorage.setItem(skey, STORAGE_EXPIRED_TOKEN);
+        interceptors.splice(0, interceptors.length);
+
+
+        const auth = new SkeletonKey({ intercept: false, renewType: "never" });
+
+        const _setTimeout = global.setTimeout;
+        const spy1        = global.setTimeout = jasmine.createSpy("setTimeout");
+        const spy2        = auth.refreshToken = jasmine.createSpy("refreshToken");
+
+        await auth.emit("login");
+        global.setTimeout = _setTimeout;
+
+        expect(spy1).toHaveBeenCalledTimes(1);
+        expect(spy2).toHaveBeenCalledTimes(2);
       });
     });
 
@@ -241,8 +309,7 @@ describe("index", () => {
         auth.user = JSON.parse(USER_DATA);
         auth.jwtBundle = JSON.parse(STORAGE_VALID_TOKEN).jwtBundle;
         expect(auth.isLoggedIn()).toBeTruthy();
-
-        await auth.logout();
+        expect(await auth.logout()).toBeTruthy();
         expect(auth.isLoggedIn()).toBeFalsy();
       });
 
@@ -258,7 +325,7 @@ describe("index", () => {
         const spy = jasmine.createSpy();
         auth.on("logout", spy);
 
-        await auth.logout();
+        expect(await auth.logout()).toBeTruthy();
         expect(auth.isLoggedIn()).toBeFalsy();
         expect(spy).toHaveBeenCalled();
       });

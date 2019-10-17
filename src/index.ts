@@ -89,8 +89,8 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object> extends Eventi
     if (!this.isLoggedIn()) return;
     if (this.needsRefresh())
       await this.refreshToken();
-    const ms = +new Date(this.tokenData.payload.exp) - +new Date();
-    if (ms < INTERVAL_TOLERANCE * 2 || this.needsRefresh())
+    const ms = +new Date(this.tokenData.payload.exp * JWT_DATE_TO_JS_DATE_RATIO) - +new Date();
+    if (ms < INTERVAL_TOLERANCE * 2)
       await this.refreshToken();
     setTimeout(this.installInterval, ms - INTERVAL_TOLERANCE);
   }

@@ -132,7 +132,7 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object> extends Eventi
       const {response} = ex;
       const {status} = response;
       // Forbidden / Unauthorized
-      if (status && status === 401 || status === 403)
+      if (status && status === 400 || status === 401 || status === 403)
         await this.logout();
     }
     return this.jwtBundle;

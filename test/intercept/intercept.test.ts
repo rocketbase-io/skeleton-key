@@ -46,10 +46,13 @@ describe("intercept", () => {
 
         interceptFunction(obj, "toBeIntercepted", spy);
 
-        const result = obj.toBeIntercepted("do", "the", "thing");
+        try {
+          const result = obj.toBeIntercepted("do", "the", "thing");
+        } catch (ex) {
+          expect(ex).toMatch("The Error");
+        }
 
         expect(spy).toHaveBeenCalledWith("do", "the", "thing");
-        expect(result).toBeUndefined();
       });
 
       it("should pass the returned arguments of the middleware to the original function", () => {

@@ -26,12 +26,14 @@ export interface SkeletonKeyOptions {
   authPrefix?: string;
   authSuffix?: string;
   storageKey?: string;
+  initialLoginCheck?: boolean;
 }
 
 export const SkeletonKeyDefaults: Readonly<SkeletonKeyOptions> = {
   url: window.location.origin,
   domains: [window.location.host],
   intercept: true,
+  initialLoginCheck: true,
   renewType: "action",
   authHeader: "Authorization",
   authPrefix: "Bearer ",
@@ -42,7 +44,7 @@ export const SkeletonKeyDefaults: Readonly<SkeletonKeyOptions> = {
 const INTERVAL_TOLERANCE = 10000; // 10s
 
 export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object>
-  extends Eventing<"login" | "logout" | "action" | "refresh">()
+  extends Eventing<"login" | "logout" | "action" | "refresh" | "initialized">()
   implements Interceptor, Required<SkeletonKeyOptions> {
   public url!: string;
   public client!: AuthClient;
@@ -53,6 +55,7 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object>
   public authPrefix!: string;
   public authSuffix!: string;
   public storageKey!: string;
+  public initialLoginCheck!: boolean;
 
   public user?: AppUserRead & USER_DATA;
   public jwtBundle?: JwtBundle;
@@ -61,10 +64,17 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object>
     super();
     Object.assign(this, { ...SkeletonKeyDefaults, ...opts });
     if (!this!.client) this.client = new AuthClient(this!.url!);
+    // noinspection JSIgnoredPromiseFromCall
+    this.init();
+  }
+
+  public async init() {
     this.load();
     this.bindMethods();
     this.installListeners();
+    if (this.isLoggedIn() && this.initialLoginCheck) await this.refreshInfo();
     this.installInterval();
+    this.emit("initialized", this);
   }
 
   public bindMethods() {
@@ -116,7 +126,7 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object>
 
   public async waitForLogin() {
     if (this.isLoggedIn()) return this.user!;
-    return new Promise(resolve => this.once("login", resolve));
+    return this.waitForEvent("login");
   }
 
   public async refreshToken() {
@@ -136,9 +146,16 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object>
 
   public async refreshInfo() {
     if (!this.isLoggedIn()) return false;
-    this.user = (await this.client.me(this.jwtBundle!.token)) as AppUserRead & USER_DATA;
-    this.emitSync("refresh", "user", this.user);
-    this.persist();
+    try {
+      this.user = (await this.client.me(this.jwtBundle!.token)) as AppUserRead & USER_DATA;
+      this.emitSync("refresh", "user", this.user);
+      this.persist();
+    } catch (ex) {
+      const { response } = ex;
+      const { status } = response;
+      // Forbidden / Unauthorized / Bad Request
+      if (status && [400, 401, 403].indexOf(status) !== -1) await this.logout();
+    }
     return this.user;
   }
 

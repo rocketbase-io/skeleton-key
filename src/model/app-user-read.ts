@@ -1,4 +1,3 @@
-
 export interface AppUserRead {
   avatar: string;
   created: string;

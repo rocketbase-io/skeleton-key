@@ -1,9 +1,14 @@
-import {interceptors} from "./interceptor";
-import {isInDomain} from "../domain";
-
+/* eslint-disable prefer-rest-params,@typescript-eslint/no-unused-vars */
+import { interceptors } from "./interceptor";
+import { isInDomain } from "@/domain";
 
 export function xmlHttpRequestOpenMiddleware(
-  this: XMLHttpRequest, method: string, url: string, async?: boolean, username?: string | null, password?: string | null
+  this: XMLHttpRequest,
+  method: string,
+  url: string,
+  async?: boolean,
+  username?: string | null,
+  password?: string | null
 ) {
   this.__openArgs = arguments;
   return executeRelevantInterceptors(url, "onXhrOpen", this, arguments);
@@ -14,11 +19,9 @@ export function xmlHttpRequestSendMiddleware(this: XMLHttpRequest, body: any) {
   return executeRelevantInterceptors(url, "onXhrSend", this, arguments);
 }
 
-
 export function fetchMiddleware(this: any, info: RequestInfo, init?: RequestInit) {
   return executeRelevantInterceptors(typeof info === "string" ? info : info.url, "onFetch", this, arguments);
 }
-
 
 export function xmlHttpRequestSetRequestHeaderMiddleware(this: XMLHttpRequest, key: string, value: string) {
   if (!this.__headers) this.__headers = {};
@@ -27,20 +30,18 @@ export function xmlHttpRequestSetRequestHeaderMiddleware(this: XMLHttpRequest, k
 }
 
 export interface XMLHttpRequest {
-  __headers: {[key: string]: string};
+  __headers: { [key: string]: string };
   __openArgs: IArguments;
 }
-
 
 export function executeRelevantInterceptors(url: string, handler: string, context: any, args: any) {
   const relevant = interceptors.filter(itor => isInDomain(itor.domains, url));
   if (!relevant.length) return args;
   return relevant
-    .map(interceptor => ((interceptor as any)[handler]))
+    .map(interceptor => (interceptor as any)[handler])
     .filter(handler => handler)
     .reduce((args, handler) => skipFirst(handler.apply(context, [context, ...args])) || args, args as any);
 }
-
 
 export function skipFirst(array: any[]) {
   if (!array) return;

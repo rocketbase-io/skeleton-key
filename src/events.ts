@@ -1,4 +1,4 @@
-import {Constructor} from "./types";
+import { Constructor } from "./types";
 
 export interface IEventing<K> {
   on(event: K, callback: (...args: any[]) => void): this;
@@ -13,17 +13,16 @@ const EVENTS = Symbol("Events");
 export function Eventing<K extends string = string, T extends {} = {}>(
   Base: Constructor<T> = Object as any
 ): Constructor<T> & Constructor<IEventing<K>> {
-
   // @ts-ignore
-  const cls = class extends (Base as any) implements IEventing<K> {};
+  const Cls = class extends (Base as any) implements IEventing<K> {};
 
-  cls.prototype.on = on;
-  cls.prototype.once = once;
-  cls.prototype.off = off;
-  cls.prototype.emit = emit;
-  cls.prototype.emitSync = emitSync;
+  Cls.prototype.on = on;
+  Cls.prototype.once = once;
+  Cls.prototype.off = off;
+  Cls.prototype.emit = emit;
+  Cls.prototype.emitSync = emitSync;
 
-  return cls as Constructor<T> & Constructor<IEventing<K>>;
+  return Cls as Constructor<T> & Constructor<IEventing<K>>;
 }
 
 export function on<K, R extends IEventing<K>>(this: R, event: K, callback: (ev: any) => void): R {

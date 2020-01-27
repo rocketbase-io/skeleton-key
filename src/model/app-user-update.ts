@@ -1,4 +1,3 @@
-
 export interface AppUserUpdate {
   avatar: string;
   enabled: boolean;

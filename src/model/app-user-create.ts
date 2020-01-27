@@ -1,4 +1,3 @@
-
 export interface AppUserCreate {
   admin: boolean;
   avatar: string;

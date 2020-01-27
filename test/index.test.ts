@@ -1,8 +1,8 @@
-import "jasmine";
+import "./mock/xhr-mock";
 import mock from "xhr-mock";
-import * as fetchMock from "fetch-mock";
-import {interceptors} from "../src/intercept";
-import {SkeletonKey, SkeletonKeyDefaults, urlAbsolute} from "../src";
+import { mock as fetchMock, reset as fetchReset } from "fetch-mock";
+import { interceptors } from "../src/intercept";
+import { SkeletonKey, SkeletonKeyDefaults, urlAbsolute } from "../src";
 import {
   JWT_VALID_REFRESH,
   JWT_VALID_TOKEN,
@@ -15,11 +15,10 @@ import {
 describe("index", () => {
   beforeEach(() => mock.setup());
   afterEach(() => mock.teardown());
-  afterEach(() => fetchMock.reset());
+  afterEach(() => fetchReset());
 
   describe("SkeletonKey", () => {
-
-    const skey = SkeletonKeyDefaults.storageKey;
+    const skey = SkeletonKeyDefaults.storageKey!;
 
     describe("new(), #installListeners()", () => {
       it("should register interceptors if enabled", () => {
@@ -40,8 +39,8 @@ describe("index", () => {
         localStorage.setItem(skey, STORAGE_VALID_TOKEN);
         interceptors.splice(0, interceptors.length);
         const auth = new SkeletonKey({ intercept: false });
-        expect(auth.jwtBundle.token).toEqual(JWT_VALID_TOKEN);
-        expect(auth.jwtBundle.refreshToken).toEqual(JWT_VALID_REFRESH);
+        expect(auth.jwtBundle!.token).toEqual(JWT_VALID_TOKEN);
+        expect(auth.jwtBundle!.refreshToken).toEqual(JWT_VALID_REFRESH);
         expect(auth.userData).toEqual(JSON.parse(USER_DATA));
         expect(auth.isLoggedIn()).toBeTruthy();
       });
@@ -59,7 +58,7 @@ describe("index", () => {
         localStorage.setItem(skey, STORAGE_VALID_TOKEN);
         interceptors.splice(0, interceptors.length);
         const orig = SkeletonKey.prototype.installInterval;
-        const spy = jasmine.createSpy();
+        const spy = jest.fn();
 
         SkeletonKey.prototype.installInterval = spy;
         const auth = new SkeletonKey({ intercept: false, renewType: "interval" });
@@ -75,9 +74,9 @@ describe("index", () => {
         interceptors.splice(0, interceptors.length);
 
         const orig = window.setTimeout;
-        const spy  = window.setTimeout = jasmine.createSpy();
+        const spy = (window.setTimeout = jest.fn() as any);
 
-        const auth = new SkeletonKey({ intercept: false, renewType: "interval" });
+        new SkeletonKey({ intercept: false, renewType: "interval" });
 
         window.setTimeout = orig;
         expect(spy).not.toHaveBeenCalled();
@@ -108,12 +107,11 @@ describe("index", () => {
         localStorage.setItem(skey, STORAGE_EXPIRED_TOKEN);
         interceptors.splice(0, interceptors.length);
 
+        const _setTimeout = window.setTimeout;
+        const spy1 = (window.setTimeout = jest.fn() as any);
 
         const auth = new SkeletonKey({ intercept: false, renewType: "never" });
-
-        const _setTimeout = global.setTimeout;
-        const spy1        = global.setTimeout = jasmine.createSpy("setTimeout");
-        const spy2        = auth.refreshToken = jasmine.createSpy("refreshToken");
+        const spy2 = (auth.refreshToken = jest.fn());
 
         await auth.emit("login");
         global.setTimeout = _setTimeout;
@@ -132,7 +130,7 @@ describe("index", () => {
         auth.jwtBundle = JSON.parse(STORAGE_VALID_TOKEN).jwtBundle;
         expect(auth.isLoggedIn()).toBeTruthy();
         auth.persist();
-        expect(JSON.parse(localStorage.getItem(skey))).toEqual(JSON.parse(STORAGE_VALID_TOKEN));
+        expect(JSON.parse(localStorage.getItem(skey)!)).toEqual(JSON.parse(STORAGE_VALID_TOKEN));
       });
     });
 
@@ -176,8 +174,8 @@ describe("index", () => {
         const auth = new SkeletonKey({ intercept: false });
         auth.user = JSON.parse(USER_DATA);
         auth.jwtBundle = JSON.parse(STORAGE_EXPIRED_TOKEN).jwtBundle;
-        auth.refreshToken = jasmine.createSpy();
-        await auth.onAction("send", undefined as any as string);
+        auth.refreshToken = jest.fn();
+        await auth.onAction("send", (undefined as any) as string);
         expect(auth.refreshToken).not.toHaveBeenCalled();
       });
       it("should not do anything if the url matches the refresh url", async () => {
@@ -186,7 +184,7 @@ describe("index", () => {
         const auth = new SkeletonKey({ intercept: false });
         auth.user = JSON.parse(USER_DATA);
         auth.jwtBundle = JSON.parse(STORAGE_EXPIRED_TOKEN).jwtBundle;
-        auth.refreshToken = jasmine.createSpy();
+        auth.refreshToken = jest.fn();
         await auth.onAction("send", "./auth/refresh");
         expect(auth.refreshToken).not.toHaveBeenCalled();
       });
@@ -196,7 +194,7 @@ describe("index", () => {
         const auth = new SkeletonKey({ intercept: false });
         auth.user = JSON.parse(USER_DATA);
         auth.jwtBundle = JSON.parse(STORAGE_EXPIRED_TOKEN).jwtBundle;
-        auth.refreshToken = jasmine.createSpy();
+        auth.refreshToken = jest.fn();
         await auth.onAction("send", "/some/path");
         expect(auth.refreshToken).toHaveBeenCalled();
       });
@@ -206,7 +204,7 @@ describe("index", () => {
         const auth = new SkeletonKey({ intercept: false });
         auth.user = JSON.parse(USER_DATA);
         auth.jwtBundle = JSON.parse(STORAGE_VALID_TOKEN).jwtBundle;
-        auth.refreshToken = jasmine.createSpy();
+        auth.refreshToken = jest.fn();
         await auth.onAction("send", "/some/path");
         expect(auth.refreshToken).not.toHaveBeenCalled();
       });
@@ -216,14 +214,14 @@ describe("index", () => {
         const auth = new SkeletonKey({ intercept: false });
         auth.user = JSON.parse(USER_DATA);
         auth.jwtBundle = JSON.parse(STORAGE_EXPIRED_REFRESH).jwtBundle;
-        auth.refreshToken = jasmine.createSpy();
+        auth.refreshToken = jest.fn();
         await auth.onAction("send", "/some/path");
         expect(auth.refreshToken).not.toHaveBeenCalled();
       });
     });
 
     describe("#login()", () => {
-      let body = JSON.parse(STORAGE_VALID_TOKEN);
+      const body = JSON.parse(STORAGE_VALID_TOKEN);
       body.jwtTokenBundle = body.jwtBundle;
       delete body.jwtBundle;
 
@@ -234,7 +232,6 @@ describe("index", () => {
         const auth = new SkeletonKey({ intercept: false });
 
         expect(auth.isLoggedIn()).toBeFalsy();
-
         mock.post(urlAbsolute("/auth/login"), (req, res) => {
           expect(req.header("Content-Type")).toEqual("application/json");
           res.status(200);
@@ -247,8 +244,8 @@ describe("index", () => {
 
         expect(auth.isLoggedIn()).toBeTruthy();
         expect(auth.userData).toEqual(JSON.parse(USER_DATA));
-        expect(auth.jwtBundle.token).toEqual(JWT_VALID_TOKEN);
-        expect(auth.jwtBundle.refreshToken).toEqual(JWT_VALID_REFRESH);
+        expect(auth.jwtBundle!.token).toEqual(JWT_VALID_TOKEN);
+        expect(auth.jwtBundle!.refreshToken).toEqual(JWT_VALID_REFRESH);
       });
 
       it("should logout the user before trying to log in again", async () => {
@@ -289,18 +286,16 @@ describe("index", () => {
           return res;
         });
 
-        const spy = jasmine.createSpy();
+        const spy = jest.fn();
         auth.on("login", spy);
 
         await auth.login("test.user", "sup3rs3cr3t");
         expect(auth.isLoggedIn()).toBeTruthy();
         expect(spy).toHaveBeenCalled();
       });
-
     });
 
     describe("#logout()", () => {
-
       it("should log out the current user", async () => {
         localStorage.removeItem(skey);
         interceptors.splice(0, interceptors.length);
@@ -322,18 +317,17 @@ describe("index", () => {
         auth.jwtBundle = JSON.parse(STORAGE_VALID_TOKEN).jwtBundle;
         expect(auth.isLoggedIn()).toBeTruthy();
 
-        const spy = jasmine.createSpy();
+        const spy = jest.fn();
         auth.on("logout", spy);
 
         expect(await auth.logout()).toBeTruthy();
         expect(auth.isLoggedIn()).toBeFalsy();
         expect(spy).toHaveBeenCalled();
       });
-
     });
 
     describe("#waitForLogin()", () => {
-      let body = JSON.parse(STORAGE_VALID_TOKEN);
+      const body = JSON.parse(STORAGE_VALID_TOKEN);
       body.jwtTokenBundle = body.jwtBundle;
       delete body.jwtBundle;
 
@@ -342,7 +336,7 @@ describe("index", () => {
         interceptors.splice(0, interceptors.length);
 
         const auth = new SkeletonKey({ intercept: false });
-        const spy = jasmine.createSpy();
+        const spy = jest.fn();
         auth.waitForLogin().then(spy);
 
         mock.post(urlAbsolute("/auth/login"), (req, res) => {
@@ -357,11 +351,9 @@ describe("index", () => {
         await auth.login("test.user", "sup3rs3cr3t");
         expect(spy).toHaveBeenCalled();
       });
-
     });
 
     describe("#refreshToken()", () => {
-
       it("should refresh a jwt using the refreshToken", async () => {
         localStorage.removeItem(skey);
         interceptors.splice(0, interceptors.length);
@@ -372,7 +364,7 @@ describe("index", () => {
         expect(auth.isLoggedIn()).toBeTruthy();
 
         mock.get(urlAbsolute("/auth/refresh"), (req, res) => {
-          expect(req.header('Authorization')).toEqual(`Bearer ${JWT_VALID_REFRESH}`);
+          expect(req.header("Authorization")).toEqual(`Bearer ${JWT_VALID_REFRESH}`);
           res.status(200);
           res.header("Content-Type", "text/plain");
           res.body(JWT_VALID_TOKEN);
@@ -380,7 +372,7 @@ describe("index", () => {
         });
 
         await auth.refreshToken();
-        expect(auth.jwtBundle.token).toEqual(JWT_VALID_TOKEN);
+        expect(auth.jwtBundle!.token).toEqual(JWT_VALID_TOKEN);
       });
 
       it("should fire a 'refresh' event", async () => {
@@ -393,18 +385,18 @@ describe("index", () => {
         expect(auth.isLoggedIn()).toBeTruthy();
 
         mock.get(urlAbsolute("/auth/refresh"), (req, res) => {
-          expect(req.header('Authorization')).toEqual(`Bearer ${JWT_VALID_REFRESH}`);
+          expect(req.header("Authorization")).toEqual(`Bearer ${JWT_VALID_REFRESH}`);
           res.status(200);
           res.header("Content-Type", "text/plain");
           res.body(JWT_VALID_TOKEN);
           return res;
         });
 
-        const spy = jasmine.createSpy();
+        const spy = jest.fn();
         auth.on("refresh", spy);
 
         await auth.refreshToken();
-        expect(auth.jwtBundle.token).toEqual(JWT_VALID_TOKEN);
+        expect(auth.jwtBundle!.token).toEqual(JWT_VALID_TOKEN);
         expect(spy).toHaveBeenCalled();
       });
 
@@ -417,7 +409,6 @@ describe("index", () => {
 
         expect(await auth.refreshToken()).toBeFalsy();
       });
-
     });
 
     describe("#refreshInfo()", () => {
@@ -428,12 +419,12 @@ describe("index", () => {
         const auth = new SkeletonKey({ intercept: false });
         auth.user = JSON.parse(USER_DATA);
         auth.jwtBundle = JSON.parse(STORAGE_VALID_TOKEN).jwtBundle;
-        auth.user.email = "hans.franz@rocketbase.io";
+        auth.user!.email = "hans.franz@rocketbase.io";
         expect(auth.isLoggedIn()).toBeTruthy();
-        expect(auth.userData.email).toEqual("hans.franz@rocketbase.io");
+        expect(auth.userData!.email).toEqual("hans.franz@rocketbase.io");
 
         mock.get(urlAbsolute("/auth/me"), (req, res) => {
-          expect(req.header('Authorization')).toEqual(`Bearer ${JWT_VALID_TOKEN}`);
+          expect(req.header("Authorization")).toEqual(`Bearer ${JWT_VALID_TOKEN}`);
           res.status(200);
           res.header("Content-Type", "application/json");
           res.body(USER_DATA);
@@ -441,7 +432,7 @@ describe("index", () => {
         });
 
         await auth.refreshInfo();
-        expect(auth.userData.email).toEqual("hans.peter@rocketbase.io");
+        expect(auth.userData!.email).toEqual("hans.peter@rocketbase.io");
       });
 
       it("should emit a 'refresh' event", async () => {
@@ -451,23 +442,23 @@ describe("index", () => {
         const auth = new SkeletonKey({ intercept: false });
         auth.user = JSON.parse(USER_DATA);
         auth.jwtBundle = JSON.parse(STORAGE_VALID_TOKEN).jwtBundle;
-        auth.user.email = "hans.franz@rocketbase.io";
+        auth.user!.email = "hans.franz@rocketbase.io";
         expect(auth.isLoggedIn()).toBeTruthy();
-        expect(auth.userData.email).toEqual("hans.franz@rocketbase.io");
+        expect(auth.userData!.email).toEqual("hans.franz@rocketbase.io");
 
         mock.get(urlAbsolute("/auth/me"), (req, res) => {
-          expect(req.header('Authorization')).toEqual(`Bearer ${JWT_VALID_TOKEN}`);
+          expect(req.header("Authorization")).toEqual(`Bearer ${JWT_VALID_TOKEN}`);
           res.status(200);
           res.header("Content-Type", "application/json");
           res.body(USER_DATA);
           return res;
         });
 
-        const spy = jasmine.createSpy();
+        const spy = jest.fn();
         auth.on("refresh", spy);
 
         await auth.refreshInfo();
-        expect(auth.userData.email).toEqual("hans.peter@rocketbase.io");
+        expect(auth.userData!.email).toEqual("hans.peter@rocketbase.io");
         expect(spy).toHaveBeenCalled();
       });
 
@@ -504,7 +495,7 @@ describe("index", () => {
         auth.user = JSON.parse(USER_DATA);
         auth.jwtBundle = JSON.parse(STORAGE_VALID_TOKEN).jwtBundle;
 
-        const spy = jasmine.createSpy();
+        const spy = jest.fn();
         auth.on("action", spy);
 
         const xhr = new XMLHttpRequest();
@@ -521,8 +512,8 @@ describe("index", () => {
         localStorage.removeItem(skey);
         interceptors.splice(0, interceptors.length);
 
-        fetchMock.get(urlAbsolute("/some/thing"), (url, opts) => {
-          expect(opts.headers["Authorization"]).toEqual(`Bearer ${JWT_VALID_TOKEN}`);
+        fetchMock(urlAbsolute("/some/thing"), (url, opts) => {
+          expect((opts!.headers! as any)["Authorization"]).toEqual(`Bearer ${JWT_VALID_TOKEN}`);
           return 200;
         });
 
@@ -530,7 +521,7 @@ describe("index", () => {
         auth.user = JSON.parse(USER_DATA);
         auth.jwtBundle = JSON.parse(STORAGE_VALID_TOKEN).jwtBundle;
 
-        await window.fetch(urlAbsolute("/some/thing"));
+        await fetch(urlAbsolute("/some/thing"));
       });
     });
   });

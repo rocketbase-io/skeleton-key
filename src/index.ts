@@ -1,9 +1,9 @@
-import {AuthClient} from "./client";
-import {installInterceptors, Interceptor, interceptors} from "./intercept";
-import {Eventing} from "./events";
-import {AppUserRead, JwtBundle} from "./model";
-import {decode, JsonWebToken, JsonWebTokenPayload} from "./jwt";
-import {only, urlMatches} from "./util";
+import { AuthClient } from "./client";
+import { installInterceptors, Interceptor, interceptors } from "./intercept";
+import { Eventing } from "./events";
+import { AppUserRead, JwtBundle } from "./model";
+import { decode, JsonWebToken } from "./jwt";
+import { only, urlMatches } from "./util";
 
 export * from "./model";
 export * from "./client";
@@ -41,9 +41,9 @@ export const SkeletonKeyDefaults: Readonly<SkeletonKeyOptions> = {
 
 const INTERVAL_TOLERANCE = 10000; // 10s
 
-export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object> extends Eventing<"login" | "logout" | "action" | "refresh">()
+export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object>
+  extends Eventing<"login" | "logout" | "action" | "refresh">()
   implements Interceptor, Required<SkeletonKeyOptions> {
-
   public url!: string;
   public client!: AuthClient;
   public domains!: string[];
@@ -59,9 +59,8 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object> extends Eventi
 
   constructor(opts: SkeletonKeyOptions = {}) {
     super();
-    Object.assign(this, {...SkeletonKeyDefaults, ...opts});
-    if (!this!.client)
-      this.client = new AuthClient(this!.url!);
+    Object.assign(this, { ...SkeletonKeyDefaults, ...opts });
+    if (!this!.client) this.client = new AuthClient(this!.url!);
     this.load();
     this.bindMethods();
     this.installListeners();
@@ -87,11 +86,9 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object> extends Eventi
   public async installInterval() {
     if (this.renewType !== "interval") return;
     if (!this.isLoggedIn()) return;
-    if (this.needsRefresh())
-      await this.refreshToken();
-    const ms = +new Date(this.tokenData.payload.exp) - +new Date();
-    if (ms < INTERVAL_TOLERANCE * 2 || this.needsRefresh())
-      await this.refreshToken();
+    if (this.needsRefresh()) await this.refreshToken();
+    const ms = +new Date(this.tokenData.payload.exp! * JWT_DATE_TO_JS_DATE_RATIO) - +new Date();
+    if (ms < INTERVAL_TOLERANCE * 2) await this.refreshToken();
     setTimeout(this.installInterval, ms - INTERVAL_TOLERANCE);
   }
 
@@ -101,7 +98,7 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object> extends Eventi
 
   public async login(username: string, password: string) {
     if (this.isLoggedIn()) await this.logout();
-    const {jwtTokenBundle, user} = await this.client.login({username, password});
+    const { jwtTokenBundle, user } = await this.client.login({ username, password });
     this.jwtBundle = jwtTokenBundle as JwtBundle & TOKEN_DATA;
     this.user = user as AppUserRead & USER_DATA;
     this.emitSync("login", user);
@@ -129,18 +126,17 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object> extends Eventi
       this.emitSync("refresh", "token", this.jwtBundle);
       this.persist();
     } catch (ex) {
-      const {response} = ex;
-      const {status} = response;
+      const { response } = ex;
+      const { status } = response;
       // Forbidden / Unauthorized
-      if (status && status === 401 || status === 403)
-        await this.logout();
+      if ((status && status === 401) || status === 403) await this.logout();
     }
     return this.jwtBundle;
   }
 
   public async refreshInfo() {
     if (!this.isLoggedIn()) return false;
-    this.user = await this.client.me(this.jwtBundle!.token) as AppUserRead & USER_DATA;
+    this.user = (await this.client.me(this.jwtBundle!.token)) as AppUserRead & USER_DATA;
     this.emitSync("refresh", "user", this.user);
     this.persist();
     return this.user;
@@ -168,12 +164,9 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object> extends Eventi
     return decode(this.jwtBundle!.refreshToken);
   }
 
-
   public persist() {
-    if (this.isLoggedIn())
-      localStorage.setItem(this.storageKey, JSON.stringify(only(this, "jwtBundle", "user")));
-    else
-      localStorage.removeItem(this.storageKey);
+    if (this.isLoggedIn()) localStorage.setItem(this.storageKey, JSON.stringify(only(this, "jwtBundle", "user")));
+    else localStorage.removeItem(this.storageKey);
   }
 
   public load() {
@@ -196,17 +189,16 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object> extends Eventi
   public async onAction(type: string, url: string) {
     // Prevent infinite renew loop
     if (!url || urlMatches(url, this.renewUrl)) return;
-    if (this.renewType === "action" && this.needsRefresh() && this.canRefresh())
-      await this.refreshToken();
+    if (this.renewType === "action" && this.needsRefresh() && this.canRefresh()) await this.refreshToken();
   }
 
   private get authHeaderValue() {
     return `${this.authPrefix}${this.jwtBundle!.token!}${this.authSuffix}`;
   }
 
-
   public onFetch(ctx: any, input: Request | string, init?: RequestInit): any {
     this.emitSync("action", "fetch", typeof input === "string" ? input : input.url, input, init);
+    // eslint-disable-next-line prefer-rest-params
     if (!this.jwtBundle) return arguments;
     if (!init) init = {};
     if (!init.headers) init.headers = {};
@@ -217,6 +209,7 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object> extends Eventi
   public onXhrSend(xhr: XMLHttpRequest, body: any): any {
     this.emitSync("action", "send", (xhr as any).__openArgs[1], xhr, body);
     this.xhrSetAuthHeader(xhr);
+    // eslint-disable-next-line prefer-rest-params
     return arguments;
   }
 
@@ -225,10 +218,3 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object> extends Eventi
       xhr.setRequestHeader(this.authHeader, this.authHeaderValue);
   }
 }
-
-
-
-
-
-
-

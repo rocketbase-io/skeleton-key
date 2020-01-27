@@ -1,10 +1,7 @@
-import "jasmine";
-import {Eventing} from "../src";
+import { Eventing } from "../src";
 
 describe("events", () => {
-
   describe("#Eventing()", () => {
-
     it("can be mixed into classes", () => {
       class Base {}
       class Cls extends Eventing<string>(Base) {}
@@ -32,12 +29,12 @@ describe("events", () => {
       const spy = jasmine.createSpy();
 
       cls.on("event", spy);
-      cls.emitSync("event", {foo: "bar"});
+      cls.emitSync("event", { foo: "bar" });
 
       expect(spy).toHaveBeenCalledTimes(1);
-      expect(spy).toHaveBeenCalledWith({foo: "bar"});
+      expect(spy).toHaveBeenCalledWith({ foo: "bar" });
 
-      cls.emitSync("event", {foo: "bar"});
+      cls.emitSync("event", { foo: "bar" });
 
       expect(spy).toHaveBeenCalledTimes(2);
     });
@@ -50,12 +47,12 @@ describe("events", () => {
       const spy = jasmine.createSpy();
 
       cls.once("event", spy);
-      cls.emitSync("event", {foo: "bar"});
+      cls.emitSync("event", { foo: "bar" });
 
       expect(spy).toHaveBeenCalledTimes(1);
-      expect(spy).toHaveBeenCalledWith({foo: "bar"});
+      expect(spy).toHaveBeenCalledWith({ foo: "bar" });
 
-      cls.emitSync("event", {foo: "bar"});
+      cls.emitSync("event", { foo: "bar" });
 
       expect(spy).toHaveBeenCalledTimes(1);
     });
@@ -68,13 +65,13 @@ describe("events", () => {
       const spy = jasmine.createSpy();
 
       cls.on("event", spy);
-      cls.emitSync("event", {foo: "bar"});
+      cls.emitSync("event", { foo: "bar" });
 
       expect(spy).toHaveBeenCalledTimes(1);
-      expect(spy).toHaveBeenCalledWith({foo: "bar"});
+      expect(spy).toHaveBeenCalledWith({ foo: "bar" });
 
       cls.off("event", spy);
-      cls.emitSync("event", {foo: "bar"});
+      cls.emitSync("event", { foo: "bar" });
 
       expect(spy).toHaveBeenCalledTimes(1);
     });
@@ -87,13 +84,13 @@ describe("events", () => {
       const spy = jasmine.createSpy();
 
       cls.on("event", spy);
-      cls.emitSync("event", {foo: "bar"});
+      cls.emitSync("event", { foo: "bar" });
 
       expect(spy).toHaveBeenCalledTimes(1);
-      expect(spy).toHaveBeenCalledWith({foo: "bar"});
+      expect(spy).toHaveBeenCalledWith({ foo: "bar" });
 
       cls.off("event");
-      cls.emitSync("event", {foo: "bar"});
+      cls.emitSync("event", { foo: "bar" });
 
       expect(spy).toHaveBeenCalledTimes(1);
     });
@@ -108,7 +105,7 @@ describe("events", () => {
       cls.on("event", h1);
       cls.on("event", h2);
 
-      expect(cls.emitSync("event", {foo: "bar"})).toEqual([5, "foobar"]);
+      expect(cls.emitSync("event", { foo: "bar" })).toEqual([5, "foobar"]);
     });
 
     it("should return handler return values as a promise on emit", async () => {
@@ -119,15 +116,12 @@ describe("events", () => {
       const h1 = async () => 5;
       const h2 = async () => "foobar";
 
-      expect(await cls.emit("event", {foo: "bar"})).toEqual([]);
+      expect(await cls.emit("event", { foo: "bar" })).toEqual([]);
 
       cls.on("event", h1);
       cls.on("event", h2);
 
-      expect(await cls.emit("event", {foo: "bar"})).toEqual([5, "foobar"]);
+      expect(await cls.emit("event", { foo: "bar" })).toEqual([5, "foobar"]);
     });
-
-
   });
-
 });

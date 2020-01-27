@@ -26,10 +26,10 @@ checks:
       threshold: 4
   similar-code:
     config:
-      threshold: 80 # language-specific defaults. an override will affect all languages.
+      threshold: 100
   identical-code:
     config:
-      threshold: 50 # language-specific defaults. an override will affect all languages.
+      threshold: 75
 plugins:
   fixme:
     enabled: true
@@ -43,18 +43,17 @@ plugins:
     enabled: true
   nodesecurity:
     enabled: true
-  tslint:
-    enabled: true
-    config: tslint.json
 
 exclude_patterns:
-  - "config/"
-  - "db/"
-  - "dist/"
-  - "node_modules/"
-  - "test/"
+  - "**/dist/"
+  - "**/node_modules/"
+  - "**/test/"
   - "**/*.d.ts"
   - ".mailmap"
   - "**/*.md"
   - "**/*polyfill*"
   - "*conf*"
+  - "**/_*"
+  - "example/"
+  - "gulpfile*"
+  - "build/"

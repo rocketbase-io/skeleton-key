@@ -1,4 +1,3 @@
-
 export function isInDomain(domains: string[], url: string) {
   if (!domains || !domains.length) return false;
   if (domains.indexOf("*") !== -1) return true;

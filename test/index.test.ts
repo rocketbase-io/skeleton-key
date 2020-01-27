@@ -29,6 +29,7 @@ describe("index", () => {
         expect(interceptors.length).toEqual(1);
         expect(interceptors[0]).toEqual(key);
       });
+
       it("should not register interceptors if disabled", () => {
         interceptors.splice(0, interceptors.length);
         new SkeletonKey({ intercept: false });
@@ -170,6 +171,7 @@ describe("index", () => {
         const auth = new SkeletonKey({ intercept: false });
         expect(auth.isLoggedIn()).toBeFalsy();
       });
+
       it("should be true for valid user and tokens", () => {
         localStorage.removeItem(skey);
         interceptors.splice(0, interceptors.length);
@@ -178,6 +180,7 @@ describe("index", () => {
         auth.jwtBundle = JSON.parse(STORAGE_VALID_TOKEN).jwtBundle;
         expect(auth.isLoggedIn()).toBeTruthy();
       });
+
       it("should be true for expired token if refresh token isn't expired", () => {
         localStorage.removeItem(skey);
         interceptors.splice(0, interceptors.length);
@@ -186,6 +189,7 @@ describe("index", () => {
         auth.jwtBundle = JSON.parse(STORAGE_EXPIRED_TOKEN).jwtBundle;
         expect(auth.isLoggedIn()).toBeTruthy();
       });
+
       it("should be false for expired token and refresh token", () => {
         localStorage.removeItem(skey);
         interceptors.splice(0, interceptors.length);
@@ -207,6 +211,7 @@ describe("index", () => {
         await auth.onAction("send", (undefined as any) as string);
         expect(auth.refreshToken).not.toHaveBeenCalled();
       });
+
       it("should not do anything if the url matches the refresh url", async () => {
         localStorage.removeItem(skey);
         interceptors.splice(0, interceptors.length);
@@ -217,6 +222,7 @@ describe("index", () => {
         await auth.onAction("send", "./auth/refresh");
         expect(auth.refreshToken).not.toHaveBeenCalled();
       });
+
       it("should try to refresh the token if the token is expired and the refreshToken is valid", async () => {
         localStorage.removeItem(skey);
         interceptors.splice(0, interceptors.length);
@@ -227,6 +233,7 @@ describe("index", () => {
         await auth.onAction("send", "/some/path");
         expect(auth.refreshToken).toHaveBeenCalled();
       });
+
       it("should not try to refresh the token if the token is valid", async () => {
         localStorage.removeItem(skey);
         interceptors.splice(0, interceptors.length);
@@ -237,6 +244,7 @@ describe("index", () => {
         await auth.onAction("send", "/some/path");
         expect(auth.refreshToken).not.toHaveBeenCalled();
       });
+
       it("should not try to refresh the token if the refresh token is expired", async () => {
         localStorage.removeItem(skey);
         interceptors.splice(0, interceptors.length);
@@ -516,6 +524,7 @@ describe("index", () => {
 
         expect((xhr as any).__headers["Authorization"]).toEqual(`Bearer ${JWT_VALID_TOKEN}`);
       });
+
       it("should fire an 'action' event on send", async () => {
         localStorage.removeItem(skey);
         interceptors.splice(0, interceptors.length);

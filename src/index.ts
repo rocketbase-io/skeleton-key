@@ -130,33 +130,33 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object>
   }
 
   public async refreshToken() {
-    if (!this.jwtBundle) return false;
-    try {
-      this.jwtBundle!.token = await this.client.refresh(this.jwtBundle!.refreshToken);
-      this.emitSync("refresh", "token", this.jwtBundle);
-      this.persist();
-    } catch (ex) {
-      const { response } = ex;
-      const { status } = response;
-      // Forbidden / Unauthorized / Bad Request
-      if (status && [400, 401, 403].indexOf(status) !== -1) await this.logout();
-    }
-    return this.jwtBundle;
+    return this.refreshSection("token");
   }
 
   public async refreshInfo() {
-    if (!this.isLoggedIn()) return false;
+    return this.refreshSection("user");
+  }
+
+  public async refreshSection(section: "user" | "token") {
+    if (section === "user" ? !this.isLoggedIn() : !this.jwtBundle) return false;
     try {
-      this.user = (await this.client.me(this.jwtBundle!.token)) as AppUserRead & USER_DATA;
-      this.emitSync("refresh", "user", this.user);
-      this.persist();
-    } catch (ex) {
-      const { response } = ex;
-      const { status } = response;
+      if (section === "user") {
+        this.emitSync(
+          "refresh",
+          section,
+          (this.user = (await this.client.me(this.jwtBundle!.token)) as AppUserRead & USER_DATA)
+        );
+        this.persist();
+      } else {
+        this.jwtBundle!.token = await this.client.refresh(this.jwtBundle!.refreshToken);
+        this.emitSync("refresh", section, this.jwtBundle);
+        this.persist();
+      }
+    } catch ({ response: { status } }) {
       // Forbidden / Unauthorized / Bad Request
       if (status && [400, 401, 403].indexOf(status) !== -1) await this.logout();
     }
-    return this.user;
+    return section === "user" ? this.user : this.jwtBundle;
   }
 
   public needsRefresh() {

@@ -46,7 +46,7 @@ describe("intercept", () => {
     });
 
     describe("#xmlHttpRequestSendMiddleware()", () => {
-      it("should call relevant interceptors", () => {
+      it("should call relevant interceptors", async () => {
         installInterceptors();
         const spy = jest.fn();
         interceptors.splice(0, interceptors.length);
@@ -56,7 +56,7 @@ describe("intercept", () => {
         } as any);
         const request = new XMLHttpRequest();
         request.open("GET", "http://example.com");
-        request.send("test");
+        await request.send("test");
         expect(spy).toHaveBeenCalledWith(request, "test");
         request.abort();
       });

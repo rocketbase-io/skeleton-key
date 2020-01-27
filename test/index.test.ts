@@ -502,7 +502,7 @@ describe("index", () => {
     });
 
     describe("#onXhrSend()", () => {
-      it("should set an auth header on an xhr object", () => {
+      it("should set an auth header on an xhr object", async () => {
         localStorage.removeItem(skey);
         interceptors.splice(0, interceptors.length);
 
@@ -512,12 +512,12 @@ describe("index", () => {
 
         const xhr = new XMLHttpRequest();
         xhr.open("GET", urlAbsolute("/LOS"));
-        xhr.send("SOMETHING");
+        await xhr.send("SOMETHING");
         xhr.abort();
 
         expect((xhr as any).__headers["Authorization"]).toEqual(`Bearer ${JWT_VALID_TOKEN}`);
       });
-      it("should fire an 'action' event on send", () => {
+      it("should fire an 'action' event on send", async () => {
         localStorage.removeItem(skey);
         interceptors.splice(0, interceptors.length);
 
@@ -530,7 +530,7 @@ describe("index", () => {
 
         const xhr = new XMLHttpRequest();
         xhr.open("GET", urlAbsolute("/LOS"));
-        xhr.send("SOMETHING");
+        await xhr.send("SOMETHING");
         xhr.abort();
 
         expect(spy).toHaveBeenCalled();

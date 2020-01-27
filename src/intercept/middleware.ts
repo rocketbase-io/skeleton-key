@@ -16,7 +16,7 @@ export function xmlHttpRequestOpenMiddleware(
 
 export function xmlHttpRequestSendMiddleware(this: XMLHttpRequest, body: any) {
   const [, url] = this.__openArgs;
-  return executeRelevantInterceptors(url, "onXhrSend", this, arguments);
+  return executeRelevantInterceptors(url, "onXhrSend", this, arguments, true);
 }
 
 export function fetchMiddleware(this: any, info: RequestInfo, init?: RequestInit) {
@@ -34,13 +34,20 @@ export interface XMLHttpRequest {
   __openArgs: IArguments;
 }
 
-export function executeRelevantInterceptors(url: string, handler: string, context: any, args: any) {
+export function executeRelevantInterceptors(url: string, handler: string, context: any, args: any, async?: boolean) {
   const relevant = interceptors.filter(itor => isInDomain(itor.domains, url));
   if (!relevant.length) return args;
-  return relevant
-    .map(interceptor => (interceptor as any)[handler])
-    .filter(handler => handler)
-    .reduce((args, handler) => skipFirst(handler.apply(context, [context, ...args])) || args, args as any);
+  const methods = relevant.map(interceptor => (interceptor as any)[handler]).filter(handler => handler);
+  if (async)
+    return methods.reduce(
+      async (args, handler) => skipFirst((await handler.apply(context, [context, ...(await args)])) || (await args)),
+      args as any
+    );
+  else
+    return methods.reduce(
+      (args, handler) => skipFirst(handler.apply(context, [context, ...args])) || args,
+      args as any
+    );
 }
 
 export function skipFirst(array: any[]) {

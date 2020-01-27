@@ -1,3 +1,11 @@
+# [0.6.0](https://github.com/rocketbase-io/skeleton-key/compare/v0.5.0...v0.6.0) (2020-01-27)
+
+
+### Features
+
+* add ensureInitialized method ([1133f11](https://github.com/rocketbase-io/skeleton-key/commit/1133f11ba6d38c07d04e6cef343282ab822a61bc))
+* add ensureInitialized method ([ae5f3e1](https://github.com/rocketbase-io/skeleton-key/commit/ae5f3e166fe8f7e386518d6c0e45cd9530ad4783))
+
 # [0.5.0](https://github.com/rocketbase-io/skeleton-key/compare/v0.4.3...v0.5.0) (2020-01-27)
 
 

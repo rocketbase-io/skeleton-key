@@ -59,6 +59,7 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object>
 
   public user?: AppUserRead & USER_DATA;
   public jwtBundle?: JwtBundle;
+  public initialized = false;
 
   constructor(opts: SkeletonKeyOptions = {}) {
     super();
@@ -81,12 +82,14 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object>
     this.onAction = this.onAction.bind(this);
     this.onFetch = this.onFetch.bind(this);
     this.onXhrSend = this.onXhrSend.bind(this);
+    this.onInitialize = this.onInitialize.bind(this);
     this.installInterval = this.installInterval.bind(this);
   }
 
   public installListeners() {
     this.on("action", this.onAction);
     this.on("login", this.installInterval);
+    this.on("initialized", this.onInitialize);
     if (this.intercept) {
       interceptors.push(this);
       installInterceptors();
@@ -127,6 +130,11 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object>
   public async waitForLogin() {
     if (this.isLoggedIn()) return this.user!;
     return this.waitForEvent("login");
+  }
+
+  public async ensureInitialized() {
+    if (this.initialized) return this;
+    return this.waitForEvent("initialized");
   }
 
   public async refreshToken() {
@@ -207,6 +215,10 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object>
     // Prevent infinite renew loop
     if (!url || urlMatches(url, this.renewUrl)) return;
     if (this.renewType === "action" && this.needsRefresh() && this.canRefresh()) await this.refreshToken();
+  }
+
+  public async onInitialize() {
+    this.initialized = true;
   }
 
   private get authHeaderValue() {

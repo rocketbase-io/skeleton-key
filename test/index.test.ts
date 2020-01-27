@@ -12,6 +12,8 @@ import {
   USER_DATA
 } from "./mock/localStorage";
 
+jest.useFakeTimers();
+
 describe("index", () => {
   beforeEach(() => mock.setup());
   afterEach(() => mock.teardown());
@@ -103,13 +105,9 @@ describe("index", () => {
         localStorage.removeItem(skey);
         interceptors.splice(0, interceptors.length);
 
-        const orig = window.setTimeout;
-        const spy = (window.setTimeout = jest.fn() as any);
-
         new SkeletonKey({ intercept: false, renewType: "interval" });
 
-        window.setTimeout = orig;
-        expect(spy).not.toHaveBeenCalled();
+        expect(setTimeout).not.toHaveBeenCalled();
       });
 
       it("should delete token data if the token is valid but incorrect", async () => {
@@ -133,21 +131,22 @@ describe("index", () => {
         expect(localStorage.getItem(skey)).toBeFalsy();
       });
 
-      xit("should try to refresh the token if it needs to be refreshed", async () => {
+      it("should try to refresh the token if it needs to be refreshed", async () => {
         localStorage.setItem(skey, STORAGE_EXPIRED_TOKEN);
         interceptors.splice(0, interceptors.length);
 
-        const _setTimeout = window.setTimeout;
-        const spy1 = (window.setTimeout = jest.fn() as any);
+        mock.get(urlAbsolute("/auth/refresh"), (req, res) => {
+          expect(req.header("Authorization")).toEqual(`Bearer ${JWT_VALID_REFRESH}`);
+          res.status(200);
+          res.header("Content-Type", "text/plain");
+          res.body(JWT_VALID_TOKEN);
+          return res;
+        });
 
-        const auth = new SkeletonKey({ intercept: false, renewType: "never" });
-        const spy2 = (auth.refreshToken = jest.fn());
+        const auth = new SkeletonKey({ intercept: false, renewType: "interval", initialLoginCheck: false });
+        await auth.waitForEvent("initialized");
 
-        await auth.emit("login");
-        global.setTimeout = _setTimeout;
-
-        expect(spy1).toHaveBeenCalledTimes(1);
-        expect(spy2).toHaveBeenCalledTimes(2);
+        expect(auth.jwtBundle!.token).toEqual(JWT_VALID_TOKEN);
       });
     });
 

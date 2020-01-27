@@ -73,7 +73,7 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object>
     this.bindMethods();
     this.installListeners();
     if (this.isLoggedIn() && this.initialLoginCheck) await this.refreshInfo();
-    this.installInterval();
+    await this.installInterval();
     this.emit("initialized", this);
   }
 

@@ -38,17 +38,38 @@ describe("index", () => {
       it("should load data from localStorage if it exists", () => {
         localStorage.setItem(skey, STORAGE_VALID_TOKEN);
         interceptors.splice(0, interceptors.length);
-        const auth = new SkeletonKey({ intercept: false });
+        const auth = new SkeletonKey({ intercept: false, initialLoginCheck: false });
         expect(auth.jwtBundle!.token).toEqual(JWT_VALID_TOKEN);
         expect(auth.jwtBundle!.refreshToken).toEqual(JWT_VALID_REFRESH);
         expect(auth.userData).toEqual(JSON.parse(USER_DATA));
         expect(auth.isLoggedIn()).toBeTruthy();
       });
+
       it("should remove invalid data from localStorage", () => {
         localStorage.setItem(skey, STORAGE_VALID_TOKEN.substr(1));
         interceptors.splice(0, interceptors.length);
         const auth = new SkeletonKey({ intercept: false });
         expect(auth.isLoggedIn()).toBeFalsy();
+        expect(localStorage.getItem(skey)).toBeFalsy();
+      });
+
+      it("should automatically delete token data if initialLoginCheck is true", async () => {
+        localStorage.setItem(skey, STORAGE_VALID_TOKEN);
+        interceptors.splice(0, interceptors.length);
+
+        mock.get(urlAbsolute("/auth/me"), (req, res) => {
+          res.status(401);
+          res.header("Content-Type", "application/json");
+          res.body("401 Unauthorized");
+          return res;
+        });
+
+        const auth = new SkeletonKey({ intercept: false, renewType: "never" });
+        await auth.waitForEvent("initialized");
+
+        expect(auth.isLoggedIn()).toBeFalsy();
+        expect(auth.jwtBundle).toBeFalsy();
+        expect(auth.user).toBeFalsy();
         expect(localStorage.getItem(skey)).toBeFalsy();
       });
     });
@@ -60,8 +81,17 @@ describe("index", () => {
         const orig = SkeletonKey.prototype.installInterval;
         const spy = jest.fn();
 
+        mock.get(urlAbsolute("/auth/me"), (req, res) => {
+          expect(req.header("Authorization")).toEqual(`Bearer ${JWT_VALID_TOKEN}`);
+          res.status(200);
+          res.header("Content-Type", "application/json");
+          res.body(USER_DATA);
+          return res;
+        });
+
         SkeletonKey.prototype.installInterval = spy;
         const auth = new SkeletonKey({ intercept: false, renewType: "interval" });
+        await auth.waitForEvent("initialized");
         SkeletonKey.prototype.installInterval = orig;
 
         expect(spy).toHaveBeenCalledTimes(1);
@@ -93,7 +123,7 @@ describe("index", () => {
           return res;
         });
 
-        const auth = new SkeletonKey({ intercept: false, renewType: "never" });
+        const auth = new SkeletonKey({ intercept: false, renewType: "never", initialLoginCheck: false });
 
         await auth.refreshToken();
 
@@ -472,7 +502,7 @@ describe("index", () => {
     });
 
     describe("#onXhrSend()", () => {
-      it("should set an auth header on an xhr object", () => {
+      it("should set an auth header on an xhr object", async () => {
         localStorage.removeItem(skey);
         interceptors.splice(0, interceptors.length);
 
@@ -482,12 +512,12 @@ describe("index", () => {
 
         const xhr = new XMLHttpRequest();
         xhr.open("GET", urlAbsolute("/LOS"));
-        xhr.send("SOMETHING");
+        await xhr.send("SOMETHING");
         xhr.abort();
 
         expect((xhr as any).__headers["Authorization"]).toEqual(`Bearer ${JWT_VALID_TOKEN}`);
       });
-      it("should fire an 'action' event on send", () => {
+      it("should fire an 'action' event on send", async () => {
         localStorage.removeItem(skey);
         interceptors.splice(0, interceptors.length);
 
@@ -500,7 +530,7 @@ describe("index", () => {
 
         const xhr = new XMLHttpRequest();
         xhr.open("GET", urlAbsolute("/LOS"));
-        xhr.send("SOMETHING");
+        await xhr.send("SOMETHING");
         xhr.abort();
 
         expect(spy).toHaveBeenCalled();

@@ -45,11 +45,27 @@ describe("intercept", () => {
         });
 
         interceptFunction(obj, "toBeIntercepted", spy);
-
         const result = obj.toBeIntercepted("do", "the", "thing");
 
-        expect(spy).toHaveBeenCalledWith("do", "the", "thing");
         expect(result).toBeUndefined();
+        expect(spy).toHaveBeenCalledWith("do", "the", "thing");
+      });
+
+      it("should cancel async execution if the interceptor throws an exception", async () => {
+        const obj = {
+          toBeIntercepted(...args: any[]) {
+            return args;
+          }
+        };
+        const spy = jest.fn(function() {
+          throw new Error("The Error");
+        });
+
+        interceptFunction(obj, "toBeIntercepted", spy, true);
+        const result = await obj.toBeIntercepted("do", "the", "thing");
+
+        expect(result).toBeUndefined();
+        expect(spy).toHaveBeenCalledWith("do", "the", "thing");
       });
 
       it("should pass the returned arguments of the middleware to the original function", () => {

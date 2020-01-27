@@ -6,6 +6,7 @@ export interface IEventing<K> {
   off(event: K, callback?: (...args: any[]) => void): this;
   emit(event: K, ...data: any[]): Promise<any[]>;
   emitSync(event: K, ...data: any[]): any[];
+  waitForEvent(event: K): Promise<any[]>;
 }
 
 const EVENTS = Symbol("Events");
@@ -21,6 +22,7 @@ export function Eventing<K extends string = string, T extends {} = {}>(
   Cls.prototype.off = off;
   Cls.prototype.emit = emit;
   Cls.prototype.emitSync = emitSync;
+  Cls.prototype.waitForEvent = waitForEvent;
 
   return Cls as Constructor<T> & Constructor<IEventing<K>>;
 }
@@ -63,4 +65,8 @@ export function emitSync<K, R extends IEventing<K>>(this: R, event: K, ...data: 
   // @ts-ignore
   if (this[EVENTS] && this[EVENTS][event]) return this[EVENTS][event].map(cb => cb(...data));
   return [];
+}
+
+export function waitForEvent<K, R extends IEventing<K>>(this: R, event: K): Promise<any[]> {
+  return new Promise(resolve => this.once(event, resolve));
 }

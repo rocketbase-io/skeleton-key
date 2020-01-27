@@ -68,7 +68,7 @@ describe("index", () => {
         });
 
         const auth = new SkeletonKey({ intercept: false, renewType: "never" });
-        await auth.waitForEvent("initialized");
+        await auth.ensureInitialized();
 
         expect(auth.isLoggedIn()).toBeFalsy();
         expect(auth.jwtBundle).toBeFalsy();

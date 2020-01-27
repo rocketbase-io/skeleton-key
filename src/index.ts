@@ -128,8 +128,8 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object>
     } catch (ex) {
       const { response } = ex;
       const { status } = response;
-      // Forbidden / Unauthorized
-      if ((status && status === 401) || status === 403) await this.logout();
+      // Forbidden / Unauthorized / Bad Request
+      if (status && [400, 401, 403].indexOf(status) !== -1) await this.logout();
     }
     return this.jwtBundle;
   }

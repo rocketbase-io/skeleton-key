@@ -1,3 +1,11 @@
+## [0.6.1](https://github.com/rocketbase-io/skeleton-key/compare/v0.6.0...v0.6.1) (2020-01-28)
+
+
+### Bug Fixes
+
+* refresh once on 401 ([f376ca2](https://github.com/rocketbase-io/skeleton-key/commit/f376ca2d071d0f30974a34927dfe8c4593583ab2))
+* refresh once on 401 ([647c547](https://github.com/rocketbase-io/skeleton-key/commit/647c547ffc363fd7e4c68b24c49b7e1a47277e3f))
+
 # [0.6.0](https://github.com/rocketbase-io/skeleton-key/compare/v0.5.0...v0.6.0) (2020-01-27)
 
 

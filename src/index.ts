@@ -4,6 +4,7 @@ import { Eventing } from "./events";
 import { AppUserRead, JwtBundle } from "./model";
 import { decode, JsonWebToken } from "./jwt";
 import { only, urlMatches } from "./util";
+import {Deferred, deferred} from "@/deferred";
 
 export * from "./model";
 export * from "./client";
@@ -60,6 +61,7 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object>
   public user?: AppUserRead & USER_DATA;
   public jwtBundle?: JwtBundle;
   public initialized = false;
+  public refreshing?: Deferred<any>;
 
   constructor(opts: SkeletonKeyOptions = {}) {
     super();
@@ -138,33 +140,35 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object>
   }
 
   public async refreshToken() {
-    return this.refreshSection("token");
+    if (!this.jwtBundle) return false;
+    if (this.refreshing) return this.refreshing;
+    this.refreshing = deferred();
+    try {
+      this.jwtBundle!.token = await this.client.refresh(this.jwtBundle!.refreshToken);
+      this.emitSync("refresh", "token", this.jwtBundle);
+      this.refreshing.resolve(this.jwtBundle);
+    } catch ({ response: { status } }) {
+      await this.handleStatus(status);
+      this.refreshing.reject(status);
+    }
+    this.refreshing = undefined;
+    return this.jwtBundle;
   }
 
   public async refreshInfo() {
-    return this.refreshSection("user");
+    if (!this.isLoggedIn()) return false;
+    try {
+      this.user = (await this.client.me(this.jwtBundle!.token)) as AppUserRead & USER_DATA;
+      this.emitSync("refresh", "user", this.user);
+      this.persist();
+    } catch ({ response: { status } }) {
+      this.handleStatus(status);
+    }
+    return this.user;
   }
 
-  public async refreshSection(section: "user" | "token") {
-    if (section === "user" ? !this.isLoggedIn() : !this.jwtBundle) return false;
-    try {
-      if (section === "user") {
-        this.emitSync(
-          "refresh",
-          section,
-          (this.user = (await this.client.me(this.jwtBundle!.token)) as AppUserRead & USER_DATA)
-        );
-        this.persist();
-      } else {
-        this.jwtBundle!.token = await this.client.refresh(this.jwtBundle!.refreshToken);
-        this.emitSync("refresh", section, this.jwtBundle);
-        this.persist();
-      }
-    } catch ({ response: { status } }) {
-      // Forbidden / Unauthorized / Bad Request
-      if (status && [400, 401, 403].indexOf(status) !== -1) await this.logout();
-    }
-    return section === "user" ? this.user : this.jwtBundle;
+  public async handleStatus(status: number) {
+    if (status && [400, 401, 403].indexOf(status) !== -1) await this.logout();
   }
 
   public needsRefresh() {
@@ -214,7 +218,8 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object>
   public async onAction(type: string, url: string) {
     // Prevent infinite renew loop
     if (!url || urlMatches(url, this.renewUrl)) return;
-    if (this.renewType === "action" && this.needsRefresh() && this.canRefresh()) await this.refreshToken();
+    if (this.renewType === "action" && this.needsRefresh() && this.canRefresh())
+      await this.refreshToken();
   }
 
   public async onInitialize() {
@@ -235,8 +240,8 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object>
     return [ctx, input, init];
   }
 
-  public onXhrSend(xhr: XMLHttpRequest, body: any): any {
-    this.emitSync("action", "send", (xhr as any).__openArgs[1], xhr, body);
+  public async onXhrSend(xhr: XMLHttpRequest, body: any): Promise<any> {
+    await this.emit("action", "send", (xhr as any).__openArgs[1], xhr, body);
     this.xhrSetAuthHeader(xhr);
     // eslint-disable-next-line prefer-rest-params
     return arguments;

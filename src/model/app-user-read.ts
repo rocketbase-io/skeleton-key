@@ -1,13 +1,13 @@
 export interface AppUserRead {
-  avatar: string;
-  created: string;
-  email: string;
-  enabled: boolean;
-  firstName: string;
   id: string;
-  keyValues: Record<string, string>;
-  lastLogin: string;
-  lastName: string;
-  roles: string[];
   username: string;
+  firstName?: string;
+  lastName?: string;
+  email: string;
+  avatar?: string;
+  roles: string[];
+  keyValues?: Record<string, string>;
+  enabled: boolean;
+  created: string;
+  lastLogin?: string
 }

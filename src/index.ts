@@ -157,6 +157,7 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object>
 
   public async refreshInfo() {
     if (!this.isLoggedIn()) return false;
+    if (this.needsRefresh()) await this.refreshToken();
     try {
       this.user = (await this.client.me(this.jwtBundle!.token)) as AppUserRead & USER_DATA;
       this.emitSync("refresh", "user", this.user);
@@ -167,8 +168,8 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object>
     return this.user;
   }
 
-  public async handleStatus(status: number) {
-    if (status && [400, 401, 403].indexOf(status) !== -1) await this.logout();
+  public async handleStatus(status: number, shouldLogout = true) {
+    if (status && [400, 401, 403].indexOf(status) !== -1 && shouldLogout) await this.logout();
   }
 
   public needsRefresh() {

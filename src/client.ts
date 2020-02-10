@@ -1,7 +1,9 @@
 /* istanbul ignore file */
 import axios, { AxiosInstance } from "axios";
 import {
+  AppInviteRead,
   AppUserRead,
+  ConfirmInviteRequest,
   ForgotPasswordRequest,
   JwtBundle,
   LoginRequest,
@@ -58,31 +60,43 @@ export class AuthClient {
   }
 
   public async register(body: RegistrationRequest) {
-    return this.api.post<void>("/auth/register", JSON.stringify(body)).then(r => r.status);
+    return this.api.post<AppUserRead>("/auth/register", JSON.stringify(body)).then(r => r.data);
   }
 
   public async verify(verification: string) {
-    return this.api.get<JwtBundle>(`/auth/verify?verification=${verification}`).then(r => r.status);
+    return this.api.get<JwtBundle>(`/auth/verify?verification=${verification}`).then(r => r.data);
   }
 
   public async validateEmail(email: string) {
-    return this.api.post<ValidateEmailResponse>("/auth/validate/email", JSON.stringify({ email })).then(r => r.status);
+    return this.api.post<ValidateEmailResponse>("/auth/validate/email", JSON.stringify({ email })).then(r => r.data);
   }
 
   public async validatePassword(password: string) {
     return this.api
       .post<ValidatePasswordResponse>("/auth/validate/password", JSON.stringify({ password }))
-      .then(r => r.status);
+      .then(r => r.data);
   }
 
   public async validateToken(token: string) {
-    return this.api.post<ValidateTokenResponse>("/auth/validate/token", JSON.stringify({ token })).then(r => r.status);
+    return this.api.post<ValidateTokenResponse>("/auth/validate/token", JSON.stringify({ token })).then(r => r.data);
   }
 
   public async validateUsername(username: string) {
     return this.api
       .post<ValidateUsernameResponse>("/auth/validate/username", JSON.stringify({ username }))
-      .then(r => r.status);
+      .then(r => r.data);
+  }
+
+  public async verifyInvite(inviteId: string) {
+    return this.api
+      .get<AppInviteRead>(`/auth/verify?inviteId=${inviteId}`)
+      .then(r => r.data);
+  }
+
+  public async transformInviteToUser(body: ConfirmInviteRequest) {
+    return this.api
+      .post<AppUserRead>("/auth/validate/username", JSON.stringify(body))
+      .then(r => r.data);
   }
 
   public authHeader(token: string) {

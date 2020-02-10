@@ -1,13 +1,12 @@
-export interface AppUserRead {
+export interface AppInviteRead {
   id: string;
-  username: string;
+  invitor: string;
+  message?: string;
   firstName?: string;
   lastName?: string;
   email: string;
-  avatar?: string;
   roles: string[];
   keyValues?: Record<string, string>;
-  enabled: boolean;
   created: string;
-  lastLogin?: string
+  expiration: string;
 }

@@ -1,3 +1,17 @@
+# [0.7.0](https://github.com/rocketbase-io/skeleton-key/compare/v0.6.1...v0.7.0) (2020-02-10)
+
+
+### Bug Fixes
+
+* changed model to actual api ([85dae76](https://github.com/rocketbase-io/skeleton-key/commit/85dae76051eb3f67dc6b3574bb69e4b82010e6c2))
+* refresh token if necessary before initial login check ([22ea8cb](https://github.com/rocketbase-io/skeleton-key/commit/22ea8cb48a9f3ab928606a8270b255bb3805cb6b))
+
+
+### Features
+
+* added invite methods + improved return-types ([a064847](https://github.com/rocketbase-io/skeleton-key/commit/a0648471037d7501bd4c5bb15bcfe47fd908365d))
+* added invite models ([73bea76](https://github.com/rocketbase-io/skeleton-key/commit/73bea7622c090a8aea1bffe7c3df75e710df5500))
+
 ## [0.6.1](https://github.com/rocketbase-io/skeleton-key/compare/v0.6.0...v0.6.1) (2020-01-28)
 
 

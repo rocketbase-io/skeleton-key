@@ -1,3 +1,10 @@
+## [0.7.1](https://github.com/rocketbase-io/skeleton-key/compare/v0.7.0...v0.7.1) (2020-02-12)
+
+
+### Bug Fixes
+
+* update validation request payloads ([b6288b4](https://github.com/rocketbase-io/skeleton-key/commit/b6288b49ad87ae5d1061358fc3caafa27348bdd6))
+
 # [0.7.0](https://github.com/rocketbase-io/skeleton-key/compare/v0.6.1...v0.7.0) (2020-02-10)
 
 

@@ -68,35 +68,27 @@ export class AuthClient {
   }
 
   public async validateEmail(email: string) {
-    return this.api.post<ValidateEmailResponse>("/auth/validate/email", JSON.stringify({ email })).then(r => r.data);
+    return this.api.post<ValidateEmailResponse>("/auth/validate/email", email).then(r => r.data);
   }
 
   public async validatePassword(password: string) {
-    return this.api
-      .post<ValidatePasswordResponse>("/auth/validate/password", JSON.stringify({ password }))
-      .then(r => r.data);
+    return this.api.post<ValidatePasswordResponse>("/auth/validate/password", password).then(r => r.data);
   }
 
   public async validateToken(token: string) {
-    return this.api.post<ValidateTokenResponse>("/auth/validate/token", JSON.stringify({ token })).then(r => r.data);
+    return this.api.post<ValidateTokenResponse>("/auth/validate/token", token).then(r => r.data);
   }
 
   public async validateUsername(username: string) {
-    return this.api
-      .post<ValidateUsernameResponse>("/auth/validate/username", JSON.stringify({ username }))
-      .then(r => r.data);
+    return this.api.post<ValidateUsernameResponse>("/auth/validate/username", username).then(r => r.data);
   }
 
   public async verifyInvite(inviteId: string) {
-    return this.api
-      .get<AppInviteRead>(`/auth/verify?inviteId=${inviteId}`)
-      .then(r => r.data);
+    return this.api.get<AppInviteRead>(`/auth/verify?inviteId=${inviteId}`).then(r => r.data);
   }
 
   public async transformInviteToUser(body: ConfirmInviteRequest) {
-    return this.api
-      .post<AppUserRead>("/auth/validate/username", JSON.stringify(body))
-      .then(r => r.data);
+    return this.api.post<AppUserRead>("/auth/validate/username", JSON.stringify(body)).then(r => r.data);
   }
 
   public authHeader(token: string) {

@@ -7,9 +7,17 @@ export interface ForgotPasswordRequest {
 
   /**
    * optional parameter to overwrite system default
-   * <p>
-   * full qualified url to a custom UI that proceed the verification<br>
-   * * ?verification=VALUE will get append
+   * full qualified url to a custom UI that proceed the verification
+   * ?verification=VALUE will get append
+   */
+  resetPasswordUrl?: string;
+
+  /**
+   * optional parameter to overwrite system default
+   * full qualified url to a custom UI that proceed the verification
+   * ?verification=VALUE will get append
+   * NOTE: Use resetPasswordUrl instead
+   * @deprecated
    */
   verificationUrl?: string;
 }

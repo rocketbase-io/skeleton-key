@@ -1,3 +1,10 @@
+## [0.7.2](https://github.com/rocketbase-io/skeleton-key/compare/v0.7.1...v0.7.2) (2020-03-10)
+
+
+### Bug Fixes
+
+* rename verificationUrl to resetPasswordUrl ([6258acc](https://github.com/rocketbase-io/skeleton-key/commit/6258accb4b445105adb9232baac48241a6d326ab))
+
 ## [0.7.1](https://github.com/rocketbase-io/skeleton-key/compare/v0.7.0...v0.7.1) (2020-02-12)
 
 

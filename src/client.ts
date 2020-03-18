@@ -84,7 +84,7 @@ export class AuthClient {
   }
 
   public async verifyInvite(inviteId: string) {
-    return this.api.get<AppInviteRead>(`/auth/verify?inviteId=${inviteId}`).then(r => r.data);
+    return this.api.get<AppInviteRead>(`/auth/invite?inviteId=${inviteId}`).then(r => r.data);
   }
 
   public async transformInviteToUser(body: ConfirmInviteRequest) {

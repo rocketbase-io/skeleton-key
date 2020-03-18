@@ -1,3 +1,10 @@
+## [0.7.4](https://github.com/rocketbase-io/skeleton-key/compare/v0.7.3...v0.7.4) (2020-03-18)
+
+
+### Bug Fixes
+
+* disable github asset upload on release ([8dddef0](https://github.com/rocketbase-io/skeleton-key/commit/8dddef0104df13eb854e17461b1374e51bd98cda))
+
 ## [0.7.3](https://github.com/rocketbase-io/skeleton-key/compare/v0.7.2...v0.7.3) (2020-03-18)
 
 

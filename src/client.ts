@@ -88,7 +88,7 @@ export class AuthClient {
   }
 
   public async transformInviteToUser(body: ConfirmInviteRequest) {
-    return this.api.post<AppUserRead>("/auth/validate/username", JSON.stringify(body)).then(r => r.data);
+    return this.api.post<AppUserRead>("/auth/invite", JSON.stringify(body)).then(r => r.data);
   }
 
   public authHeader(token: string) {

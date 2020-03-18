@@ -1,6 +1,6 @@
-import {JsonWebToken} from "./token";
-import {b64UrlDecode} from "./url-decode";
-import {MalformedTokenError} from "./malformed-token-error";
+import { JsonWebToken } from "./token";
+import { b64UrlDecode } from "./url-decode";
+import { MalformedTokenError } from "./malformed-token-error";
 
 const jsonParse = (str: string) => JSON.parse(str);
 
@@ -10,7 +10,8 @@ const jsonParse = (str: string) => JSON.parse(str);
  */
 export function decode(token: string): JsonWebToken {
   try {
-    const [header, payload] = token.split(".")
+    const [header, payload] = token
+      .split(".")
       .slice(0, 2)
       .map(b64UrlDecode)
       .map(jsonParse);
@@ -22,4 +23,3 @@ export function decode(token: string): JsonWebToken {
     throw new MalformedTokenError(ex);
   }
 }
-

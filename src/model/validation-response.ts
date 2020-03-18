@@ -1,4 +1,4 @@
 export interface ValidationResponse {
-  errorCodes: string[];
+  errorCodes: Record<string, string>;
   valid: boolean;
 }

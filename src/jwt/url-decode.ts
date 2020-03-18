@@ -1,5 +1,5 @@
 /* istanbul ignore file */
-import {InvalidCharacterError} from "./invalid-character-error";
+import { InvalidCharacterError } from "./invalid-character-error";
 
 /**
  * The code was extracted from:
@@ -7,11 +7,16 @@ import {InvalidCharacterError} from "./invalid-character-error";
  * (MIT License)
  */
 function b64DecodeUnicode(str: string): string {
-  return decodeURIComponent(atob(str).replace(/(.)/g, (m, p) => {
-    let code = p.charCodeAt(0).toString(16).toUpperCase();
-    if (code.length < 2) code = `0${code}`;
-    return `%${code}`;
-  }));
+  return decodeURIComponent(
+    atob(str).replace(/(.)/g, (m, p) => {
+      let code = p
+        .charCodeAt(0)
+        .toString(16)
+        .toUpperCase();
+      if (code.length < 2) code = `0${code}`;
+      return `%${code}`;
+    })
+  );
 }
 
 export function b64UrlDecode(str: string): string {

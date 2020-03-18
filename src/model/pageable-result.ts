@@ -1,4 +1,3 @@
-
 export interface PageableResult<T = {}> {
   content: T[];
   page: number;

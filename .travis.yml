@@ -1,12 +1,10 @@
+os: linux
 language: node_js
-node_js: "10"
 cache: npm
 
-before_install:
-  - npm i -g npm@latest
-
-install:
-  - npm i
+node_js:
+  - 10
+  - 12
 
 before_script:
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
@@ -14,17 +12,21 @@ before_script:
   - ./cc-test-reporter before-build
 
 script:
-  - npm run lint
+  - npm install
+  - npm build
   - npm run test
 
 after_script:
   - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
 
-deploy:
-  provider: npm
-  email: $NPM_EMAIL
-  api_key: $NPM_TOKEN
-  skip_cleanup: true
-  on:
-    branch: master
-    tags: true
+jobs:
+  include:
+    - stage: release
+      node_js: lts/*
+      script:
+        - npm install
+        - npm run build
+      deploy:
+        provider: script
+        skip_cleanup: true
+        script: npx semantic-release

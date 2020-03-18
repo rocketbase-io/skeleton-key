@@ -1,4 +1,4 @@
 export interface Constructor<T> {
   name: string;
-  new(...args: any[]): T;
+  new (...args: any[]): T;
 }

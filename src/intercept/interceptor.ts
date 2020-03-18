@@ -1,4 +1,3 @@
-
 export interface Interceptor {
   domains: string[];
   onXhrOpen?(xhr: XMLHttpRequest, method: string, url: string, async?: boolean, user?: string, password?: string): any;

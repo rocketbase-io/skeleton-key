@@ -1,3 +1,10 @@
+## [0.7.5](https://github.com/rocketbase-io/skeleton-key/compare/v0.7.4...v0.7.5) (2020-03-18)
+
+
+### Bug Fixes
+
+* invite verify url ([0f39899](https://github.com/rocketbase-io/skeleton-key/commit/0f39899f061d60f960c63e6cc7613065b0d82db8))
+
 ## [0.7.4](https://github.com/rocketbase-io/skeleton-key/compare/v0.7.3...v0.7.4) (2020-03-18)
 
 

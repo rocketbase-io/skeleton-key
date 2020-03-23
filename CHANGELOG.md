@@ -1,3 +1,10 @@
+# [0.8.0](https://github.com/rocketbase-io/skeleton-key/compare/v0.7.5...v0.8.0) (2020-03-23)
+
+
+### Features
+
+* enable external storage aside from localStorage ([9287abe](https://github.com/rocketbase-io/skeleton-key/commit/9287abe6cfd72f6c1c993b54f4cbb86ab06e10b6))
+
 ## [0.7.5](https://github.com/rocketbase-io/skeleton-key/compare/v0.7.4...v0.7.5) (2020-03-18)
 
 

@@ -1,3 +1,4 @@
+import { AuthStore, StorageAuthStore } from "@/auth-store";
 import { AuthClient } from "./client";
 import { installInterceptors, Interceptor, interceptors } from "./intercept";
 import { Eventing } from "./events";
@@ -27,6 +28,7 @@ export interface SkeletonKeyOptions {
   authPrefix?: string;
   authSuffix?: string;
   storageKey?: string;
+  store?: AuthStore;
   initialLoginCheck?: boolean;
 }
 
@@ -39,7 +41,8 @@ export const SkeletonKeyDefaults: Readonly<SkeletonKeyOptions> = {
   authHeader: "Authorization",
   authPrefix: "Bearer ",
   authSuffix: "",
-  storageKey: "io.rocketbase.commons.auth"
+  storageKey: "io.rocketbase.commons.auth",
+  store: new StorageAuthStore(localStorage)
 };
 
 const INTERVAL_TOLERANCE = 10000; // 10s
@@ -56,6 +59,7 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object>
   public authPrefix!: string;
   public authSuffix!: string;
   public storageKey!: string;
+  public store!: AuthStore;
   public initialLoginCheck!: boolean;
 
   public user?: AppUserRead & USER_DATA;
@@ -195,20 +199,15 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object>
   }
 
   public persist() {
-    if (this.isLoggedIn()) localStorage.setItem(this.storageKey, JSON.stringify(only(this, "jwtBundle", "user")));
-    else localStorage.removeItem(this.storageKey);
+    if (this.isLoggedIn()) this.store.setData(this.storageKey, only(this, "jwtBundle", "user") as any);
+    else this.store.removeData(this.storageKey);
   }
 
   public load() {
     if (!this.isLoggedIn()) {
-      const item = localStorage.getItem(this.storageKey);
-      if (!item) return;
-      try {
-        Object.assign(this, only(JSON.parse(item), "jwtBundle", "user") as any);
-      } catch (ex) {
-        // Make sure invalid data isn't kept
-        this.persist();
-      }
+      const data = this.store.getData(this.storageKey);
+      if (!data) return this.persist();
+      Object.assign(this, only(data, "jwtBundle", "user"));
     }
   }
 

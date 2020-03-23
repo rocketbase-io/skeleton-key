@@ -76,9 +76,9 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object>
   }
 
   public async init() {
-    this.load();
     this.bindMethods();
     this.installListeners();
+    await this.load();
     if (this.isLoggedIn() && this.initialLoginCheck) await this.refreshInfo();
     await this.installInterval();
     this.emit("initialized", this);
@@ -121,7 +121,7 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object>
     this.jwtBundle = jwtTokenBundle as JwtBundle & TOKEN_DATA;
     this.user = user as AppUserRead & USER_DATA;
     this.emitSync("login", user);
-    this.persist();
+    await this.persist();
     return user;
   }
 
@@ -129,7 +129,7 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object>
     this.user = undefined;
     this.jwtBundle = undefined;
     this.emitSync("logout");
-    this.persist();
+    await this.persist();
     return true;
   }
 
@@ -165,7 +165,7 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object>
     try {
       this.user = (await this.client.me(this.jwtBundle!.token)) as AppUserRead & USER_DATA;
       this.emitSync("refresh", "user", this.user);
-      this.persist();
+      await this.persist();
     } catch ({ response: { status } }) {
       this.handleStatus(status);
     }
@@ -198,15 +198,15 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object>
     return decode(this.jwtBundle!.refreshToken);
   }
 
-  public persist() {
-    if (this.isLoggedIn()) this.store.setData(this.storageKey, only(this, "jwtBundle", "user") as any);
-    else this.store.removeData(this.storageKey);
+  public async persist() {
+    if (this.isLoggedIn()) await this.store.setData(this.storageKey, only(this, "jwtBundle", "user") as any);
+    else await this.store.removeData(this.storageKey);
   }
 
-  public load() {
+  public async load() {
     if (!this.isLoggedIn()) {
-      const data = this.store.getData(this.storageKey);
-      if (!data) return this.persist();
+      const data = await this.store.getData(this.storageKey);
+      if (!data) return await this.persist();
       Object.assign(this, only(data, "jwtBundle", "user"));
     }
   }

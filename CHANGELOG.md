@@ -1,3 +1,10 @@
+# [0.9.0](https://github.com/rocketbase-io/skeleton-key/compare/v0.8.0...v0.9.0) (2020-03-23)
+
+
+### Features
+
+* enable asynchronous store implementations ([0e0dd3e](https://github.com/rocketbase-io/skeleton-key/commit/0e0dd3ee72c7cb8d6d85a1d7f102e24c7d43ef93))
+
 # [0.8.0](https://github.com/rocketbase-io/skeleton-key/compare/v0.7.5...v0.8.0) (2020-03-23)
 
 

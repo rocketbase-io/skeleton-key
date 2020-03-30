@@ -4,6 +4,7 @@ import { mock as fetchMock, reset as fetchReset } from "fetch-mock";
 import { interceptors } from "../src/intercept";
 import { SkeletonKey, SkeletonKeyDefaults, urlAbsolute } from "../src";
 import {
+  JWT_EXPIRED_TOKEN,
   JWT_VALID_REFRESH,
   JWT_VALID_TOKEN,
   STORAGE_EXPIRED_REFRESH,
@@ -15,17 +16,19 @@ import {
 jest.useFakeTimers();
 
 describe("index", () => {
+  const skey = SkeletonKeyDefaults.storageKey!;
   beforeEach(() => {
     mock.setup();
   });
   afterEach(() => {
     mock.teardown();
     interceptors.splice(0, interceptors.length);
+    localStorage.removeItem(skey);
     fetchReset();
   });
 
   describe("SkeletonKey", () => {
-    const skey = SkeletonKeyDefaults.storageKey!;
+
 
     describe("new(), #installListeners()", () => {
       it("should register interceptors if enabled", () => {
@@ -103,7 +106,6 @@ describe("index", () => {
       });
 
       it("should not install a timer if the user isn't logged in", () => {
-        localStorage.removeItem(skey);
         new SkeletonKey({ intercept: false, renewType: "interval" });
 
         expect(setTimeout).not.toHaveBeenCalled();
@@ -148,7 +150,6 @@ describe("index", () => {
 
     describe("#persist()", () => {
       it("should write data to localStorage, if logged in", async () => {
-        localStorage.removeItem(skey);
         const auth = new SkeletonKey({ intercept: false });
         auth.user = JSON.parse(USER_DATA);
         auth.jwtBundle = JSON.parse(STORAGE_VALID_TOKEN).jwtBundle;
@@ -160,13 +161,11 @@ describe("index", () => {
 
     describe("#isLoggedIn()", () => {
       it("should be false if no user or token are stored", () => {
-        localStorage.removeItem(skey);
         const auth = new SkeletonKey({ intercept: false });
         expect(auth.isLoggedIn()).toBeFalsy();
       });
 
       it("should be true for valid user and tokens", () => {
-        localStorage.removeItem(skey);
         const auth = new SkeletonKey({ intercept: false });
         auth.user = JSON.parse(USER_DATA);
         auth.jwtBundle = JSON.parse(STORAGE_VALID_TOKEN).jwtBundle;
@@ -174,7 +173,6 @@ describe("index", () => {
       });
 
       it("should be true for expired token if refresh token isn't expired", () => {
-        localStorage.removeItem(skey);
         const auth = new SkeletonKey({ intercept: false });
         auth.user = JSON.parse(USER_DATA);
         auth.jwtBundle = JSON.parse(STORAGE_EXPIRED_TOKEN).jwtBundle;
@@ -182,7 +180,6 @@ describe("index", () => {
       });
 
       it("should be false for expired token and refresh token", () => {
-        localStorage.removeItem(skey);
         const auth = new SkeletonKey({ intercept: false });
         auth.user = JSON.parse(USER_DATA);
         auth.jwtBundle = JSON.parse(STORAGE_EXPIRED_REFRESH).jwtBundle;
@@ -192,7 +189,6 @@ describe("index", () => {
 
     describe("#onAction()", () => {
       it("should not do anything if no url is passed", async () => {
-        localStorage.removeItem(skey);
         const auth = new SkeletonKey({ intercept: false });
         auth.user = JSON.parse(USER_DATA);
         auth.jwtBundle = JSON.parse(STORAGE_EXPIRED_TOKEN).jwtBundle;
@@ -202,7 +198,6 @@ describe("index", () => {
       });
 
       it("should not do anything if the url matches the refresh url", async () => {
-        localStorage.removeItem(skey);
         const auth = new SkeletonKey({ intercept: false });
         auth.user = JSON.parse(USER_DATA);
         auth.jwtBundle = JSON.parse(STORAGE_EXPIRED_TOKEN).jwtBundle;
@@ -212,7 +207,6 @@ describe("index", () => {
       });
 
       it("should try to refresh the token if the token is expired and the refreshToken is valid", async () => {
-        localStorage.removeItem(skey);
         const auth = new SkeletonKey({ intercept: false });
         auth.user = JSON.parse(USER_DATA);
         auth.jwtBundle = JSON.parse(STORAGE_EXPIRED_TOKEN).jwtBundle;
@@ -222,7 +216,6 @@ describe("index", () => {
       });
 
       it("should not try to refresh the token if the token is valid", async () => {
-        localStorage.removeItem(skey);
         const auth = new SkeletonKey({ intercept: false });
         auth.user = JSON.parse(USER_DATA);
         auth.jwtBundle = JSON.parse(STORAGE_VALID_TOKEN).jwtBundle;
@@ -232,7 +225,6 @@ describe("index", () => {
       });
 
       it("should not try to refresh the token if the refresh token is expired", async () => {
-        localStorage.removeItem(skey);
         const auth = new SkeletonKey({ intercept: false });
         auth.user = JSON.parse(USER_DATA);
         auth.jwtBundle = JSON.parse(STORAGE_EXPIRED_REFRESH).jwtBundle;
@@ -248,7 +240,6 @@ describe("index", () => {
       delete body.jwtBundle;
 
       it("should send a login request to the auth service", async () => {
-        localStorage.removeItem(skey);
         const auth = new SkeletonKey({ intercept: false });
 
         expect(auth.isLoggedIn()).toBeFalsy();
@@ -269,7 +260,6 @@ describe("index", () => {
       });
 
       it("should logout the user before trying to log in again", async () => {
-        localStorage.removeItem(skey);
         const auth = new SkeletonKey({ intercept: false });
 
         auth.user = JSON.parse(USER_DATA);
@@ -291,7 +281,6 @@ describe("index", () => {
       });
 
       it("should emit the login event after successful login", async () => {
-        localStorage.removeItem(skey);
         const auth = new SkeletonKey({ intercept: false });
 
         mock.post(urlAbsolute("/auth/login"), (req, res) => {
@@ -311,9 +300,44 @@ describe("index", () => {
       });
     });
 
+    describe("#loginWithToken()", () => {
+      it("should login with a given token", async () => {
+        const auth = new SkeletonKey({ intercept: false });
+
+        mock.get(urlAbsolute("/auth/me"), (req, res) => {
+          expect(req.header("Authorization")).toEqual(`Bearer ${JWT_VALID_TOKEN}`);
+          res.status(200);
+          res.header("Content-Type", "application/json");
+          res.body(USER_DATA);
+          return res;
+        });
+
+        await auth.ensureInitialized();
+        await auth.loginWithToken(JWT_VALID_TOKEN);
+
+        expect(auth.isLoggedIn()).toBeTruthy();
+      });
+
+      it("should not login with an expired token", async () => {
+        const auth = new SkeletonKey({ intercept: false });
+
+        mock.get(urlAbsolute("/auth/me"), (req, res) => {
+          expect(req.header("Authorization")).toEqual(`Bearer ${JWT_EXPIRED_TOKEN}`);
+          res.status(401);
+          res.header("Content-Type", "application/json");
+          res.body("401 Unauthorized");
+          return res;
+        });
+
+        await auth.ensureInitialized();
+        await auth.loginWithToken(JWT_EXPIRED_TOKEN);
+
+        expect(auth.isLoggedIn()).toBeFalsy();
+      });
+    });
+
     describe("#logout()", () => {
       it("should log out the current user", async () => {
-        localStorage.removeItem(skey);
         const auth = new SkeletonKey({ intercept: false });
         auth.user = JSON.parse(USER_DATA);
         auth.jwtBundle = JSON.parse(STORAGE_VALID_TOKEN).jwtBundle;
@@ -323,7 +347,6 @@ describe("index", () => {
       });
 
       it("trigger the 'logout' event", async () => {
-        localStorage.removeItem(skey);
         const auth = new SkeletonKey({ intercept: false });
         auth.user = JSON.parse(USER_DATA);
         auth.jwtBundle = JSON.parse(STORAGE_VALID_TOKEN).jwtBundle;
@@ -344,7 +367,6 @@ describe("index", () => {
       delete body.jwtBundle;
 
       it("should return a promise that resolves upon successful login", async () => {
-        localStorage.removeItem(skey);
         const auth = new SkeletonKey({ intercept: false });
         const spy = jest.fn();
         auth.waitForLogin().then(spy);
@@ -365,7 +387,6 @@ describe("index", () => {
 
     describe("#refreshToken()", () => {
       it("should refresh a jwt using the refreshToken", async () => {
-        localStorage.removeItem(skey);
         const auth = new SkeletonKey({ intercept: false });
         auth.user = JSON.parse(USER_DATA);
         auth.jwtBundle = JSON.parse(STORAGE_EXPIRED_TOKEN).jwtBundle;
@@ -384,7 +405,6 @@ describe("index", () => {
       });
 
       it("should fire a 'refresh' event", async () => {
-        localStorage.removeItem(skey);
         const auth = new SkeletonKey({ intercept: false });
         auth.user = JSON.parse(USER_DATA);
         auth.jwtBundle = JSON.parse(STORAGE_EXPIRED_TOKEN).jwtBundle;
@@ -407,7 +427,6 @@ describe("index", () => {
       });
 
       it("should return false if no tokens are defined", async () => {
-        localStorage.removeItem(skey);
         const auth = new SkeletonKey({ intercept: false });
         auth.user = JSON.parse(USER_DATA);
 
@@ -417,7 +436,6 @@ describe("index", () => {
 
     describe("#refreshInfo()", () => {
       it("should refresh the user information", async () => {
-        localStorage.removeItem(skey);
         const auth = new SkeletonKey({ intercept: false });
         auth.user = JSON.parse(USER_DATA);
         auth.jwtBundle = JSON.parse(STORAGE_VALID_TOKEN).jwtBundle;
@@ -438,7 +456,6 @@ describe("index", () => {
       });
 
       it("should emit a 'refresh' event", async () => {
-        localStorage.removeItem(skey);
         const auth = new SkeletonKey({ intercept: false });
         auth.user = JSON.parse(USER_DATA);
         auth.jwtBundle = JSON.parse(STORAGE_VALID_TOKEN).jwtBundle;
@@ -463,7 +480,6 @@ describe("index", () => {
       });
 
       it("should return false if the user isn't logged in", async () => {
-        localStorage.removeItem(skey);
         const auth = new SkeletonKey({ intercept: false });
         expect(await auth.refreshInfo()).toBeFalsy();
       });
@@ -471,7 +487,6 @@ describe("index", () => {
 
     describe("#onXhrSend()", () => {
       it("should set an auth header on an xhr object", async () => {
-        localStorage.removeItem(skey);
         const auth = new SkeletonKey();
         auth.user = JSON.parse(USER_DATA);
         auth.jwtBundle = JSON.parse(STORAGE_VALID_TOKEN).jwtBundle;
@@ -485,7 +500,6 @@ describe("index", () => {
       });
 
       it("should fire an 'action' event on send", async () => {
-        localStorage.removeItem(skey);
         const auth = new SkeletonKey();
         auth.user = JSON.parse(USER_DATA);
         auth.jwtBundle = JSON.parse(STORAGE_VALID_TOKEN).jwtBundle;
@@ -504,7 +518,6 @@ describe("index", () => {
 
     describe("#onFetch()", () => {
       it("should add auth headers to request info", async () => {
-        localStorage.removeItem(skey);
         fetchMock(urlAbsolute("/some/thing"), (url, opts) => {
           expect((opts!.headers! as any)["Authorization"]).toEqual(`Bearer ${JWT_VALID_TOKEN}`);
           return 200;

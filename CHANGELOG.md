@@ -1,3 +1,10 @@
+## [0.11.1](https://github.com/rocketbase-io/skeleton-key/compare/v0.11.0...v0.11.1) (2020-03-30)
+
+
+### Bug Fixes
+
+* canRefresh with optional refreshToken ([d1b2625](https://github.com/rocketbase-io/skeleton-key/commit/d1b262577adde667fea099f57c5761fa99ee3a30))
+
 # [0.11.0](https://github.com/rocketbase-io/skeleton-key/compare/v0.10.0...v0.11.0) (2020-03-30)
 
 

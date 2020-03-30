@@ -1,3 +1,10 @@
+# [0.10.0](https://github.com/rocketbase-io/skeleton-key/compare/v0.9.0...v0.10.0) (2020-03-30)
+
+
+### Features
+
+* allow for logging in with a given token, make refresh optional ([b7981de](https://github.com/rocketbase-io/skeleton-key/commit/b7981de17d9e274a83542141b5ab404c823d596a))
+
 # [0.9.0](https://github.com/rocketbase-io/skeleton-key/compare/v0.8.0...v0.9.0) (2020-03-23)
 
 

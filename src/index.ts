@@ -195,7 +195,7 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object>
   }
 
   public canRefresh() {
-    if (!this.jwtBundle) return false;
+    if (!this.jwtBundle?.refreshToken) return false;
     return new Date(this.refreshTokenData.payload.exp! * JWT_DATE_TO_JS_DATE_RATIO) > new Date();
   }
 

@@ -119,9 +119,9 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object>
     if (this.isLoggedIn()) await this.logout();
     try {
       this.jwtBundle = { token, refreshToken };
-      this.user = (await this.client.me(token)) as AppUserRead & USER_DATA;
-      this.emit("login", this.user);
+      const user = this.user = (await this.client.me(token)) as AppUserRead & USER_DATA;
       await this.persist();
+      this.emitSync("login", user);
     } catch (ex) {
       await this.logout();
     }

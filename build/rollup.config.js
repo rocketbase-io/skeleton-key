@@ -13,7 +13,7 @@ export default {
   output: ["umd", "iife", "esm", "cjs"].map(format => ({
     file: `dist/${name}${format === "umd" ? "" : `.${format}`}.js`,
     exports: "named",
-    sourceMap: true,
+    sourcemap: true,
     format,
     globals,
     name,

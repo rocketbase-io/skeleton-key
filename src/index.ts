@@ -115,6 +115,19 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object>
     return !!this.user && !!this.jwtBundle && (!this.needsRefresh() || this.canRefresh());
   }
 
+  public async loginWithToken(token: string, refreshToken?: string) {
+    if (this.isLoggedIn()) await this.logout();
+    try {
+      this.jwtBundle = { token, refreshToken };
+      this.user = (await this.client.me(token)) as AppUserRead & USER_DATA;
+      this.emit("login", this.user);
+      await this.persist();
+    } catch (ex) {
+      await this.logout();
+    }
+    return this.userData;
+  }
+
   public async login(username: string, password: string) {
     if (this.isLoggedIn()) await this.logout();
     const { jwtTokenBundle, user } = await this.client.login({ username, password });
@@ -144,11 +157,11 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object>
   }
 
   public async refreshToken() {
-    if (!this.jwtBundle) return false;
+    if (!this.jwtBundle?.refreshToken) return false;
     if (this.refreshing) return this.refreshing;
     this.refreshing = deferred();
     try {
-      this.jwtBundle!.token = await this.client.refresh(this.jwtBundle!.refreshToken);
+      this.jwtBundle!.token = await this.client.refresh(this.jwtBundle!.refreshToken!);
       this.emitSync("refresh", "token", this.jwtBundle);
       this.refreshing.resolve(this.jwtBundle);
     } catch ({ response: { status } }) {
@@ -195,7 +208,7 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object>
   }
 
   public get refreshTokenData() {
-    return decode(this.jwtBundle!.refreshToken);
+    return decode(this.jwtBundle!.refreshToken!);
   }
 
   public async persist() {

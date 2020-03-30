@@ -1,4 +1,4 @@
 export interface JwtBundle {
-  refreshToken: string;
+  refreshToken?: string;
   token: string;
 }

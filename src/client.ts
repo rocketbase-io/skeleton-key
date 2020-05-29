@@ -17,17 +17,19 @@ import {
 
 export class AuthClient {
   private api: AxiosInstance;
+  public baseUrl?: string;
 
   public constructor(url: string);
   public constructor(client: AxiosInstance);
   public constructor(url: string | AxiosInstance) {
-    if (typeof url === "string")
-      this.api = axios.create({ baseURL: url, headers: { "Content-Type": "application/json" } });
-    else this.api = url;
+    if (typeof url === "string") {
+      this.baseUrl = url;
+      this.api = axios.create({ headers: { "Content-Type": "application/json" } });
+    } else this.api = url;
   }
 
   public async login(body: LoginRequest) {
-    const { data } = await this.api.post<LoginResponse>("/auth/login", JSON.stringify(body));
+    const { data } = await this.api.post<LoginResponse>("/auth/login", JSON.stringify(body), { baseURL: this.baseUrl });
     return data;
   }
 
@@ -52,47 +54,47 @@ export class AuthClient {
   }
 
   public async forgotPassword(body: ForgotPasswordRequest) {
-    return this.api.put<void>("/auth/forgot-password", JSON.stringify(body)).then(r => r.status);
+    return this.api.put<void>("/auth/forgot-password", JSON.stringify(body), { baseURL: this.baseUrl }).then(r => r.status);
   }
 
   public async resetPassword(body: PasswordResetRequest) {
-    return this.api.put<void>("/auth/reset-password", JSON.stringify(body)).then(r => r.status);
+    return this.api.put<void>("/auth/reset-password", JSON.stringify(body), { baseURL: this.baseUrl }).then(r => r.status);
   }
 
   public async register(body: RegistrationRequest) {
-    return this.api.post<AppUserRead>("/auth/register", JSON.stringify(body)).then(r => r.data);
+    return this.api.post<AppUserRead>("/auth/register", JSON.stringify(body), { baseURL: this.baseUrl }).then(r => r.data);
   }
 
   public async verify(verification: string) {
-    return this.api.get<JwtBundle>(`/auth/verify?verification=${verification}`).then(r => r.data);
+    return this.api.get<JwtBundle>(`/auth/verify?verification=${verification}`, { baseURL: this.baseUrl }).then(r => r.data);
   }
 
   public async validateEmail(email: string) {
-    return this.api.post<ValidateEmailResponse>("/auth/validate/email", email).then(r => r.data);
+    return this.api.post<ValidateEmailResponse>("/auth/validate/email", email, { baseURL: this.baseUrl }).then(r => r.data);
   }
 
   public async validatePassword(password: string) {
-    return this.api.post<ValidatePasswordResponse>("/auth/validate/password", password).then(r => r.data);
+    return this.api.post<ValidatePasswordResponse>("/auth/validate/password", password, { baseURL: this.baseUrl }).then(r => r.data);
   }
 
   public async validateToken(token: string) {
-    return this.api.post<ValidateTokenResponse>("/auth/validate/token", token).then(r => r.data);
+    return this.api.post<ValidateTokenResponse>("/auth/validate/token", token, { baseURL: this.baseUrl }).then(r => r.data);
   }
 
   public async validateUsername(username: string) {
-    return this.api.post<ValidateUsernameResponse>("/auth/validate/username", username).then(r => r.data);
+    return this.api.post<ValidateUsernameResponse>("/auth/validate/username", username, { baseURL: this.baseUrl }).then(r => r.data);
   }
 
   public async verifyInvite(inviteId: string) {
-    return this.api.get<AppInviteRead>(`/auth/invite?inviteId=${inviteId}`).then(r => r.data);
+    return this.api.get<AppInviteRead>(`/auth/invite?inviteId=${inviteId}`, { baseURL: this.baseUrl }).then(r => r.data);
   }
 
   public async transformInviteToUser(body: ConfirmInviteRequest) {
-    return this.api.post<AppUserRead>("/auth/invite", JSON.stringify(body)).then(r => r.data);
+    return this.api.post<AppUserRead>("/auth/invite", JSON.stringify(body), { baseURL: this.baseUrl }).then(r => r.data);
   }
 
   public authHeader(token: string) {
-    return { headers: { Authorization: `Bearer ${token}` } };
+    return { headers: { Authorization: `Bearer ${token}` }, baseURL: this.baseUrl };
   }
 }
 

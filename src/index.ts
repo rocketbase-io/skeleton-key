@@ -69,10 +69,17 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object>
 
   constructor(opts: SkeletonKeyOptions = {}) {
     super();
-    Object.assign(this, { ...SkeletonKeyDefaults, ...opts });
-    if (!this!.client) this.client = new AuthClient(this!.url!);
+    const allOpts = { ...SkeletonKeyDefaults, ...opts };
+    for (const key in allOpts)
+      (this as any)[key] = (allOpts as any)[key];
+    if (!this.client) this.client = new AuthClient(this.url!);
     // noinspection JSIgnoredPromiseFromCall
     this.init();
+  }
+
+  public setUrl(url: string) {
+    this.url = url;
+    this.client.baseUrl = url;
   }
 
   public async init() {
@@ -179,8 +186,9 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object>
       this.user = (await this.client.me(this.jwtBundle!.token)) as AppUserRead & USER_DATA;
       this.emitSync("refresh", "user", this.user);
       await this.persist();
-    } catch ({ response: { status } }) {
-      this.handleStatus(status);
+    } catch (ex) {
+      const { response: { status } } = ex;
+      await this.handleStatus(status);
     }
     return this.user;
   }

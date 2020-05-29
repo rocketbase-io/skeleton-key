@@ -1,3 +1,15 @@
+# [0.12.0](https://github.com/rocketbase-io/skeleton-key/compare/v0.11.1...v0.12.0) (2020-05-29)
+
+
+### Bug Fixes
+
+* base url in auth header client config ([2a51971](https://github.com/rocketbase-io/skeleton-key/commit/2a51971984b4567fa4148d064d8a123d48276f6c))
+
+
+### Features
+
+* allow for changing root url post initialization ([ca2780d](https://github.com/rocketbase-io/skeleton-key/commit/ca2780d87027e7ec1fc8ecaf16997beb57316b07))
+
 ## [0.11.1](https://github.com/rocketbase-io/skeleton-key/compare/v0.11.0...v0.11.1) (2020-03-30)
 
 

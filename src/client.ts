@@ -94,7 +94,7 @@ export class AuthClient {
   }
 
   public authHeader(token: string) {
-    return { headers: { Authorization: `Bearer ${token}` }, baseUrl: this.baseUrl };
+    return { headers: { Authorization: `Bearer ${token}` }, baseURL: this.baseUrl };
   }
 }
 

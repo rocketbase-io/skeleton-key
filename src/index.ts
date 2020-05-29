@@ -186,8 +186,9 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object>
       this.user = (await this.client.me(this.jwtBundle!.token)) as AppUserRead & USER_DATA;
       this.emitSync("refresh", "user", this.user);
       await this.persist();
-    } catch ({ response: { status } }) {
-      this.handleStatus(status);
+    } catch (ex) {
+      const { response: { status } } = ex;
+      await this.handleStatus(status);
     }
     return this.user;
   }

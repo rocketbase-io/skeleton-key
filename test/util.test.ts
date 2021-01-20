@@ -32,12 +32,12 @@ describe("util", () => {
         fname: "Hans",
         lname: "Peter",
         age: 17,
-        occupation: "Software Engineer"
+        occupation: "Software Engineer",
       };
       const keys: any[] = ["fname", "lname"];
       const expected = {
         fname: "Hans",
-        lname: "Peter"
+        lname: "Peter",
       };
 
       expect(only(source, ...keys)).toEqual(expected);
@@ -47,7 +47,7 @@ describe("util", () => {
         fname: "Hans",
         lname: "Peter",
         age: 17,
-        occupation: "Software Engineer"
+        occupation: "Software Engineer",
       };
       const keys: any[] = ["phone"];
       const expected = {};

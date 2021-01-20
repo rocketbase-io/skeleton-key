@@ -1,4 +1,4 @@
-// tslint:disable
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* istanbul ignore file */
 import { InvalidCharacterError } from "./invalid-character-error";
 /**
@@ -7,7 +7,8 @@ import { InvalidCharacterError } from "./invalid-character-error";
  * (dual-licensed under Apache 2.0 and WTFPL)
  */
 
-export const atob = (typeof global !== "undefined" && global.atob && global.atob.bind(global)) ||
+export const atob =
+  (typeof global !== "undefined" && global.atob && global.atob.bind(global)) ||
   (() => {
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
     function polyfill(input: string): string {

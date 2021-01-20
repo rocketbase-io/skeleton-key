@@ -12,13 +12,13 @@ describe("intercept", () => {
         interceptors.splice(0, interceptors.length);
         interceptors.push({
           domains: ["*"],
-          onFetch: spy
+          onFetch: spy,
         } as any);
 
         const promise = fetch("http://example.existiert-nicht", { headers: { "Content-Type": "application/json" } });
 
         expect(spy).toHaveBeenCalledWith(undefined, "http://example.existiert-nicht", {
-          headers: { "Content-Type": "application/json" }
+          headers: { "Content-Type": "application/json" },
         });
 
         try {
@@ -39,7 +39,7 @@ describe("intercept", () => {
         request.setRequestHeader("X-CustomHeader", "custom value");
         expect((request as any).__headers).toEqual({
           "Content-Type": "application/json",
-          "X-CustomHeader": "custom value"
+          "X-CustomHeader": "custom value",
         });
         request.abort();
       });
@@ -52,7 +52,7 @@ describe("intercept", () => {
         interceptors.splice(0, interceptors.length);
         interceptors.push({
           domains: ["*"],
-          onXhrSend: spy
+          onXhrSend: spy,
         } as any);
         const request = new XMLHttpRequest();
         request.open("GET", "http://example.com");
@@ -78,7 +78,7 @@ describe("intercept", () => {
         interceptors.splice(0, interceptors.length);
         interceptors.push({
           domains: ["*"],
-          onXhrOpen: spy
+          onXhrOpen: spy,
         } as any);
         const request = new XMLHttpRequest();
         request.open("GET", "http://example.com");
@@ -107,7 +107,7 @@ describe("intercept", () => {
           domains: ["*"],
           onFetch: spy,
           onXhrOpen: spy,
-          onXhrSend: spy
+          onXhrSend: spy,
         } as any);
 
         const result = executeRelevantInterceptors("https://foo.bar/", "onFetch", window, args);
@@ -117,7 +117,7 @@ describe("intercept", () => {
 
       it("should return the modified args if handlers return an array", () => {
         const args = ["foo", 5, { foo: "bar" }];
-        const spy = jest.fn(function(...args) {
+        const spy = jest.fn(function (...args) {
           args.push("baz");
           return args;
         });
@@ -127,7 +127,7 @@ describe("intercept", () => {
           domains: ["*"],
           onFetch: spy,
           onXhrOpen: spy,
-          onXhrSend: spy
+          onXhrSend: spy,
         } as any);
 
         const result = executeRelevantInterceptors("https://foo.bar/", "onFetch", window, args);
@@ -138,7 +138,7 @@ describe("intercept", () => {
 
       it("should prevent calls if handlers throw exceptions", () => {
         const args = ["foo", 5, { foo: "bar" }];
-        const spy = jest.fn(function() {
+        const spy = jest.fn(function () {
           throw new Error("something went wrong");
         });
 
@@ -147,7 +147,7 @@ describe("intercept", () => {
           domains: ["*"],
           onFetch: spy,
           onXhrOpen: spy,
-          onXhrSend: spy
+          onXhrSend: spy,
         } as any);
 
         expect(() => executeRelevantInterceptors("https://foo.bar/", "onFetch", window, args)).toThrow();
@@ -169,7 +169,7 @@ describe("intercept", () => {
 
       it("should be okay with array likes", () => {
         // @ts-ignore
-        const args = (function(...params: number[]) {
+        const args = (function (...params: number[]) {
           return params;
         })(1, 2, 3, 4, 5);
 

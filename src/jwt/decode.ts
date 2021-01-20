@@ -10,14 +10,10 @@ const jsonParse = (str: string) => JSON.parse(str);
  */
 export function decode(token: string): JsonWebToken {
   try {
-    const [header, payload] = token
-      .split(".")
-      .slice(0, 2)
-      .map(b64UrlDecode)
-      .map(jsonParse);
+    const [header, payload] = token.split(".").slice(0, 2).map(b64UrlDecode).map(jsonParse);
     return {
       header,
-      payload
+      payload,
     };
   } catch (ex) {
     throw new MalformedTokenError(ex);

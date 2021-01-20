@@ -9,5 +9,5 @@ export interface AppUserRead {
   keyValues?: Record<string, string>;
   enabled: boolean;
   created: string;
-  lastLogin?: string
+  lastLogin?: string;
 }

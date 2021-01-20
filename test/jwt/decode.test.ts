@@ -9,12 +9,12 @@ describe("jwt", () => {
         const decoded = decode(jwt);
         expect(decoded.header).toEqual({
           alg: "HS256",
-          typ: "JWT"
+          typ: "JWT",
         });
         expect(decoded.payload).toEqual({
           sub: "1234567890",
           name: "John Doe",
-          exp: 2516239022
+          exp: 2516239022,
         } as any);
       });
 

@@ -9,21 +9,21 @@ export function xmlHttpRequestOpenMiddleware(
   async?: boolean,
   username?: string | null,
   password?: string | null
-) {
+): unknown[] {
   this.__openArgs = arguments;
-  return executeRelevantInterceptors(url, "onXhrOpen", this, arguments);
+  return executeRelevantInterceptors(url, "onXhrOpen", this, arguments as any);
 }
 
-export function xmlHttpRequestSendMiddleware(this: XMLHttpRequest, body: any) {
+export function xmlHttpRequestSendMiddleware(this: XMLHttpRequest, body: unknown): unknown[] {
   const [, url] = this.__openArgs;
-  return executeRelevantInterceptors(url, "onXhrSend", this, arguments, true);
+  return executeRelevantInterceptors(url, "onXhrSend", this, arguments as any, true);
 }
 
-export function fetchMiddleware(this: any, info: RequestInfo, init?: RequestInit) {
-  return executeRelevantInterceptors(typeof info === "string" ? info : info.url, "onFetch", this, arguments);
+export function fetchMiddleware(this: unknown, info: RequestInfo, init?: RequestInit): unknown[] {
+  return executeRelevantInterceptors(typeof info === "string" ? info : info.url, "onFetch", this, arguments as any);
 }
 
-export function xmlHttpRequestSetRequestHeaderMiddleware(this: XMLHttpRequest, key: string, value: string) {
+export function xmlHttpRequestSetRequestHeaderMiddleware(this: XMLHttpRequest, key: string, value: string): unknown[] {
   if (!this.__headers) this.__headers = {};
   this.__headers[key] = value;
   return arguments as any;
@@ -34,10 +34,16 @@ export interface XMLHttpRequest {
   __openArgs: IArguments;
 }
 
-export function executeRelevantInterceptors(url: string, handler: string, context: any, args: any, async?: boolean) {
-  const relevant = interceptors.filter(itor => isInDomain(itor.domains, url));
+export function executeRelevantInterceptors(
+  url: string,
+  handler: string,
+  context: unknown,
+  args: unknown[],
+  async?: boolean
+): unknown[] {
+  const relevant = interceptors.filter((itor) => isInDomain(itor.domains, url));
   if (!relevant.length) return args;
-  const methods = relevant.map(interceptor => (interceptor as any)[handler]).filter(handler => handler);
+  const methods = relevant.map((interceptor) => (interceptor as any)[handler]).filter((handler) => handler);
   if (async)
     return methods.reduce(
       async (args, handler) => skipFirst((await handler.apply(context, [context, ...(await args)])) || (await args)),
@@ -50,7 +56,7 @@ export function executeRelevantInterceptors(url: string, handler: string, contex
     );
 }
 
-export function skipFirst(array: any[]) {
-  if (!array) return;
+export function skipFirst(array: unknown[]): unknown[] {
+  if (!array) return [];
   return array.slice ? array.slice(1) : [...array].slice(1);
 }

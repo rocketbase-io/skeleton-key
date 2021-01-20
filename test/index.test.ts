@@ -9,7 +9,7 @@ import {
   STORAGE_EXPIRED_REFRESH,
   STORAGE_EXPIRED_TOKEN,
   STORAGE_VALID_TOKEN,
-  USER_DATA
+  USER_DATA,
 } from "./mock/localStorage";
 
 jest.useFakeTimers();
@@ -32,8 +32,6 @@ describe("index", () => {
   });
 
   describe("SkeletonKey", () => {
-
-
     describe("new(), #installListeners()", () => {
       it("should register interceptors if enabled", () => {
         const key = new SkeletonKey(defaults);
@@ -145,7 +143,12 @@ describe("index", () => {
           return res;
         });
 
-        const auth = new SkeletonKey({ ...defaults, intercept: false, renewType: "interval", initialLoginCheck: false });
+        const auth = new SkeletonKey({
+          ...defaults,
+          intercept: false,
+          renewType: "interval",
+          initialLoginCheck: false,
+        });
         await auth.ensureInitialized();
 
         expect(auth.jwtBundle!.token).toEqual(JWT_VALID_TOKEN);

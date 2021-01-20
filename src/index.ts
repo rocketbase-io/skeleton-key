@@ -19,9 +19,9 @@ export * from "./util";
 export const JWT_DATE_TO_JS_DATE_RATIO = 1000;
 
 export interface SkeletonKeyOptions {
-  url?: string;
+  url: string;
   client?: AuthClient;
-  domains?: string[];
+  domains: string[];
   intercept?: boolean;
   renewType?: "action" | "never" | "interval";
   authHeader?: string;
@@ -32,9 +32,7 @@ export interface SkeletonKeyOptions {
   initialLoginCheck?: boolean;
 }
 
-export const SkeletonKeyDefaults: Readonly<SkeletonKeyOptions> = {
-  url: window.location.origin,
-  domains: [window.location.host],
+export const SkeletonKeyDefaults: Readonly<Omit<SkeletonKeyOptions, "url" | "domains">> = {
   intercept: true,
   initialLoginCheck: true,
   renewType: "action",
@@ -67,7 +65,7 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object>
   public initialized = false;
   public refreshing?: Deferred<any>;
 
-  constructor(opts: SkeletonKeyOptions = {}) {
+  constructor(opts: SkeletonKeyOptions) {
     super();
     const allOpts = { ...SkeletonKeyDefaults, ...opts };
     for (const key in allOpts)

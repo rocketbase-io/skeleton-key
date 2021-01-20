@@ -8,7 +8,7 @@ describe("intercept", () => {
         const obj = {
           toBeIntercepted(...args: any[]) {
             return args;
-          }
+          },
         };
         const spy = jest.fn();
 
@@ -21,9 +21,9 @@ describe("intercept", () => {
         const obj = {
           toBeIntercepted(...args: any[]) {
             return args;
-          }
+          },
         };
-        const spy = jest.fn(function(this: any) {
+        const spy = jest.fn(function (this: any) {
           expect(this).toBe(obj);
         });
 
@@ -38,9 +38,9 @@ describe("intercept", () => {
         const obj = {
           toBeIntercepted(...args: any[]) {
             return args;
-          }
+          },
         };
-        const spy = jest.fn(function() {
+        const spy = jest.fn(function () {
           throw new Error("The Error");
         });
 
@@ -55,9 +55,9 @@ describe("intercept", () => {
         const obj = {
           toBeIntercepted(...args: any[]) {
             return args;
-          }
+          },
         };
-        const spy = jest.fn(function() {
+        const spy = jest.fn(function () {
           throw new Error("The Error");
         });
 
@@ -72,9 +72,9 @@ describe("intercept", () => {
         const obj = {
           toBeIntercepted(...args: any[]) {
             return args;
-          }
+          },
         };
-        const spy = jest.fn(function(this: any) {
+        const spy = jest.fn(function (this: any) {
           expect(this).toBe(obj);
           return ["baby", "don't", "hurt", "me"];
         });

@@ -10,10 +10,7 @@ import { atob } from "./atob-polyfill";
 function b64DecodeUnicode(str: string): string {
   return decodeURIComponent(
     atob(str).replace(/(.)/g, (m, p) => {
-      let code = p
-        .charCodeAt(0)
-        .toString(16)
-        .toUpperCase();
+      let code = p.charCodeAt(0).toString(16).toUpperCase();
       if (code.length < 2) code = `0${code}`;
       return `%${code}`;
     })

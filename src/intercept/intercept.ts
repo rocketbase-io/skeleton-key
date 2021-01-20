@@ -1,23 +1,23 @@
+import { MethodOnly } from "@/types";
 import {
   xmlHttpRequestOpenMiddleware,
   xmlHttpRequestSendMiddleware,
   xmlHttpRequestSetRequestHeaderMiddleware,
-  fetchMiddleware
+  fetchMiddleware,
 } from "./middleware";
 
-export function interceptFunction<T, K extends keyof T, M extends T[K] extends (...args: any) => any ? T[K] : never>(
+export function interceptFunction<T, K extends keyof T, M extends MethodOnly<T[K]>>(
   target: T,
   key: K,
   middleware: (...args: Parameters<M>) => Parameters<M> | Promise<Parameters<M>>,
   async?: boolean
-) {
+): T[K] {
   const orig = target[key];
-  if ((orig as any).__intercepted) return;
+  if ((orig as any).__intercepted) return orig;
   let intercepted: any;
 
   if (async)
-    // @ts-ignore
-    intercepted = target[key] = async function(...params: Parameters<M>) {
+    intercepted = (target as any)[key] = async function (...params: Parameters<M>) {
       let args: Parameters<M>;
       try {
         args = await middleware.call(this, ...params);
@@ -27,13 +27,10 @@ export function interceptFunction<T, K extends keyof T, M extends T[K] extends (
         console.error(ex);
         return;
       }
-      // @ts-ignore
-      return orig.call(this, ...(args ?? params));
+      return (orig as any).call(this, ...(args ?? (params as unknown[])));
     };
-  /* eslint-disable-next-line */
   else
-    // @ts-ignore
-    intercepted = target[key] = function(...params: Parameters<M>) {
+    intercepted = (target as any)[key] = function (...params: Parameters<M>) {
       let args: Parameters<M>;
       try {
         args = middleware.call(this, ...params) as Parameters<M>;
@@ -43,16 +40,15 @@ export function interceptFunction<T, K extends keyof T, M extends T[K] extends (
         console.error(ex);
         return;
       }
-      // @ts-ignore
-      return orig.call(this, ...(args ?? params));
+      return (orig as any).call(this, ...(args ?? (params as unknown[])));
     };
   (intercepted as any).__intercepted = true;
   return intercepted;
 }
 
-export function installInterceptors() {
-  interceptFunction(XMLHttpRequest.prototype, "open", xmlHttpRequestOpenMiddleware);
-  interceptFunction(XMLHttpRequest.prototype, "send", xmlHttpRequestSendMiddleware, true);
-  interceptFunction(XMLHttpRequest.prototype, "setRequestHeader", xmlHttpRequestSetRequestHeaderMiddleware);
-  interceptFunction(Function("return this")() as typeof global, "fetch", fetchMiddleware);
+export function installInterceptors(): void {
+  interceptFunction(XMLHttpRequest.prototype, "open", xmlHttpRequestOpenMiddleware as any);
+  interceptFunction(XMLHttpRequest.prototype, "send", xmlHttpRequestSendMiddleware as any, true);
+  interceptFunction(XMLHttpRequest.prototype, "setRequestHeader", xmlHttpRequestSetRequestHeaderMiddleware as any);
+  interceptFunction(Function("return this")() as typeof global, "fetch", fetchMiddleware as any);
 }

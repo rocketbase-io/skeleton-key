@@ -1,11 +1,11 @@
-import { AuthStore, StorageAuthStore } from "@/auth-store";
+import { AuthDataBundle, AuthStore, StorageAuthStore } from "@/auth-store";
 import { AuthClient } from "./client";
 import { installInterceptors, Interceptor, interceptors } from "./intercept";
 import { Eventing } from "./events";
 import { AppUserRead, JwtBundle } from "./model";
 import { decode, JsonWebToken } from "./jwt";
 import { only, urlMatches } from "./util";
-import {Deferred, deferred} from "@/deferred";
+import { Deferred, deferred } from "@/deferred";
 
 export * from "./model";
 export * from "./client";
@@ -19,9 +19,9 @@ export * from "./util";
 export const JWT_DATE_TO_JS_DATE_RATIO = 1000;
 
 export interface SkeletonKeyOptions {
-  url?: string;
+  url: string;
   client?: AuthClient;
-  domains?: string[];
+  domains: string[];
   intercept?: boolean;
   renewType?: "action" | "never" | "interval";
   authHeader?: string;
@@ -32,9 +32,7 @@ export interface SkeletonKeyOptions {
   initialLoginCheck?: boolean;
 }
 
-export const SkeletonKeyDefaults: Readonly<SkeletonKeyOptions> = {
-  url: window.location.origin,
-  domains: [window.location.host],
+export const SkeletonKeyDefaults: Readonly<Omit<SkeletonKeyOptions, "url" | "domains">> = {
   intercept: true,
   initialLoginCheck: true,
   renewType: "action",
@@ -42,12 +40,12 @@ export const SkeletonKeyDefaults: Readonly<SkeletonKeyOptions> = {
   authPrefix: "Bearer ",
   authSuffix: "",
   storageKey: "io.rocketbase.commons.auth",
-  store: new StorageAuthStore(localStorage)
+  store: new StorageAuthStore(localStorage),
 };
 
 const INTERVAL_TOLERANCE = 10000; // 10s
 
-export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object>
+export class SkeletonKey<USER_DATA = unknown, TOKEN_DATA = unknown>
   extends Eventing<"login" | "logout" | "action" | "refresh" | "initialized">()
   implements Interceptor, Required<SkeletonKeyOptions> {
   public url!: string;
@@ -67,22 +65,21 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object>
   public initialized = false;
   public refreshing?: Deferred<any>;
 
-  constructor(opts: SkeletonKeyOptions = {}) {
+  constructor(opts: SkeletonKeyOptions) {
     super();
     const allOpts = { ...SkeletonKeyDefaults, ...opts };
-    for (const key in allOpts)
-      (this as any)[key] = (allOpts as any)[key];
+    for (const key in allOpts) (this as any)[key] = (allOpts as any)[key];
     if (!this.client) this.client = new AuthClient(this.url!);
     // noinspection JSIgnoredPromiseFromCall
     this.init();
   }
 
-  public setUrl(url: string) {
+  public setUrl(url: string): void {
     this.url = url;
     this.client.baseUrl = url;
   }
 
-  public async init() {
+  public async init(): Promise<void> {
     this.bindMethods();
     this.installListeners();
     await this.load();
@@ -91,7 +88,7 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object>
     this.emit("initialized", this);
   }
 
-  public bindMethods() {
+  public bindMethods(): void {
     this.onAction = this.onAction.bind(this);
     this.onFetch = this.onFetch.bind(this);
     this.onXhrSend = this.onXhrSend.bind(this);
@@ -99,7 +96,7 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object>
     this.installInterval = this.installInterval.bind(this);
   }
 
-  public installListeners() {
+  public installListeners(): void {
     this.on("action", this.onAction);
     this.on("login", this.installInterval);
     this.on("initialized", this.onInitialize);
@@ -109,7 +106,7 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object>
     }
   }
 
-  public async installInterval() {
+  public async installInterval(): Promise<void> {
     if (this.renewType !== "interval") return;
     if (!this.isLoggedIn()) return;
     if (this.needsRefresh()) await this.refreshToken();
@@ -118,15 +115,15 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object>
     setTimeout(this.installInterval, ms - INTERVAL_TOLERANCE);
   }
 
-  public isLoggedIn() {
+  public isLoggedIn(): boolean {
     return !!this.user && !!this.jwtBundle && (!this.needsRefresh() || this.canRefresh());
   }
 
-  public async loginWithToken(token: string, refreshToken?: string) {
+  public async loginWithToken(token: string, refreshToken?: string): Promise<AppUserRead & USER_DATA> {
     if (this.isLoggedIn()) await this.logout();
     try {
       this.jwtBundle = { token, refreshToken };
-      const user = this.user = (await this.client.me(token)) as AppUserRead & USER_DATA;
+      const user = (this.user = (await this.client.me(token)) as AppUserRead & USER_DATA);
       await this.persist();
       this.emitSync("login", user);
     } catch (ex) {
@@ -135,17 +132,17 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object>
     return this.userData;
   }
 
-  public async login(username: string, password: string) {
+  public async login(username: string, password: string): Promise<AppUserRead & USER_DATA> {
     if (this.isLoggedIn()) await this.logout();
     const { jwtTokenBundle, user } = await this.client.login({ username, password });
     this.jwtBundle = jwtTokenBundle as JwtBundle & TOKEN_DATA;
     this.user = user as AppUserRead & USER_DATA;
     this.emitSync("login", user);
     await this.persist();
-    return user;
+    return user as AppUserRead & USER_DATA;
   }
 
-  public async logout() {
+  public async logout(): Promise<boolean> {
     this.user = undefined;
     this.jwtBundle = undefined;
     this.emitSync("logout");
@@ -153,17 +150,17 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object>
     return true;
   }
 
-  public async waitForLogin() {
-    if (this.isLoggedIn()) return this.user!;
-    return this.waitForEvent("login");
+  public async waitForLogin(): Promise<void> {
+    if (this.isLoggedIn()) return;
+    await this.waitForEvent("login");
   }
 
-  public async ensureInitialized() {
-    if (this.initialized) return this;
-    return this.waitForEvent("initialized");
+  public async ensureInitialized(): Promise<void> {
+    if (this.initialized) return;
+    await this.waitForEvent("initialized");
   }
 
-  public async refreshToken() {
+  public async refreshToken(): Promise<JwtBundle | boolean> {
     if (!this.jwtBundle?.refreshToken) return false;
     if (this.refreshing) return this.refreshing;
     this.refreshing = deferred();
@@ -179,7 +176,7 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object>
     return this.jwtBundle;
   }
 
-  public async refreshInfo() {
+  public async refreshInfo(): Promise<(AppUserRead & USER_DATA) | false> {
     if (!this.isLoggedIn()) return false;
     if (this.needsRefresh()) await this.refreshToken();
     try {
@@ -187,44 +184,46 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object>
       this.emitSync("refresh", "user", this.user);
       await this.persist();
     } catch (ex) {
-      const { response: { status } } = ex;
+      const {
+        response: { status },
+      } = ex;
       await this.handleStatus(status);
     }
-    return this.user;
+    return this.user!;
   }
 
-  public async handleStatus(status: number, shouldLogout = true) {
+  public async handleStatus(status: number, shouldLogout = true): Promise<void> {
     if (status && [400, 401, 403].indexOf(status) !== -1 && shouldLogout) await this.logout();
   }
 
-  public needsRefresh() {
+  public needsRefresh(): boolean {
     if (!this.jwtBundle) return true;
     return new Date(this.tokenData.payload.exp! * JWT_DATE_TO_JS_DATE_RATIO) < new Date();
   }
 
-  public canRefresh() {
+  public canRefresh(): boolean {
     if (!this.jwtBundle?.refreshToken) return false;
     return new Date(this.refreshTokenData.payload.exp! * JWT_DATE_TO_JS_DATE_RATIO) > new Date();
   }
 
-  public get userData() {
-    return this.user;
+  public get userData(): AppUserRead & USER_DATA {
+    return this.user!;
   }
 
-  public get tokenData() {
+  public get tokenData(): JsonWebToken & { payload: TOKEN_DATA } {
     return decode(this.jwtBundle!.token) as JsonWebToken & { payload: TOKEN_DATA };
   }
 
-  public get refreshTokenData() {
+  public get refreshTokenData(): JsonWebToken {
     return decode(this.jwtBundle!.refreshToken!);
   }
 
-  public async persist() {
-    if (this.isLoggedIn()) await this.store.setData(this.storageKey, only(this, "jwtBundle", "user") as any);
+  public async persist(): Promise<void> {
+    if (this.isLoggedIn()) await this.store.setData(this.storageKey, only(this, "jwtBundle", "user") as AuthDataBundle);
     else await this.store.removeData(this.storageKey);
   }
 
-  public async load() {
+  public async load(): Promise<void> {
     if (!this.isLoggedIn()) {
       const data = await this.store.getData(this.storageKey);
       if (!data) return await this.persist();
@@ -232,26 +231,25 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object>
     }
   }
 
-  private get renewUrl() {
+  private get renewUrl(): string {
     return `${this.url}/auth/refresh`;
   }
 
-  public async onAction(type: string, url: string) {
+  public async onAction(type: string, url: string): Promise<void> {
     // Prevent infinite renew loop
     if (!url || urlMatches(url, this.renewUrl)) return;
-    if (this.renewType === "action" && this.needsRefresh() && this.canRefresh())
-      await this.refreshToken();
+    if (this.renewType === "action" && this.needsRefresh() && this.canRefresh()) await this.refreshToken();
   }
 
-  public async onInitialize() {
+  public onInitialize(): void {
     this.initialized = true;
   }
 
-  private get authHeaderValue() {
+  private get authHeaderValue(): string {
     return `${this.authPrefix}${this.jwtBundle!.token!}${this.authSuffix}`;
   }
 
-  public onFetch(ctx: any, input: Request | string, init?: RequestInit): any {
+  public onFetch(ctx: unknown, input: Request | string, init?: RequestInit): any {
     this.emitSync("action", "fetch", typeof input === "string" ? input : input.url, input, init);
     // eslint-disable-next-line prefer-rest-params
     if (!this.jwtBundle) return arguments;
@@ -261,7 +259,7 @@ export class SkeletonKey<USER_DATA = object, TOKEN_DATA = object>
     return [ctx, input, init];
   }
 
-  public async onXhrSend(xhr: XMLHttpRequest, body: any): Promise<any> {
+  public async onXhrSend(xhr: XMLHttpRequest, body: unknown): Promise<any> {
     await this.emit("action", "send", (xhr as any).__openArgs[1], xhr, body);
     this.xhrSetAuthHeader(xhr);
     // eslint-disable-next-line prefer-rest-params

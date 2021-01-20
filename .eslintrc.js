@@ -3,13 +3,13 @@ module.exports = {
   parser: "@typescript-eslint/parser",
   plugins: ["@typescript-eslint"],
   env: {
-    node: true
+    node: true,
   },
   extends: [
     "eslint:recommended",
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
-    "plugin:prettier/recommended"
+    "plugin:prettier/recommended",
   ],
   rules: {
     "no-console": "error",
@@ -23,8 +23,11 @@ module.exports = {
   },
   overrides: [
     {
-      files: ["**/test/unit/**/*.spec.{j,t}s?(x)"],
-      env: { jest: true }
-    }
-  ]
+      files: ["test/**/*.test.ts"],
+      env: { jest: true },
+      rules: {
+        "@typescript-eslint/ban-ts-comment": "off",
+      },
+    },
+  ],
 };

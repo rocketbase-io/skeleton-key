@@ -1,14 +1,13 @@
 // tslint:disable
 /* istanbul ignore file */
+import { InvalidCharacterError } from "./invalid-character-error";
 /**
  * The code was extracted from:
  * https://github.com/davidchambers/Base64.js
  * (dual-licensed under Apache 2.0 and WTFPL)
  */
-import { InvalidCharacterError } from "./invalid-character-error";
 
-window.atob =
-  (typeof window !== "undefined" && window.atob && window.atob.bind(window)) ||
+export const atob = (typeof global !== "undefined" && global.atob && global.atob.bind(global)) ||
   (() => {
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
     function polyfill(input: string): string {

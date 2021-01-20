@@ -1,5 +1,6 @@
 /* istanbul ignore file */
 import { InvalidCharacterError } from "./invalid-character-error";
+import { atob } from "./atob-polyfill";
 
 /**
  * The code was extracted from:

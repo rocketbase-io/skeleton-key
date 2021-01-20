@@ -1,3 +1,11 @@
+## [0.12.1](https://github.com/rocketbase-io/skeleton-key/compare/v0.12.0...v0.12.1) (2021-01-20)
+
+
+### Bug Fixes
+
+* update deps, make server side compatible ([ace6c37](https://github.com/rocketbase-io/skeleton-key/commit/ace6c37ef1265c5bf097fd3ed3e5d06f46cfdfd0))
+* url resolution in tests ([0e6c731](https://github.com/rocketbase-io/skeleton-key/commit/0e6c731c36b05dc964680aaf3ff6b0b5f68bb006))
+
 # [0.12.0](https://github.com/rocketbase-io/skeleton-key/compare/v0.11.1...v0.12.0) (2020-05-29)
 
 

@@ -56,7 +56,7 @@ export function executeRelevantInterceptors(
     );
 }
 
-export function skipFirst(array: unknown[]): unknown[] {
-  if (!array) return [];
-  return array.slice ? array.slice(1) : [...array].slice(1);
+export function skipFirst<T extends unknown[] | undefined>(array: T): T {
+  if (!array) return undefined as any;
+  return array.slice ? array.slice(1) : ([...(array as any)].slice(1) as any);
 }

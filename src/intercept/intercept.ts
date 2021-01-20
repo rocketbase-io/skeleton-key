@@ -54,5 +54,5 @@ export function installInterceptors() {
   interceptFunction(XMLHttpRequest.prototype, "open", xmlHttpRequestOpenMiddleware);
   interceptFunction(XMLHttpRequest.prototype, "send", xmlHttpRequestSendMiddleware, true);
   interceptFunction(XMLHttpRequest.prototype, "setRequestHeader", xmlHttpRequestSetRequestHeaderMiddleware);
-  interceptFunction(window, "fetch", fetchMiddleware);
+  interceptFunction(Function("return this")() as typeof global, "fetch", fetchMiddleware);
 }

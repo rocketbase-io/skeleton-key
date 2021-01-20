@@ -1,6 +1,9 @@
 import { Constructor } from "./types";
 
-export interface IEventing<K> {
+const EVENTS = Symbol("Events");
+
+export interface IEventing<K extends string> {
+  [EVENTS]: Record<K, ((...args: any[]) => void)[]>
   on(event: K, callback: (...args: any[]) => void): this;
   once(event: K, callback: (...args: any[]) => void): this;
   off(event: K, callback?: (...args: any[]) => void): this;
@@ -8,8 +11,6 @@ export interface IEventing<K> {
   emitSync(event: K, ...data: any[]): any[];
   waitForEvent(event: K): Promise<any[]>;
 }
-
-const EVENTS = Symbol("Events");
 
 export function Eventing<K extends string = string, T extends {} = {}>(
   Base: Constructor<T> = Object as any
@@ -27,19 +28,13 @@ export function Eventing<K extends string = string, T extends {} = {}>(
   return Cls as Constructor<T> & Constructor<IEventing<K>>;
 }
 
-export function on<K, R extends IEventing<K>>(this: R, event: K, callback: (ev: any) => void): R {
-  // @ts-ignore
-  if (!this[EVENTS]) this[EVENTS] = {};
-  // @ts-ignore
-  if (!this[EVENTS][event]) this[EVENTS][event] = [];
-  // @ts-ignore
-  this[EVENTS][event].push(callback);
+export function on<K extends string, R extends IEventing<K>>(this: R, event: K, callback: (...args: any[]) => void): R {
+  ((this[EVENTS] ??= {} as any)[event] ??= []).push(callback);
   return this;
 }
 
-export function once<K, R extends IEventing<K>>(this: R, event: K, callback: (ev: any) => void): R {
+export function once<K extends string, R extends IEventing<K>>(this: R, event: K, callback: (...args: any[]) => void): R {
   const onceHandler = (...args: any[]) => {
-    // @ts-ignore
     const result = callback.apply(this, args);
     this.off(event, onceHandler);
     return result;
@@ -47,26 +42,21 @@ export function once<K, R extends IEventing<K>>(this: R, event: K, callback: (ev
   return this.on(event, onceHandler);
 }
 
-export function off<K, R extends IEventing<K>>(this: R, event: K, callback?: (ev: any) => void): R {
-  // @ts-ignore
+export function off<K extends string, R extends IEventing<K>>(this: R, event: K, callback?: (...args: any[]) => void): R {
   if (!callback) delete this[EVENTS][event];
-  // @ts-ignore
   else this[EVENTS][event] = this[EVENTS][event].filter(cb => cb !== callback);
   return this;
 }
 
-export function emit<K, R extends IEventing<K>>(this: R, event: K, ...data: any[]): Promise<any[]> {
-  // @ts-ignore
+export function emit<K extends string, R extends IEventing<K>>(this: R, event: K, ...data: any[]): Promise<any[]> {
   if (this[EVENTS] && this[EVENTS][event]) return Promise.all(this[EVENTS][event].map(cb => cb(...data)));
   return Promise.resolve([] as any);
 }
 
-export function emitSync<K, R extends IEventing<K>>(this: R, event: K, ...data: any[]): any[] {
-  // @ts-ignore
-  if (this[EVENTS] && this[EVENTS][event]) return this[EVENTS][event].map(cb => cb(...data));
-  return [];
+export function emitSync<K extends string, R extends IEventing<K>>(this: R, event: K, ...data: any[]): any[] {
+  return this[EVENTS]?.[event]?.map(cb => cb(...data)) ?? [];
 }
 
-export function waitForEvent<K, R extends IEventing<K>>(this: R, event: K): Promise<any[]> {
+export function waitForEvent<K extends string, R extends IEventing<K>>(this: R, event: K): Promise<any[]> {
   return new Promise(resolve => this.once(event, resolve));
 }

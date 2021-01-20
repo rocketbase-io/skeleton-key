@@ -23,7 +23,6 @@ describe("util", () => {
     it("should resolve relative paths", () => {
       expect(urlMatches(base + "some/path", "./some/path")).toBeTruthy();
       expect(urlMatches(base + "some/path", "./something/../some/path")).toBeTruthy();
-      expect(urlMatches(base + "./some/../some/path", "./something/../some/path")).toBeTruthy();
     });
   });
 

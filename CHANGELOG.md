@@ -1,3 +1,11 @@
+## [0.12.2](https://github.com/rocketbase-io/skeleton-key/compare/v0.12.1...v0.12.2) (2021-01-20)
+
+
+### Bug Fixes
+
+* make skipFirst return undefined if no array was given ([1915cb3](https://github.com/rocketbase-io/skeleton-key/commit/1915cb31d740b40ba3ef9cbf0ade65e0a5b90393))
+* resolve linter errors, update linter definitions ([35b5c17](https://github.com/rocketbase-io/skeleton-key/commit/35b5c17fb0b9ae1e7d692222c4f2dc0be3826ec9))
+
 ## [0.12.1](https://github.com/rocketbase-io/skeleton-key/compare/v0.12.0...v0.12.1) (2021-01-20)
 
 

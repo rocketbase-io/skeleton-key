@@ -32,7 +32,7 @@ export interface SkeletonKeyOptions {
   initialLoginCheck?: boolean;
 }
 
-export const SkeletonKeyDefaults: Readonly<Omit<SkeletonKeyOptions, "url" | "domains">> = {
+export const SkeletonKeyDefaults: Readonly<Omit<SkeletonKeyOptions, "url" | "domains" | "store">> = {
   intercept: true,
   initialLoginCheck: true,
   renewType: "action",
@@ -40,7 +40,6 @@ export const SkeletonKeyDefaults: Readonly<Omit<SkeletonKeyOptions, "url" | "dom
   authPrefix: "Bearer ",
   authSuffix: "",
   storageKey: "io.rocketbase.commons.auth",
-  store: new StorageAuthStore(localStorage),
 };
 
 const INTERVAL_TOLERANCE = 10000; // 10s
@@ -70,6 +69,7 @@ export class SkeletonKey<USER_DATA = unknown, TOKEN_DATA = unknown>
     const allOpts = { ...SkeletonKeyDefaults, ...opts };
     for (const key in allOpts) (this as any)[key] = (allOpts as any)[key];
     if (!this.client) this.client = new AuthClient(this.url!);
+    if (!this.store && typeof localStorage !== "undefined") this.store = new StorageAuthStore(localStorage);
     // noinspection JSIgnoredPromiseFromCall
     this.init();
   }

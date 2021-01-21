@@ -1,3 +1,10 @@
+## [0.12.3](https://github.com/rocketbase-io/skeleton-key/compare/v0.12.2...v0.12.3) (2021-01-21)
+
+
+### Bug Fixes
+
+* only initialize store with localStorage if localStorage exists ([b809973](https://github.com/rocketbase-io/skeleton-key/commit/b809973381136338884c58bafa471d916119c80f))
+
 ## [0.12.2](https://github.com/rocketbase-io/skeleton-key/compare/v0.12.1...v0.12.2) (2021-01-20)
 
 

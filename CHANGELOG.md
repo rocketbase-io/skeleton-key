@@ -1,3 +1,10 @@
+## [0.12.4](https://github.com/rocketbase-io/skeleton-key/compare/v0.12.3...v0.12.4) (2021-01-26)
+
+
+### Bug Fixes
+
+* refactor b64 polyfills ([dff3fbe](https://github.com/rocketbase-io/skeleton-key/commit/dff3fbe03ce6c8ae636207fa8def6cd6dbef3730))
+
 ## [0.12.3](https://github.com/rocketbase-io/skeleton-key/compare/v0.12.2...v0.12.3) (2021-01-21)
 
 

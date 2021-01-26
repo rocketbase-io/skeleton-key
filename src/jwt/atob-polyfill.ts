@@ -16,10 +16,11 @@ export const atob =
       if (str.length % 4 === 1) {
         throw new InvalidCharacterError("'atob' failed: The string to be decoded is not correctly encoded.");
       }
+      let output = "";
       // noinspection CommaExpressionJS
       for (
         // initialize result and counters
-        let bc = 0, bs, buffer, idx = 0, output = "";
+        let bc = 0, bs, buffer, idx = 0;
         // get next character
         (buffer = str.charAt(idx++));
         // character found in table? initialize bit storage and add its ascii value;
@@ -35,7 +36,6 @@ export const atob =
         // try to find character in table (0-63, not found => -1)
         buffer = chars.indexOf(buffer);
       }
-      // @ts-ignore
       return output;
     }
 

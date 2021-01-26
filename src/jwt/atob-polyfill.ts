@@ -4,7 +4,7 @@ import { InvalidCharacterError } from "./invalid-character-error";
 /**
  * The code was extracted from:
  * https://github.com/davidchambers/Base64.js
- * (dual-licensed under Apache 2.0 and WTFPL)
+ * @license Apache 2.0, WTFPL
  */
 
 export const atob =
@@ -16,6 +16,7 @@ export const atob =
       if (str.length % 4 === 1) {
         throw new InvalidCharacterError("'atob' failed: The string to be decoded is not correctly encoded.");
       }
+      // noinspection CommaExpressionJS
       for (
         // initialize result and counters
         let bc = 0, bs, buffer, idx = 0, output = "";

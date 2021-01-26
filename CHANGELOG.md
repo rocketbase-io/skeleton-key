@@ -1,3 +1,10 @@
+## [0.12.5](https://github.com/rocketbase-io/skeleton-key/compare/v0.12.4...v0.12.5) (2021-01-26)
+
+
+### Bug Fixes
+
+* change scope of output var in atob polyfill ([8a3b85d](https://github.com/rocketbase-io/skeleton-key/commit/8a3b85d3649dc69dd6775822282eba95ad5e9837))
+
 ## [0.12.4](https://github.com/rocketbase-io/skeleton-key/compare/v0.12.3...v0.12.4) (2021-01-26)
 
 

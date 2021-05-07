@@ -185,7 +185,8 @@ export class SkeletonKey<USER_DATA = unknown, TOKEN_DATA = unknown>
     if (this.needsRefresh()) await this.refreshToken();
     try {
       this.user = (await this.client.me(this.jwtBundle!.token)) as AppUserRead & USER_DATA;
-      this.emitSync("refresh", "user", this.user);
+      if (skipLoginCheck) this.emitSync("login", this.user);
+      else this.emitSync("refresh", "user", this.user);
       await this.persist();
     } catch (ex) {
       const {

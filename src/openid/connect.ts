@@ -46,7 +46,7 @@ export async function receive(config: OpenIdConfig, current = currentHref()): Pr
   if (url.origin !== target.origin) return false;
   if (url.pathname !== target.pathname) return false;
   const params = url.searchParams;
-  if (params.get("state") !== state) return false;
+  if ((params.get("state") ?? undefined) !== state) return false;
   const code = params.get("code");
   return code ? code : false;
 }

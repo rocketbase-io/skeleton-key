@@ -1,3 +1,10 @@
+## [0.13.5](https://github.com/rocketbase-io/skeleton-key/compare/v0.13.4...v0.13.5) (2021-05-07)
+
+
+### Bug Fixes
+
+* url encode data, since axios does not support it ([9d3fb3d](https://github.com/rocketbase-io/skeleton-key/commit/9d3fb3df5b4e7e0d3cb7723343c8982b96ed603b))
+
 ## [0.13.4](https://github.com/rocketbase-io/skeleton-key/compare/v0.13.3...v0.13.4) (2021-05-07)
 
 

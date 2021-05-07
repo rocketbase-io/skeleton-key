@@ -4,8 +4,8 @@
   "description": "A Client-Side JS Authentication and Authorization Library",
   "main": "dist/SkeletonKey.js",
   "module": "dist/SkeletonKey.esm.js",
-  "unpkg": "dist/SkeletonKey.js",
-  "types": "dist/SkeletonKey.d.ts",
+  "unpkg": "dist/SkeletonKey.umd.js",
+  "types": "dist/SkeletonKey.esm.d.ts",
   "since": "2020",
   "files": [
     "dist",

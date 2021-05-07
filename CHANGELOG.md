@@ -1,3 +1,10 @@
+## [0.13.1](https://github.com/rocketbase-io/skeleton-key/compare/v0.13.0...v0.13.1) (2021-05-07)
+
+
+### Bug Fixes
+
+* change paths in package.json to point to existing files ([fc85822](https://github.com/rocketbase-io/skeleton-key/commit/fc8582226049580b112bc0324027cb02e978e263))
+
 # [0.13.0](https://github.com/rocketbase-io/skeleton-key/compare/v0.12.5...v0.13.0) (2021-05-07)
 
 

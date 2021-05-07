@@ -1,3 +1,10 @@
+## [0.13.7](https://github.com/rocketbase-io/skeleton-key/compare/v0.13.6...v0.13.7) (2021-05-07)
+
+
+### Bug Fixes
+
+* rename redirect_url to redirect_uri ([453aa31](https://github.com/rocketbase-io/skeleton-key/commit/453aa3109bbd7e3964c7fad43dbc254a82e06d09))
+
 ## [0.13.6](https://github.com/rocketbase-io/skeleton-key/compare/v0.13.5...v0.13.6) (2021-05-07)
 
 

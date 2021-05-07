@@ -1,3 +1,10 @@
+## [0.13.4](https://github.com/rocketbase-io/skeleton-key/compare/v0.13.3...v0.13.4) (2021-05-07)
+
+
+### Bug Fixes
+
+* send code redeeming requests using url-encoded form data ([d1c123b](https://github.com/rocketbase-io/skeleton-key/commit/d1c123bbeb9703bf6987371c48c6ecde8635f4e0))
+
 ## [0.13.3](https://github.com/rocketbase-io/skeleton-key/compare/v0.13.2...v0.13.3) (2021-05-07)
 
 

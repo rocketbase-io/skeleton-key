@@ -1,3 +1,10 @@
+## [0.13.3](https://github.com/rocketbase-io/skeleton-key/compare/v0.13.2...v0.13.3) (2021-05-07)
+
+
+### Bug Fixes
+
+* allow for state null/undefined ambiguity ([4a01518](https://github.com/rocketbase-io/skeleton-key/commit/4a0151825003c415b9f59c99005e6ecfeb0b2360))
+
 ## [0.13.2](https://github.com/rocketbase-io/skeleton-key/compare/v0.13.1...v0.13.2) (2021-05-07)
 
 

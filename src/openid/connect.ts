@@ -7,12 +7,17 @@ export interface OpenIdConfig {
   features?: string;
 }
 
-export const currentUrl = (): string | undefined => (typeof location === "undefined" ? undefined : location.origin);
+export const currentOrigin = (): string | undefined => (typeof location === "undefined" ? undefined : location.origin);
+export const currentHref = (): string | undefined => (typeof location === "undefined" ? undefined : location.href);
+export function relativeUrl(path: string, origin = currentOrigin()): URL {
+  return new URL(path, origin);
+}
+
 export const popupFeatures = "height=500,width=420,location=0,menubar=0,status=0,toolbar=0";
 
 export async function connect(config: OpenIdConfig): Promise<void> {
   const { target, features = popupFeatures, ...urlParams } = config;
-  const url = new URL(target, currentUrl());
+  const url = relativeUrl(target);
   for (const [key, value] of Object.entries(urlParams)) url.searchParams.set(key, value);
   return new Promise((resolve, reject) => {
     const w = window.open(url.href, "_blank", features)!;
@@ -32,14 +37,12 @@ export async function connect(config: OpenIdConfig): Promise<void> {
   });
 }
 
-export async function receive(config: OpenIdConfig, current = currentUrl()): Promise<false | string> {
+export async function receive(config: OpenIdConfig, current = currentHref()): Promise<false | string> {
   if (!current)
-    throw new Error(
-      "No callback url provided for OpenId Connect callback. Are you running in a server side environment?"
-    );
+    throw new Error("No url provided for OpenId Connect callback. Are you running in a server side environment?");
   const { state, redirect_uri } = config;
-  const url = new URL(current, currentUrl());
-  const target = new URL(redirect_uri, currentUrl());
+  const url = relativeUrl(current);
+  const target = relativeUrl(redirect_uri);
   if (url.origin !== target.origin) return false;
   if (url.pathname !== target.pathname) return false;
   const params = url.searchParams;

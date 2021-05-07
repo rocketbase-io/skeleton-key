@@ -142,8 +142,9 @@ export class AuthClient {
     return { headers: { Authorization: `Bearer ${token}` }, baseURL: this.baseUrl };
   }
 
-  public urlEncoded(body: any): string {
-    return Object.entries(body ?? {})
+  public urlEncoded(body: unknown): string {
+    return Object.entries((body as any) ?? {})
+      .filter(([, value]) => value !== undefined)
       .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`)
       .join("&");
   }

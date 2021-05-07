@@ -123,13 +123,29 @@ export class AuthClient {
     clientId: string,
     scope?: string
   ): Promise<JwtResponseBundle> {
-    const payload = { code, grant_type: grantType, redirect_url: redirectUrl, client_id: clientId, scope };
-    const requestConfig = { baseURL: this.baseUrl, headers: { "Content-Type": "application/x-www-form-urlencoded" } };
-    return this.api.post("/oauth/token", payload, requestConfig).then((r) => r.data);
+    const payload = this.urlEncoded({
+      code,
+      grant_type: grantType,
+      redirect_url: redirectUrl,
+      client_id: clientId,
+      scope,
+    });
+    return this.api
+      .post("/oauth/token", payload, {
+        baseURL: this.baseUrl,
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      })
+      .then((r) => r.data);
   }
 
   public authHeader(token: string): AxiosRequestConfig {
     return { headers: { Authorization: `Bearer ${token}` }, baseURL: this.baseUrl };
+  }
+
+  public urlEncoded(body: any): string {
+    return Object.entries(body ?? {})
+      .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`)
+      .join("&");
   }
 }
 

@@ -1,3 +1,10 @@
+## [0.13.9](https://github.com/rocketbase-io/skeleton-key/compare/v0.13.8...v0.13.9) (2021-05-07)
+
+
+### Bug Fixes
+
+* emit login event after successful openid login flow ([2e0c8bb](https://github.com/rocketbase-io/skeleton-key/commit/2e0c8bb3ec87b024cd67ba3e9f4d888b994b5cdb))
+
 ## [0.13.8](https://github.com/rocketbase-io/skeleton-key/compare/v0.13.7...v0.13.8) (2021-05-07)
 
 

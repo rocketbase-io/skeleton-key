@@ -180,8 +180,8 @@ export class SkeletonKey<USER_DATA = unknown, TOKEN_DATA = unknown>
     return this.jwtBundle;
   }
 
-  public async refreshInfo(): Promise<(AppUserRead & USER_DATA) | false> {
-    if (!this.isLoggedIn()) return false;
+  public async refreshInfo(skipLoginCheck?: boolean): Promise<(AppUserRead & USER_DATA) | false> {
+    if (!this.isLoggedIn() && !skipLoginCheck) return false;
     if (this.needsRefresh()) await this.refreshToken();
     try {
       this.user = (await this.client.me(this.jwtBundle!.token)) as AppUserRead & USER_DATA;
@@ -298,7 +298,7 @@ export class SkeletonKey<USER_DATA = unknown, TOKEN_DATA = unknown>
     const code = await this.receive();
     if (!code) return;
     this.jwtBundle = await this.redeem(code);
-    await this.refreshInfo();
+    await this.refreshInfo(true);
     if (typeof close !== "undefined") close();
   }
 }

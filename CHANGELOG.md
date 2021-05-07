@@ -1,3 +1,10 @@
+# [0.13.0](https://github.com/rocketbase-io/skeleton-key/compare/v0.12.5...v0.13.0) (2021-05-07)
+
+
+### Features
+
+* add rudimentary openid connect support ([53087ab](https://github.com/rocketbase-io/skeleton-key/commit/53087ab2046ba34560964748906757053988c551))
+
 ## [0.12.5](https://github.com/rocketbase-io/skeleton-key/compare/v0.12.4...v0.12.5) (2021-01-26)
 
 

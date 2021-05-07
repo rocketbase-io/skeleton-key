@@ -6,6 +6,7 @@ import {
   ConfirmInviteRequest,
   ForgotPasswordRequest,
   JwtBundle,
+  JwtResponseBundle,
   LoginRequest,
   LoginResponse,
   PasswordChangeRequest,
@@ -113,6 +114,17 @@ export class AuthClient {
     return this.api
       .post<AppUserRead>("/auth/invite", JSON.stringify(body), { baseURL: this.baseUrl })
       .then((r) => r.data);
+  }
+
+  public async redeemCode(
+    code: string,
+    grantType: "authorization_code" | "refresh_token",
+    redirectUrl: string,
+    clientId: string,
+    scope?: string
+  ): Promise<JwtResponseBundle> {
+    const payload = { code, grant_type: grantType, redirect_url: redirectUrl, client_id: clientId, scope };
+    return this.api.post("/oauth/token", payload, { baseURL: this.baseUrl }).then((r) => r.data);
   }
 
   public authHeader(token: string): AxiosRequestConfig {

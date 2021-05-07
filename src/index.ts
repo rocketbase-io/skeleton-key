@@ -1,4 +1,5 @@
 import { AuthDataBundle, AuthStore, StorageAuthStore } from "@/auth-store";
+import { connect, OpenIdConfig, receive } from "@/openid/connect";
 import { AuthClient } from "./client";
 import { installInterceptors, Interceptor, interceptors } from "./intercept";
 import { Eventing } from "./events";
@@ -30,9 +31,10 @@ export interface SkeletonKeyOptions {
   storageKey?: string;
   store?: AuthStore;
   initialLoginCheck?: boolean;
+  openIdConfig?: OpenIdConfig;
 }
 
-export const SkeletonKeyDefaults: Readonly<Omit<SkeletonKeyOptions, "url" | "domains" | "store">> = {
+export const SkeletonKeyDefaults: Readonly<Omit<SkeletonKeyOptions, "url" | "domains" | "store" | "openIdConfig">> = {
   intercept: true,
   initialLoginCheck: true,
   renewType: "action",
@@ -57,6 +59,7 @@ export class SkeletonKey<USER_DATA = unknown, TOKEN_DATA = unknown>
   public authSuffix!: string;
   public storageKey!: string;
   public store!: AuthStore;
+  public openIdConfig!: OpenIdConfig;
   public initialLoginCheck!: boolean;
 
   public user?: AppUserRead & USER_DATA;
@@ -82,6 +85,7 @@ export class SkeletonKey<USER_DATA = unknown, TOKEN_DATA = unknown>
   public async init(): Promise<void> {
     this.bindMethods();
     this.installListeners();
+    await this.fromOpenId();
     await this.load();
     if (this.isLoggedIn() && this.initialLoginCheck) await this.refreshInfo();
     await this.installInterval();
@@ -269,5 +273,32 @@ export class SkeletonKey<USER_DATA = unknown, TOKEN_DATA = unknown>
   private xhrSetAuthHeader(xhr: XMLHttpRequest) {
     if (this.jwtBundle && (!(xhr as any).__headers || !(xhr as any).__headers[this.authHeader]))
       xhr.setRequestHeader(this.authHeader, this.authHeaderValue);
+  }
+
+  public async connect(config: OpenIdConfig = this.openIdConfig): Promise<void> {
+    if (!config) throw new Error("No OpenID config provided!");
+    await connect(config);
+    // load changes from store after window closes
+    await this.load();
+  }
+
+  public async receive(config: OpenIdConfig = this.openIdConfig, currentUrl?: string): Promise<string | false> {
+    if (!config) return false;
+    return receive(config, currentUrl);
+  }
+
+  public async redeem(code: string, config: OpenIdConfig = this.openIdConfig): Promise<JwtBundle> {
+    if (!config) throw new Error("No OpenID config provided!");
+    const { redirect_uri: url, client_id: id } = config;
+    const { refresh_token, access_token } = await this.client.redeemCode(code, "authorization_code", url, id);
+    return { refreshToken: refresh_token, token: access_token };
+  }
+
+  public async fromOpenId(): Promise<void> {
+    const code = await this.receive();
+    if (!code) return;
+    this.jwtBundle = await this.redeem(code);
+    await this.refreshInfo();
+    if (typeof close !== "undefined") close();
   }
 }

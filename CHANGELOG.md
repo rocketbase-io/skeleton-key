@@ -1,3 +1,10 @@
+## [0.13.2](https://github.com/rocketbase-io/skeleton-key/compare/v0.13.1...v0.13.2) (2021-05-07)
+
+
+### Bug Fixes
+
+* resolve urls relative to current origin if not absolute ([c1e64c8](https://github.com/rocketbase-io/skeleton-key/commit/c1e64c826724c010b9a91f1d4e710331a0068729))
+
 ## [0.13.1](https://github.com/rocketbase-io/skeleton-key/compare/v0.13.0...v0.13.1) (2021-05-07)
 
 

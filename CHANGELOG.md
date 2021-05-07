@@ -1,3 +1,10 @@
+## [0.13.8](https://github.com/rocketbase-io/skeleton-key/compare/v0.13.7...v0.13.8) (2021-05-07)
+
+
+### Bug Fixes
+
+* allow refreshing user data w/ just a token bundle ([771e68d](https://github.com/rocketbase-io/skeleton-key/commit/771e68d49561cfb70e033db7f4c612acf767636c))
+
 ## [0.13.7](https://github.com/rocketbase-io/skeleton-key/compare/v0.13.6...v0.13.7) (2021-05-07)
 
 

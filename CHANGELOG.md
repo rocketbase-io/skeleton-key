@@ -1,3 +1,10 @@
+## [0.13.6](https://github.com/rocketbase-io/skeleton-key/compare/v0.13.5...v0.13.6) (2021-05-07)
+
+
+### Bug Fixes
+
+* remove undefined fields from form body ([225ea0f](https://github.com/rocketbase-io/skeleton-key/commit/225ea0f1f06d4c9a9f1aee5cbc7b7703cc159d4e))
+
 ## [0.13.5](https://github.com/rocketbase-io/skeleton-key/compare/v0.13.4...v0.13.5) (2021-05-07)
 
 

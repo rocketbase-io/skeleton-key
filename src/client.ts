@@ -119,14 +119,14 @@ export class AuthClient {
   public async redeemCode(
     code: string,
     grantType: "authorization_code" | "refresh_token",
-    redirectUrl: string,
+    redirectUri: string,
     clientId: string,
     scope?: string
   ): Promise<JwtResponseBundle> {
     const payload = this.urlEncoded({
       code,
       grant_type: grantType,
-      redirect_url: redirectUrl,
+      redirect_uri: redirectUri,
       client_id: clientId,
       scope,
     });

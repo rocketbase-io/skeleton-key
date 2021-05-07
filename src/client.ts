@@ -124,7 +124,8 @@ export class AuthClient {
     scope?: string
   ): Promise<JwtResponseBundle> {
     const payload = { code, grant_type: grantType, redirect_url: redirectUrl, client_id: clientId, scope };
-    return this.api.post("/oauth/token", payload, { baseURL: this.baseUrl }).then((r) => r.data);
+    const requestConfig = { baseURL: this.baseUrl, headers: { "Content-Type": "application/x-www-form-urlencoded" } };
+    return this.api.post("/oauth/token", payload, requestConfig).then((r) => r.data);
   }
 
   public authHeader(token: string): AxiosRequestConfig {

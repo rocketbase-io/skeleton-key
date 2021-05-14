@@ -31,7 +31,7 @@ export interface SkeletonKeyOptions {
   storageKey?: string;
   store?: AuthStore;
   initialLoginCheck?: boolean;
-  openIdActions: OpenIdConfig[];
+  openIdActions?: OpenIdConfig[];
 }
 
 export const SkeletonKeyDefaults: Readonly<Omit<SkeletonKeyOptions, "url" | "domains" | "store" | "openIdConfig">> = {

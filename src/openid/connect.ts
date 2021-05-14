@@ -1,10 +1,12 @@
 export interface OpenIdConfig {
   target: string;
-  response_type: "code";
+  response_type: "code" | "token";
   client_id: string;
   redirect_uri: string;
   state?: string;
   features?: string;
+  login?: boolean;
+  logout?: boolean;
 }
 
 export const currentOrigin = (): string | undefined => (typeof location === "undefined" ? undefined : location.origin);

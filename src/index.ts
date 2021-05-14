@@ -31,7 +31,7 @@ export interface SkeletonKeyOptions {
   storageKey?: string;
   store?: AuthStore;
   initialLoginCheck?: boolean;
-  openIdConfig?: OpenIdConfig;
+  openIdActions: OpenIdConfig[];
 }
 
 export const SkeletonKeyDefaults: Readonly<Omit<SkeletonKeyOptions, "url" | "domains" | "store" | "openIdConfig">> = {
@@ -42,6 +42,7 @@ export const SkeletonKeyDefaults: Readonly<Omit<SkeletonKeyOptions, "url" | "dom
   authPrefix: "Bearer ",
   authSuffix: "",
   storageKey: "io.rocketbase.commons.auth",
+  openIdActions: [],
 };
 
 const INTERVAL_TOLERANCE = 10000; // 10s
@@ -59,7 +60,7 @@ export class SkeletonKey<USER_DATA = unknown, TOKEN_DATA = unknown>
   public authSuffix!: string;
   public storageKey!: string;
   public store!: AuthStore;
-  public openIdConfig!: OpenIdConfig;
+  public openIdActions!: OpenIdConfig[];
   public initialLoginCheck!: boolean;
 
   public user?: AppUserRead & USER_DATA;
@@ -276,19 +277,19 @@ export class SkeletonKey<USER_DATA = unknown, TOKEN_DATA = unknown>
       xhr.setRequestHeader(this.authHeader, this.authHeaderValue);
   }
 
-  public async connect(config: OpenIdConfig = this.openIdConfig): Promise<void> {
+  public async connect(config: OpenIdConfig): Promise<void> {
     if (!config) throw new Error("No OpenID config provided!");
     await connect(config);
     // load changes from store after window closes
     await this.load();
   }
 
-  public async receive(config: OpenIdConfig = this.openIdConfig, currentUrl?: string): Promise<string | false> {
+  public async receive(config: OpenIdConfig, currentUrl?: string): Promise<string | false> {
     if (!config) return false;
     return receive(config, currentUrl);
   }
 
-  public async redeem(code: string, config: OpenIdConfig = this.openIdConfig): Promise<JwtBundle> {
+  public async redeem(code: string, config: OpenIdConfig): Promise<JwtBundle> {
     if (!config) throw new Error("No OpenID config provided!");
     const { redirect_uri: url, client_id: id } = config;
     const { refresh_token, access_token } = await this.client.redeemCode(code, "authorization_code", url, id);
@@ -296,10 +297,22 @@ export class SkeletonKey<USER_DATA = unknown, TOKEN_DATA = unknown>
   }
 
   public async fromOpenId(): Promise<void> {
-    const code = await this.receive();
-    if (!code) return;
-    this.jwtBundle = await this.redeem(code);
+    for (const action of this.openIdActions) {
+      const code = await this.receive(action);
+      if (!code) return;
+      if (action.login) return this.openIdLogin(code, action);
+      if (action.logout) return this.openIdLogout(code, action);
+    }
+  }
+
+  public async openIdLogin(code: string, action: OpenIdConfig): Promise<void> {
+    this.jwtBundle = await this.redeem(code, action);
     await this.refreshInfo(true);
+    if (typeof close !== "undefined") close();
+  }
+
+  public async openIdLogout(code: string, action: OpenIdConfig): Promise<void> {
+    await this.logout();
     if (typeof close !== "undefined") close();
   }
 }

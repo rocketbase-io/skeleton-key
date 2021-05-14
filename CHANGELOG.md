@@ -1,3 +1,15 @@
+# [0.14.0](https://github.com/rocketbase-io/skeleton-key/compare/v0.13.9...v0.14.0) (2021-05-14)
+
+
+### Bug Fixes
+
+* make openid config optional ([fbd8957](https://github.com/rocketbase-io/skeleton-key/commit/fbd895753a0ac1695d0f8b7e7ce1814a093ce212))
+
+
+### Features
+
+* add multiple openid connections ([007ab4c](https://github.com/rocketbase-io/skeleton-key/commit/007ab4c2007f081bbf924b01984c396ca22102fd))
+
 ## [0.13.9](https://github.com/rocketbase-io/skeleton-key/compare/v0.13.8...v0.13.9) (2021-05-07)
 
 

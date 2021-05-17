@@ -10,4 +10,5 @@ export function urlMatches(target: string, needle: string): boolean {
   return urlAbsolute(target).indexOf(urlAbsolute(needle)) !== -1;
 }
 
-export const urlAbsolute = (url: string): string => new URI(url).absoluteTo(global?.location?.href).href();
+export const urlAbsolute = (url: string): string =>
+  new URI(url).absoluteTo(typeof location !== "undefined" ? location?.href : "/").href();

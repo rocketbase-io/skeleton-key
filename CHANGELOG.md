@@ -1,3 +1,10 @@
+## [0.14.1](https://github.com/rocketbase-io/skeleton-key/compare/v0.14.0...v0.14.1) (2021-05-17)
+
+
+### Bug Fixes
+
+* remove references to node globals ([ff138d1](https://github.com/rocketbase-io/skeleton-key/commit/ff138d1c4a3a901d270d0a02603bc33f353fd452))
+
 # [0.14.0](https://github.com/rocketbase-io/skeleton-key/compare/v0.13.9...v0.14.0) (2021-05-14)
 
 

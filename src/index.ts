@@ -301,7 +301,7 @@ export class SkeletonKey<USER_DATA = unknown, TOKEN_DATA = unknown>
   public async fromOpenId(shouldClose?: boolean | ((action: OpenIdConfig) => boolean)): Promise<void> {
     for (const action of this.openIdActions) {
       const code = await this.receive(action);
-      if (!code) return;
+      if (!code) continue;
       shouldClose = typeof shouldClose === "function" ? shouldClose(action) : shouldClose || action.state === "close";
       try {
         if (action.login) return this.openIdLogin(code, action);

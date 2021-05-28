@@ -1,3 +1,11 @@
+## [0.14.4](https://github.com/rocketbase-io/skeleton-key/compare/v0.14.3...v0.14.4) (2021-05-28)
+
+
+### Bug Fixes
+
+* await openid action before closing window ([ab01a80](https://github.com/rocketbase-io/skeleton-key/commit/ab01a8061e19b04717a2d3941c1f32b9d1a2e2d9))
+* pass true for successful loopback without code or token ([bb3ddf0](https://github.com/rocketbase-io/skeleton-key/commit/bb3ddf0c7262b74f64e54c54a2831bc682b25e23))
+
 ## [0.14.3](https://github.com/rocketbase-io/skeleton-key/compare/v0.14.2...v0.14.3) (2021-05-28)
 
 

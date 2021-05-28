@@ -32,6 +32,7 @@ export interface SkeletonKeyOptions {
   store?: AuthStore;
   initialLoginCheck?: boolean;
   openIdActions?: OpenIdConfig[];
+  openIdShouldClose?: boolean | ((action: OpenIdConfig) => boolean);
 }
 
 export const SkeletonKeyDefaults: Readonly<Omit<SkeletonKeyOptions, "url" | "domains" | "store" | "openIdConfig">> = {
@@ -61,6 +62,7 @@ export class SkeletonKey<USER_DATA = unknown, TOKEN_DATA = unknown>
   public storageKey!: string;
   public store!: AuthStore;
   public openIdActions!: OpenIdConfig[];
+  public openIdShouldClose!: boolean | ((action: OpenIdConfig) => boolean);
   public initialLoginCheck!: boolean;
 
   public user?: AppUserRead & USER_DATA;
@@ -86,7 +88,7 @@ export class SkeletonKey<USER_DATA = unknown, TOKEN_DATA = unknown>
   public async init(): Promise<void> {
     this.bindMethods();
     this.installListeners();
-    await this.fromOpenId();
+    await this.fromOpenId(this.openIdShouldClose);
     await this.load();
     if (this.isLoggedIn() && this.initialLoginCheck) await this.refreshInfo();
     await this.installInterval();
@@ -296,23 +298,26 @@ export class SkeletonKey<USER_DATA = unknown, TOKEN_DATA = unknown>
     return { refreshToken: refresh_token, token: access_token };
   }
 
-  public async fromOpenId(): Promise<void> {
+  public async fromOpenId(shouldClose?: boolean | ((action: OpenIdConfig) => boolean)): Promise<void> {
     for (const action of this.openIdActions) {
       const code = await this.receive(action);
       if (!code) return;
-      if (action.login) return this.openIdLogin(code, action);
-      if (action.logout) return this.openIdLogout(code, action);
+      shouldClose = typeof shouldClose === "function" ? shouldClose(action) : shouldClose || action.state === "close";
+      try {
+        if (action.login) return this.openIdLogin(code, action);
+        if (action.logout) return this.openIdLogout();
+      } finally {
+        if (shouldClose && typeof close !== "undefined") close();
+      }
     }
   }
 
   public async openIdLogin(code: string, action: OpenIdConfig): Promise<void> {
     this.jwtBundle = await this.redeem(code, action);
     await this.refreshInfo(true);
-    if (typeof close !== "undefined") close();
   }
 
-  public async openIdLogout(code: string, action: OpenIdConfig): Promise<void> {
+  public async openIdLogout(): Promise<void> {
     await this.logout();
-    if (typeof close !== "undefined") close();
   }
 }

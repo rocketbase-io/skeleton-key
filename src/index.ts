@@ -286,7 +286,7 @@ export class SkeletonKey<USER_DATA = unknown, TOKEN_DATA = unknown>
     await this.load();
   }
 
-  public async receive(config: OpenIdConfig, currentUrl?: string): Promise<string | false> {
+  public async receive(config: OpenIdConfig, currentUrl?: string): Promise<string | boolean> {
     if (!config) return false;
     return receive(config, currentUrl);
   }
@@ -301,10 +301,10 @@ export class SkeletonKey<USER_DATA = unknown, TOKEN_DATA = unknown>
   public async fromOpenId(shouldClose?: boolean | ((action: OpenIdConfig) => boolean)): Promise<void> {
     for (const action of this.openIdActions) {
       const code = await this.receive(action);
-      if (!code) continue;
+      if (code === false) continue;
       shouldClose = typeof shouldClose === "function" ? shouldClose(action) : shouldClose || action.state === "close";
       try {
-        if (action.login) return this.openIdLogin(code, action);
+        if (action.login && typeof code === "string") return this.openIdLogin(code, action);
         if (action.logout) return this.openIdLogout();
       } finally {
         if (shouldClose && typeof close !== "undefined") close();

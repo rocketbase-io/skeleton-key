@@ -39,7 +39,7 @@ export async function connect(config: OpenIdConfig): Promise<void> {
   });
 }
 
-export async function receive(config: OpenIdConfig, current = currentHref()): Promise<false | string> {
+export async function receive(config: OpenIdConfig, current = currentHref()): Promise<boolean | string> {
   if (!current)
     throw new Error("No url provided for OpenId Connect callback. Are you running in a server side environment?");
   const { state, redirect_uri } = config;
@@ -50,5 +50,5 @@ export async function receive(config: OpenIdConfig, current = currentHref()): Pr
   const params = url.searchParams;
   if ((params.get("state") ?? undefined) !== state) return false;
   const code = params.get("code");
-  return code ? code : false;
+  return code ? code : true;
 }

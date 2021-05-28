@@ -1,3 +1,10 @@
+## [0.14.2](https://github.com/rocketbase-io/skeleton-key/compare/v0.14.1...v0.14.2) (2021-05-28)
+
+
+### Bug Fixes
+
+* allow for not closing window after login/logout ([793a0f9](https://github.com/rocketbase-io/skeleton-key/commit/793a0f9f97d337d133d62d8ee9385e503427cca2))
+
 ## [0.14.1](https://github.com/rocketbase-io/skeleton-key/compare/v0.14.0...v0.14.1) (2021-05-17)
 
 

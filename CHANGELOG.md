@@ -1,3 +1,10 @@
+## [0.14.3](https://github.com/rocketbase-io/skeleton-key/compare/v0.14.2...v0.14.3) (2021-05-28)
+
+
+### Bug Fixes
+
+* check every registered openid configuration on fromOpenId hook ([ab189f8](https://github.com/rocketbase-io/skeleton-key/commit/ab189f854943706477aea41a6f6c20cfb998c0ab))
+
 ## [0.14.2](https://github.com/rocketbase-io/skeleton-key/compare/v0.14.1...v0.14.2) (2021-05-28)
 
 

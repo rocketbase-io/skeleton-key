@@ -303,9 +303,10 @@ export class SkeletonKey<USER_DATA = unknown, TOKEN_DATA = unknown>
 
   public async fromOpenId(
     shouldClose: boolean | ((action: OpenIdConfig) => boolean) = this.openIdShouldClose,
-    currentUrl?: string
+    currentUrl?: string,
+    actions: OpenIdConfig[] = this.openIdActions
   ): Promise<void> {
-    for (const action of this.openIdActions) {
+    for (const action of actions) {
       const code = await this.receive(action, currentUrl);
       if (code === false) continue;
       shouldClose = typeof shouldClose === "function" ? shouldClose(action) : shouldClose || action.state === "close";

@@ -1,3 +1,10 @@
+## [0.14.5](https://github.com/rocketbase-io/skeleton-key/compare/v0.14.4...v0.14.5) (2021-06-21)
+
+
+### Bug Fixes
+
+* make initial openid connect checks optional, pass url to receive calls ([67e3998](https://github.com/rocketbase-io/skeleton-key/commit/67e3998d6847180136a64a35ff5a5386c4b75a1d))
+
 ## [0.14.4](https://github.com/rocketbase-io/skeleton-key/compare/v0.14.3...v0.14.4) (2021-05-28)
 
 

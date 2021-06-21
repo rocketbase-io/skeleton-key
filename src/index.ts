@@ -31,6 +31,7 @@ export interface SkeletonKeyOptions {
   storageKey?: string;
   store?: AuthStore;
   initialLoginCheck?: boolean;
+  initialOpenIdCheck?: boolean;
   openIdActions?: OpenIdConfig[];
   openIdShouldClose?: boolean | ((action: OpenIdConfig) => boolean);
 }
@@ -38,6 +39,7 @@ export interface SkeletonKeyOptions {
 export const SkeletonKeyDefaults: Readonly<Omit<SkeletonKeyOptions, "url" | "domains" | "store" | "openIdConfig">> = {
   intercept: true,
   initialLoginCheck: true,
+  initialOpenIdCheck: false,
   renewType: "action",
   authHeader: "Authorization",
   authPrefix: "Bearer ",
@@ -64,6 +66,7 @@ export class SkeletonKey<USER_DATA = unknown, TOKEN_DATA = unknown>
   public openIdActions!: OpenIdConfig[];
   public openIdShouldClose!: boolean | ((action: OpenIdConfig) => boolean);
   public initialLoginCheck!: boolean;
+  public initialOpenIdCheck!: boolean;
 
   public user?: AppUserRead & USER_DATA;
   public jwtBundle?: JwtBundle;
@@ -88,7 +91,7 @@ export class SkeletonKey<USER_DATA = unknown, TOKEN_DATA = unknown>
   public async init(): Promise<void> {
     this.bindMethods();
     this.installListeners();
-    await this.fromOpenId(this.openIdShouldClose);
+    if (this.initialOpenIdCheck) await this.fromOpenId(this.openIdShouldClose);
     await this.load();
     if (this.isLoggedIn() && this.initialLoginCheck) await this.refreshInfo();
     await this.installInterval();
@@ -298,9 +301,12 @@ export class SkeletonKey<USER_DATA = unknown, TOKEN_DATA = unknown>
     return { refreshToken: refresh_token, token: access_token };
   }
 
-  public async fromOpenId(shouldClose?: boolean | ((action: OpenIdConfig) => boolean)): Promise<void> {
+  public async fromOpenId(
+    shouldClose: boolean | ((action: OpenIdConfig) => boolean) = this.openIdShouldClose,
+    currentUrl?: string
+  ): Promise<void> {
     for (const action of this.openIdActions) {
-      const code = await this.receive(action);
+      const code = await this.receive(action, currentUrl);
       if (code === false) continue;
       shouldClose = typeof shouldClose === "function" ? shouldClose(action) : shouldClose || action.state === "close";
       try {

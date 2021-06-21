@@ -1,3 +1,10 @@
+## [0.14.6](https://github.com/rocketbase-io/skeleton-key/compare/v0.14.5...v0.14.6) (2021-06-21)
+
+
+### Bug Fixes
+
+* make receiving oidc action configurable ([4f82ea0](https://github.com/rocketbase-io/skeleton-key/commit/4f82ea00463d516ce69aab71def3c56b3027b9b3))
+
 ## [0.14.5](https://github.com/rocketbase-io/skeleton-key/compare/v0.14.4...v0.14.5) (2021-06-21)
 
 

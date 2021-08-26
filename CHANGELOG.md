@@ -1,3 +1,10 @@
+## [0.14.7](https://github.com/rocketbase-io/skeleton-key/compare/v0.14.6...v0.14.7) (2021-08-26)
+
+
+### Bug Fixes
+
+* http status handling without unchecked destructuring ([40a8f25](https://github.com/rocketbase-io/skeleton-key/commit/40a8f2560e9ecf8952ed08ae4495b8c822a8198a))
+
 ## [0.14.6](https://github.com/rocketbase-io/skeleton-key/compare/v0.14.5...v0.14.6) (2021-06-21)
 
 

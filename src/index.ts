@@ -7,6 +7,7 @@ import { AppUserRead, JwtBundle } from "./model";
 import { decode, JsonWebToken } from "./jwt";
 import { only, urlMatches } from "./util";
 import { Deferred, deferred } from "@/deferred";
+import { AxiosError } from "axios";
 
 export * from "./model";
 export * from "./client";
@@ -170,6 +171,11 @@ export class SkeletonKey<USER_DATA = unknown, TOKEN_DATA = unknown>
     await this.waitForEvent("initialized");
   }
 
+  public errorStatus(err: Error): number | undefined {
+    if (!(err as AxiosError).isAxiosError) return;
+    return (err as AxiosError).response?.status;
+  }
+
   public async refreshToken(): Promise<JwtBundle | boolean> {
     if (!this.jwtBundle?.refreshToken) return false;
     if (this.refreshing) return this.refreshing;
@@ -178,9 +184,12 @@ export class SkeletonKey<USER_DATA = unknown, TOKEN_DATA = unknown>
       this.jwtBundle!.token = await this.client.refresh(this.jwtBundle!.refreshToken!);
       this.emitSync("refresh", "token", this.jwtBundle);
       this.refreshing.resolve(this.jwtBundle);
-    } catch ({ response: { status } }) {
-      await this.handleStatus(status);
-      this.refreshing.reject(status);
+    } catch (error) {
+      const status = this.errorStatus(error);
+      if (status !== undefined) {
+        await this.handleStatus(status);
+        this.refreshing.reject(error);
+      }
     }
     this.refreshing = undefined;
     return this.jwtBundle;
@@ -194,11 +203,9 @@ export class SkeletonKey<USER_DATA = unknown, TOKEN_DATA = unknown>
       if (skipLoginCheck) this.emitSync("login", this.user);
       else this.emitSync("refresh", "user", this.user);
       await this.persist();
-    } catch (ex) {
-      const {
-        response: { status },
-      } = ex;
-      await this.handleStatus(status);
+    } catch (error) {
+      const status = this.errorStatus(error);
+      if (status !== undefined) await this.handleStatus(status);
     }
     return this.user!;
   }

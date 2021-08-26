@@ -185,11 +185,7 @@ export class SkeletonKey<USER_DATA = unknown, TOKEN_DATA = unknown>
       this.emitSync("refresh", "token", this.jwtBundle);
       this.refreshing.resolve(this.jwtBundle);
     } catch (error) {
-      const status = this.errorStatus(error);
-      if (status !== undefined) {
-        await this.handleStatus(status);
-        this.refreshing.reject(error);
-      }
+      await this.handleError(error, true, this.refreshing.reject);
     }
     this.refreshing = undefined;
     return this.jwtBundle;
@@ -204,14 +200,18 @@ export class SkeletonKey<USER_DATA = unknown, TOKEN_DATA = unknown>
       else this.emitSync("refresh", "user", this.user);
       await this.persist();
     } catch (error) {
-      const status = this.errorStatus(error);
-      if (status !== undefined) await this.handleStatus(status);
+      await this.handleError(error);
     }
     return this.user!;
   }
 
-  public async handleStatus(status: number, shouldLogout = true): Promise<void> {
+  public async handleError(error: Error, shouldLogout = true, errorCallback?: (error: Error) => void): Promise<void> {
+    const status = this.errorStatus(error);
     if (status && [400, 401, 403].indexOf(status) !== -1 && shouldLogout) await this.logout();
+    else {
+      errorCallback?.(error);
+      throw error;
+    }
   }
 
   public needsRefresh(): boolean {
@@ -304,8 +304,13 @@ export class SkeletonKey<USER_DATA = unknown, TOKEN_DATA = unknown>
   public async redeem(code: string, config: OpenIdConfig): Promise<JwtBundle> {
     if (!config) throw new Error("No OpenID config provided!");
     const { redirect_uri: url, client_id: id } = config;
-    const { refresh_token, access_token } = await this.client.redeemCode(code, "authorization_code", url, id);
-    return { refreshToken: refresh_token, token: access_token };
+    try {
+      const { refresh_token, access_token } = await this.client.redeemCode(code, "authorization_code", url, id);
+      return { refreshToken: refresh_token, token: access_token };
+    } catch (error) {
+      await this.handleError(error);
+      throw error;
+    }
   }
 
   public async fromOpenId(

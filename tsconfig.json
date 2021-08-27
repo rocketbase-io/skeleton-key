@@ -17,7 +17,8 @@
     "declaration": true,
     "paths": {
       "@/*": ["./src/*"],
-      "test/*": ["./test/*"]
+      "test/*": ["./test/*"],
+      "example/*": ["./example/*"]
     },
     "lib": ["esnext", "dom"]
   },
@@ -25,7 +26,9 @@
     "src/**/*.ts",
     "src/**/*.tsx",
     "tests/**/*.ts",
-    "tests/**/*.tsx"
+    "tests/**/*.tsx",
+    "example/**/*.ts",
+    "example/**/*.tsx"
   ],
   "exclude": [
     "node_modules"

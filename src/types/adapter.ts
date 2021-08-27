@@ -1,13 +1,16 @@
+import { SkeletonConfig } from "@/types/config";
 import { SkeletonContext } from "@/types/context";
 import { SkeletonKey } from "@/types/skeleton-key";
-import { PromiseOr } from "@/types/util";
+import { PromiseOr, TeardownOr } from "@/types/util";
 import { AxiosRequestConfig } from "axios";
 
 export type RequestConfig = AxiosRequestConfig;
 
 export interface SkeletonAdapter {
-  revive?(context: SkeletonContext): PromiseOr<void | (() => PromiseOr<void>)>;
-  init?(context: SkeletonContext): PromiseOr<void | (() => PromiseOr<void>)>;
+  config?(context: SkeletonContext): PromiseOr<Partial<SkeletonConfig>>;
+  revive?(context: SkeletonContext): TeardownOr<PromiseOr<void>>;
+  init?(context: SkeletonContext): TeardownOr<PromiseOr<void>>;
+  postInit?(context: SkeletonContext): TeardownOr<PromiseOr<void>>;
 
   /**
    * hook for when the context has been modified
@@ -29,5 +32,5 @@ export interface SkeletonAdapter {
   /**
    * Expose global properties on the skeleton-key object
    */
-  expose?: Partial<SkeletonKey>;
+  expose?: Partial<SkeletonKey> | unknown;
 }

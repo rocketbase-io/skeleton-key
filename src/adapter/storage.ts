@@ -1,4 +1,4 @@
-import { SkeletonAdapter, SkeletonContext, SkeletonConfig } from "@/types";
+import { SkeletonAdapter, SkeletonContext, SkeletonConfig, PromiseOr, SkeletonKey } from "@/types";
 import { dateSerializer, json, StringSerializer } from "@/util";
 
 export function storageAdapter({
@@ -14,6 +14,8 @@ export function storageAdapter({
   ignoredSources?: string[];
   serializer?: StringSerializer;
 }): SkeletonAdapter {
+  let revived = false;
+
   const revive: SkeletonAdapter["revive"] = (context) => {
     if (context.user && context.data) return;
     try {
@@ -27,6 +29,7 @@ export function storageAdapter({
         patches[name as keyof SkeletonContext] = value as never;
       }
       context.auth.internal.setContext(patches, "revive");
+      revived = true;
     } catch (ignored) {
       return;
     }
@@ -40,8 +43,36 @@ export function storageAdapter({
     );
   };
 
+  function store(
+    this: SkeletonKey,
+    field: keyof SkeletonContext,
+    source: string,
+    preferRuntime?: boolean
+  ): PromiseOr<void> {
+    if (ignoredSources.includes(source)) return;
+    if (storedFields.includes(field)) return;
+    storedFields = storedFields.concat(field);
+    if (!revived) return;
+    const value = serializer.parse(storage.getItem(key) ?? "{}");
+    if (field in value && !preferRuntime ? this.internal.getContext()[field] !== "undefined" : true)
+      this.internal.setContext({ [field]: value[field] }, "revive");
+    storage.setItem(
+      key,
+      serializer.stringify(Object.fromEntries(storedFields.map((field) => [field, this.internal.getContext()[field]])))
+    );
+  }
+
+  function persist(key: string, value: unknown): void {
+    storage.setItem(key, serializer.stringify(value));
+  }
+
+  function read<T>(key: string): T {
+    return serializer.parse(storage.getItem(key) ?? "null");
+  }
+
   return {
     revive,
     change,
+    expose: { store, persist, read },
   };
 }

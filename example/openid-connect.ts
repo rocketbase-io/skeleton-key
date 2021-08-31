@@ -9,7 +9,7 @@ async function example() {
     debug(true),
     storageAdapter({ storage, key: "openid-connect-example" }),
     openidConnect({
-      endpoint: "https://api.dev.productspace.io/satellite",
+      endpoint: "http://localhost:8080/auth/realms/master",
       client: "observue",
     }),
   ]);

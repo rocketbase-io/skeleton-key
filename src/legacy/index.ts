@@ -1,12 +1,12 @@
-import { AuthDataBundle, AuthStore, StorageAuthStore } from "@/auth-store";
-import { connect, OpenIdConfig, receive } from "@/openid/connect";
+import { AuthDataBundle, AuthStore, StorageAuthStore } from "./auth-store";
+import { connect, OpenIdConfig, receive } from "./openid/connect";
 import { AuthClient } from "./client";
 import { installInterceptors, Interceptor, interceptors } from "./intercept";
 import { Eventing } from "./events";
 import { AppUserRead, JwtBundle } from "./model";
 import { decode, JsonWebToken } from "./jwt";
 import { only, urlMatches } from "./util";
-import { Deferred, deferred } from "@/deferred";
+import { Deferred, deferred } from "./deferred";
 
 export * from "./model";
 export * from "./client";
@@ -52,7 +52,8 @@ const INTERVAL_TOLERANCE = 10000; // 10s
 
 export class SkeletonKey<USER_DATA = unknown, TOKEN_DATA = unknown>
   extends Eventing<"login" | "logout" | "action" | "refresh" | "initialized">()
-  implements Interceptor, Required<SkeletonKeyOptions> {
+  implements Interceptor, Required<SkeletonKeyOptions>
+{
   public url!: string;
   public client!: AuthClient;
   public domains!: string[];
